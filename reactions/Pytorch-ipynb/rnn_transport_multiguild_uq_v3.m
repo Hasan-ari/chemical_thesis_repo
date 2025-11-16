@@ -14,8 +14,12 @@ function rnn_transport_multiguild_uq_v3
     % , X_meth (Methanogen biomass), X_sulf (Sulfate reducer biomass), X_aceto (Acetogen biomass), Acetate (Acetic acid)]
     x0 = [data_exp(1,:)'; 0.01; 0.01; 0.01; 0; 0]; % 10 elements 
 
+    %% Parameter metadata for reporting
+    paramNames = {'k_meth','k_sulf','k_aceto','Y_m','Y_s','Y_a', ...
+        'KI_meth','KI_sulf','KI_aceto','k_precip','H2S_sat','H2_thresh','DG_thresh'};
+
     %% Fit mechanistic parameters and simulate trajectory
-    p_fit = fit_mechanistic_params(t_exp, data_exp, x0);
+    p_fit = fit_mechanistic_params(t_exp, data_exp, x0, paramNames);
     t = linspace(0, t_exp(end), 2000);
     [~, xTrain] = ode45(@(t,y) trueODEfunc_multiguild(t,y,p_fit), t, x0);
     xTrain = xTrain'; % [10 x timeSteps]
@@ -190,59 +194,30 @@ title(['BTC: ', species{i}]); xlabel('Time [d]'); ylabel('mmol/L');
 end
 
 
-function p_fit = fit_mechanistic_params(t_exp, data_exp, x0)
+function p_fit = fit_mechanistic_params(t_exp, data_exp, x0, paramNames)
     % Define parameter bounds and initial guess
     p0 = [1, 1, 1, 0.05, 0.05, 0.05, 0.1, 0.1, 0.1, 0.01, 0.01, 0.01, -10];
     lb = [0.001, 0.001, 0.001, 0.01, 0.01, 0.01, 0.001, 0.001, 0.001, 0, 0, 0, -50];
     ub = [10, 10, 10, 0.5, 0.5, 0.5, 10, 10, 10, 1, 1, 1, 0];
 
-    % Comparison-friendly pre-fit printout
-    fprintf('\n%s\n','======================================================================');
-    fprintf('%s\n','PARAMETER FITTING: Nonlinear Least Squares Optimization (MATLAB)');
-    fprintf('%s\n','======================================================================');
-    fprintf('Algorithm: lsqnonlin (Trust-Region-Reflective)\n');
-    fprintf('Residual length (data points flattened): %d\n', numel(data_exp));
-    fprintf('Weights: [1, 1, 0.5, 0.5, 1] (H2, CO2, CH4, H2S, SO4)\n');
-    names = {'k_meth','k_sulf','k_aceto','Y_m','Y_s','Y_a', ...
-             'KI_meth','KI_sulf','KI_aceto','k_precip','H2S_sat','H2_thresh','DG_thresh'};
-    fprintf('\nInitial guess (p0):\n');
-    for i = 1:numel(p0)
-        fprintf('  %-12s = %12.6f\n', names{i}, p0(i));
-    end
-    fprintf('\nLower bounds (lb):\n');
-    for i = 1:numel(lb)
-        fprintf('  %-12s >= %12.6f\n', names{i}, lb(i));
-    end
-    fprintf('\nUpper bounds (ub):\n');
-    for i = 1:numel(ub)
-        fprintf('  %-12s <= %12.6f\n', names{i}, ub(i));
-    end
-    fprintf('%s\n','======================================================================');
+    printParameterTable('Initial parameter guess (p0)', paramNames, p0);
+    printParameterTable('Lower bounds (lb)', paramNames, lb);
+    printParameterTable('Upper bounds (ub)', paramNames, ub);
 
     options = optimoptions('lsqnonlin','Display','iter','MaxFunctionEvaluations',5000);
-    [p_fit, resnorm, residual, exitflag, output, lambda, jacobian] = lsqnonlin(@(p) residuals_multiguild(p, t_exp, data_exp, x0), p0, lb, ub, options);
+    p_fit = lsqnonlin(@(p) residuals_multiguild(p, t_exp, data_exp, x0), p0, lb, ub, options);
+    
+    printParameterTable('Fitted parameters (MATLAB lsqnonlin)', paramNames, p_fit);
+    printParameterTable('Δ relative to initial guess (p\_fit - p0)', paramNames, p_fit - p0);
+    
+    fractionalChange = arrayfun(@(pf, pinit) computeFraction(pf, pinit), p_fit, p0);
+    printParameterTable('Relative change (fractional)', paramNames, fractionalChange);
 
-    % Comparison-friendly post-fit summary
-    fprintf('\n%s\n','======================================================================');
-    fprintf('%s\n','FITTING COMPLETE (MATLAB)');
-    fprintf('%s\n','======================================================================');
-    fprintf('Success (exitflag>0): %d\n', exitflag > 0);
-    if isfield(output,'message'); fprintf('Message: %s\n', strtrim(output.message)); end
-    if isfield(output,'funcCount'); fprintf('Function evaluations: %d\n', output.funcCount); end
-    if isfield(output,'iterations'); fprintf('Iterations: %d\n', output.iterations); end
-    if isfield(output,'algorithm'); fprintf('Algorithm: %s\n', output.algorithm); end
-    fprintf('Resnorm (sum of squares):    %.6f\n', resnorm);
-    fprintf('Cost (0.5 * resnorm):        %.6f\n', 0.5*resnorm);
-    rms_resid = sqrt(resnorm / numel(residual));
-    fprintf('RMS residual:                %.6f\n', rms_resid);
-    fprintf('Residual length:             %d\n', numel(residual));
-
-    fprintf('\nFitted Parameters:\n');
-    fprintf('----------------------------------------------------------------------\n');
-    for i = 1:numel(p_fit)
-        fprintf('  %-12s = %12.6f\n', names{i}, p_fit(i));
-    end
-    fprintf('%s\n','======================================================================');
+    summaryTable = table(paramNames(:), lb(:), p0(:), p_fit(:), ub(:), ...
+        (p_fit - p0)', fractionalChange', ...
+        'VariableNames', {'Parameter','LowerBound','InitialGuess','FittedValue','UpperBound','DeltaFromInitial','FractionalChange'});
+    writetable(summaryTable, 'matlab_parameter_summary.csv');
+    fprintf('✓ Parameter summary exported to matlab_parameter_summary.csv\n');
 end
 
 
@@ -260,8 +235,7 @@ function res = residuals_multiguild(p, t_exp, data_exp, x0)
             res = res + 1e3 * abs(min(y_sim(:)));
         end
         res = res(:);
-    catch ME
-        warning('ODE solver failed in residuals_multiguild: %s', ME.message);
+    catch
         res = 1e6 * ones(numel(data_exp), 1);
     end
 end
@@ -334,4 +308,21 @@ function dydt = trueODEfunc_multiguild(~, y, p)
     dAcetate = +1*r_aceto;
 
     dydt = [dH2; dCO2; dCH4; dH2S; dSO4; dFeS; dX_meth; dX_sulf; dX_aceto; dAcetate];
+end
+
+function frac = computeFraction(pFitVal, pInitVal)
+    if pInitVal ~= 0
+        frac = (pFitVal - pInitVal) / abs(pInitVal);
+    else
+        frac = NaN;
+    end
+end
+
+function printParameterTable(label, paramNames, values)
+    fprintf('\n%s\n', label);
+    fprintf('%s\n', repmat('-',1,70));
+    for idx = 1:numel(paramNames)
+        fprintf('  %-12s: %12.6f\n', paramNames{idx}, values(idx));
+    end
+    fprintf('%s\n', repmat('-',1,70));
 end

@@ -49,6 +49,30 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'Using device: {device}')
 print(f'PyTorch version: {torch.__version__}')
 
+# Global parameter metadata reused across reporting utilities
+PARAMETER_NAMES = [
+    'k_meth', 'k_sulf', 'k_aceto',
+    'Y_m', 'Y_s', 'Y_a',
+    'KI_meth', 'KI_sulf', 'KI_aceto',
+    'k_precip', 'H2S_sat', 'H2_thresh',
+    'DG_thresh'
+]
+
+
+def print_parameter_table(label: str, values: np.ndarray) -> None:
+    """
+    Pretty-print a labeled table of the 13 ODE parameters.
+
+    Args:
+        label: Header describing the data (e.g., 'Initial guess (p0)')
+        values: Array-like of length 13 in the order defined by PARAMETER_NAMES
+    """
+    print(f'\n{label}')
+    print('-'*70)
+    for name, val in zip(PARAMETER_NAMES, values):
+        print(f'  {name:12s}: {val:12.6f}')
+    print('-'*70)
+
 # %% [markdown]
 # ## Part 2: Load Experimental Data
 #
@@ -483,6 +507,10 @@ def fit_parameters(t_exp, data_exp, x0):
         0.0                      # DG_thresh must be negative (0 is upper bound)
     ])
 
+    print_parameter_table('Initial parameter guess (p0)', p0)
+    print_parameter_table('Lower bounds (lb)', lb)
+    print_parameter_table('Upper bounds (ub)', ub)
+
     print('\n' + '='*70)
     print('PARAMETER FITTING: Nonlinear Least Squares Optimization')
     print('='*70)
@@ -490,26 +518,6 @@ def fit_parameters(t_exp, data_exp, x0):
     print('MATLAB Equivalent: lsqnonlin from Optimization Toolbox')
     print('\nFitting 13 parameters to experimental data...')
     print('This may take 30-90 seconds...')
-    print('='*70)
-    # Comparison-friendly: print initial guess and bounds with names
-    param_names = [
-        'k_meth', 'k_sulf', 'k_aceto',
-        'Y_m', 'Y_s', 'Y_a',
-        'KI_meth', 'KI_sulf', 'KI_aceto',
-        'k_precip', 'H2S_sat', 'H2_thresh',
-        'DG_thresh'
-    ]
-    print('\nInitial guess (p0):')
-    for name, val in zip(param_names, p0):
-        print(f'  {name:12s} = {val:12.6f}')
-    print('\nLower bounds (lb):')
-    for name, val in zip(param_names, lb):
-        print(f'  {name:12s} >= {val:12.6f}')
-    print('\nUpper bounds (ub):')
-    for name, val in zip(param_names, ub):
-        print(f'  {name:12s} <= {val:12.6f}')
-    print(f'\nResidual length (data points flattened): {data_exp.size}')
-    print(f'Weights: [1.0, 1.0, 0.5, 0.5, 1.0] (H2, CO2, CH4, H2S, SO4)')
     print('='*70 + '\n')
 
     # === RUN OPTIMIZATION ===
@@ -535,22 +543,28 @@ def fit_parameters(t_exp, data_exp, x0):
     print('='*70)
     print(f'Success: {result.success}')
     print(f'Message: {result.message}')
-    # SciPy reports cost = 0.5 * sum(residuals^2); MATLAB reports resnorm = sum(residuals.^2)
-    resnorm = 2.0 * result.cost
-    rms_residual = np.sqrt(resnorm / result.fun.size) if result.fun.size > 0 else np.nan
-    print(f'Resnorm (sum of squares, MATLAB style): {resnorm:.6f}')
-    print(f'Cost (0.5 * resnorm, SciPy style):       {result.cost:.6f}')
-    print(f'RMS residual:                             {rms_residual:.6f}')
-    print(f'Residual length:                          {result.fun.size}')
+    print(f'Final cost: {result.cost:.6f}')
     print(f'Function evaluations: {result.nfev}')
     print(f'Optimality: {result.optimality:.2e}')
 
     # Print parameter names and values
-    print('\nFitted Parameters:')
-    print('-'*70)
-    for name, val in zip(param_names, p_fit):
-        print(f'  {name:12s} = {val:12.6f}')
-    print('='*70 + '\n')
+    print_parameter_table('Fitted parameters (PyTorch least_squares)', p_fit)
+    print_parameter_table('Δ relative to initial guess (p_fit - p0)', p_fit - p0)
+
+    relative_change = np.where(p0 != 0, (p_fit - p0) / np.abs(p0), np.nan)
+    print_parameter_table('Relative change (fractional)', relative_change)
+
+    param_summary = pd.DataFrame({
+        'parameter': PARAMETER_NAMES,
+        'lower_bound': lb,
+        'initial_guess': p0,
+        'fitted_value': p_fit,
+        'upper_bound': ub,
+        'delta_from_initial': p_fit - p0,
+        'fractional_change': relative_change
+    })
+    param_summary.to_csv('pytorch_parameter_summary.csv', index=False)
+    print('✓ Parameter summary exported to pytorch_parameter_summary.csv\n')
 
     return p_fit
 

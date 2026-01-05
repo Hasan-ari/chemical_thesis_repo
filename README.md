@@ -22,20 +22,67 @@ Bu proje, yer altı hidrojen (H₂) depolamadaki biyokimyasal reaksiyonları mod
 
 ```
 chemical_thesis_repo/
-├── src/              # Kaynak kod (MATLAB + PyTorch)
-├── data/             # 12 eğitim dataset'i (kayaç/sıcaklık kombinasyonları)
-├── results/          # Model çıktıları, figürler, parametreler
-├── docs/             # Referanslar ve dokümantasyon
-└── weekly_work/      # Gelişim snapshot'ları
+├── CURRENT/              # ⭐ ŞU AN ÇALIŞILACAK MATERYALLER (v4 kodları)
+├── shared/               # Ortak kullanılan kaynaklar
+│   └── datasets/         # 12 deneysel veri seti (Muller 2024)
+├── archive/              # Eski çalışmalar (v1, v2, v3 - KULLANMA!)
+└── [haftalık klasörler]  # Gelecekte: 2025-W50, 2025-W51, vb.
 ```
 
-**Detaylı açıklama**:
-- [src/matlab/core/](src/matlab/core/): Ana MATLAB modeli (RNN, LSTM, ODE)
-- [src/python/](src/python/): PyTorch implementasyonu
-- [src/notebooks/](src/notebooks/): Jupyter notebook'lar
-- [data/training/](data/training/): Basalt, Calcite, Gypsum, Sandstone verileri
-- [results/trained_models/](results/trained_models/): Eğitilmiş model ağırlıkları
-- [weekly_work/](weekly_work/): Her haftanın tam snapshot'ı
+### 🎯 CURRENT/ - Şu An Çalışılacak Dosyalar
+
+**⭐ En önemli klasör!** Profesörün 3 Ocak 2026 akşam mailinden:
+
+```
+CURRENT/
+├── code/v4_two_phase/     # 12 MATLAB kodu (.m + .mat fitted params)
+│   ├── sandstone_25C/
+│   ├── sandstone_34C/
+│   ├── sandstone_40C/
+│   ├── basalt_25C/
+│   ├── basalt_34C/
+│   ├── basalt_40C/
+│   ├── calcite_25C/
+│   ├── calcite_34C/
+│   ├── calcite_40C/
+│   ├── gypsum_25C/
+│   ├── gypsum_34C/
+│   └── gypsum_40C/
+├── data/muller_2024/      # Deneysel veriler (.txt)
+├── results/fitted_outputs/ # Fit sonuçları (.dat + .png)
+└── docs/                  # Açıklama dokümanları
+```
+
+**v4 İki Fazlı Model Özellikleri**:
+- ✅ 14 state variables (v3'te 13'tü)
+- ✅ 28 parameters (v3'te 13'tü)
+- ✅ İki fazlı sistem (gaz + sıvı)
+- ✅ Henry yasası + pH türlenmesi
+- ✅ 12 başarılı fit
+
+👉 **Detaylar için**: [CURRENT/README.md](CURRENT/README.md)
+
+### 📊 shared/datasets/ - Ortak Veri Setleri
+
+Tüm haftalık çalışmalarda kullanılacak 12 deneysel veri seti:
+
+```
+shared/datasets/muller_2024/
+├── basalt/      # 25C, 34C, 40C (.dat)
+├── calcite/     # 25C, 34C, 40C (.dat)
+├── gypsum/      # 25C, 34C, 40C (.dat)
+└── sandstone/   # 25C, 34C, 40C (.dat)
+```
+
+👉 **Detaylar için**: [shared/datasets/README.md](shared/datasets/README.md)
+
+### 🗄️ archive/ - Eski Çalışmalar
+
+❌ **KULLANMA!** Sadece referans için:
+- `reactions_old/`: Eski tek fazlı modeller (v1, v2, v3)
+- Yanlış fizik içeriyor - profesör v4 ile güncelledi
+
+👉 **Detaylar için**: [archive/README.md](archive/README.md)
 
 ---
 
@@ -52,79 +99,59 @@ pip install -r requirements.txt
 
 ### Çalıştırma
 
-**PyTorch modeli**:
-```bash
-cd src/python
-python matlab_to_pytorch_complete.py
+**v4 MATLAB modeli** (Şu an çalışılması gereken):
+```matlab
+cd CURRENT/code/v4_two_phase/sandstone_25C
+anaerobic_model_two_phase_mixedSR_25C_v4
 ```
 
-**MATLAB modeli**:
+**Tüm 12 durumu görüntüleme**:
 ```matlab
-addpath(genpath('src/matlab/core'));
-addpath(genpath('data/training'));
-rnn_transport_multiguild_uq_v3
+% 12 folder'ı tek tek aç ve çalıştır
+% Her biri .m ve .mat dosyası içerir
+```
+
+**Python'a çevirme** (gelecek adım):
+```bash
+# Henüz yapılmadı - HAFTA 3-4'te gelecek
+cd CURRENT/code
+# v4 MATLAB kodunu Python'a çevir
 ```
 
 ---
 
 ## 📊 Haftalık İlerleme Günlüğü
 
-> **Not**: Her hafta yeni bölüm eklenecek - kronolojik sırayla
+> **Not**: ISO hafta bazlı klasörleme sistemi gelecekte eklenecek (2025-W50, W51, W52, 2026-W01)
 
-### Hafta 3 (23 Aralık 2025): PINN Finalizasyonu ✅
+### 🔄 5 Ocak 2026: Repo Reorganizasyonu
 
 **Ne Yapıldı**:
-- ✅ Biyokimyasal denklemler düzeltildi
-- ✅ MATLAB'a karşı doğrulama yapıldı (parametreler %1 içinde)
-- ✅ Karşılaştırma grafikleri oluşturuldu
+- ✅ CURRENT/ klasörü oluşturuldu (profesörün v4 kodları)
+- ✅ shared/datasets/ ortak veri klasörü hazırlandı
+- ✅ archive/ eski çalışmalar arşivlendi
+- ✅ 12 rock/temperature kombinasyonu organize edildi
 
-**Sonuçlar**:
-- MSE: 0.00038 (MATLAB: 0.00042)
-- Parametre uyumu: %99.2
+**Profesör Mesajı** (3 Ocak akşam):
+> "Artık tüm kayaçlar için algoritmaları standard hale getirdim ki **senin işin daha kolay olsun**."
 
-**Önemli Dosyalar**:
-- [weekly_work/week_03_dec23_pinn_finalization/](weekly_work/week_03_dec23_pinn_finalization/)
-- [weekly_work/week_03_dec23_pinn_finalization/README.md](weekly_work/week_03_dec23_pinn_finalization/README.md) (detaylı haftalık rapor)
+**Sonraki Adımlar**:
+- HAFTA 1-2: v4 kodunu anla (14 state, 28 param, Henry yasası)
+- HAFTA 3-4: v4'ü Python'a çevir
+- AY 2-3: Tüm kayaçlar + GPU + LSTM/PINN eğitimi
 
 ---
 
-### Hafta 2 (16 Aralık 2025): Keşif ve Deneyler ✅
+### 🗄️ Eski Haftalık Çalışmalar (Arşivlendi)
 
-**Ne Yapıldı**:
-- ✅ ODE solver'ları test edildi (ode15s, ode23)
-- ✅ Python kimya kütüphaneleri araştırıldı (ChemPy, Cantera)
-- ✅ PINN prototipleri geliştirildi (6 farklı deney)
+**Not**: Aşağıdaki çalışmalar v1/v2/v3 (tek fazlı, yanlış fizik) ile yapılmıştır.
+Profesör 3 Ocak'ta v4 (iki fazlı, doğru fizik) gönderdi.
 
-**Deneyler**:
-1. **Task 1**: ODE15 solver testi → ODE23 daha kararlı
-2. **Task 2**: ChemPy entegrasyonu → Başarısız (kütüphane limitleri)
-3. **Task 4**: İlk PINN implementasyonu → Çalışıyor!
-4. **Task 5**: PINN + normalizasyon → İyileşme
-5. **Task 5b**: Sequence length=50 testi → Optimal
-6. **Task 6**: Veri downsampling → Eğitim hızlandı
+**Hafta 3** (23 Aralık): PINN finalizasyonu → `archive/reactions_old/`
+**Hafta 2** (16 Aralık): Keşif ve deneyler → `archive/reactions_old/`
+**Hafta 1** (9 Aralık): MATLAB baseline → `archive/reactions_old/`
 
-**Karar**: Standart LSTM, PINN'den daha iyi performans (bu dataset için)
-
-**Önemli Dosyalar**:
-- [weekly_work/week_02_dec16_exploration/](weekly_work/week_02_dec16_exploration/)
-- [weekly_work/week_02_dec16_exploration/README.md](weekly_work/week_02_dec16_exploration/README.md) (detaylı haftalık rapor)
-
----
-
-### Hafta 1 (9 Aralık 2025): MATLAB Baseline ✅
-
-**Ne Yapıldı**:
-- ✅ MATLAB'da RNN/LSTM implementasyonu
-- ✅ Sandstone 25°C üzerinde eğitim
-- ✅ İlk başarılı fit
-
-**Sonuçlar**:
-- MSE: 0.00042
-- Eğitim süresi: 45 dakika (CPU)
-
-**Önemli Dosyalar**:
-- [weekly_work/week_01_dec09_matlab_baseline/](weekly_work/week_01_dec09_matlab_baseline/)
-- [weekly_work/week_01_dec09_matlab_baseline/README.md](weekly_work/week_01_dec09_matlab_baseline/README.md) (detaylı haftalık rapor)
+👉 **Eski çalışma detayları**: Eğer gerekirse `archive/reactions_old/` içinde mevcuttur
 
 ---
 
@@ -167,10 +194,11 @@ MIT License - Detaylar için [LICENSE](LICENSE) dosyasına bakın
 
 ## 🔄 Son Güncellemeler
 
-- **5 Ocak 2026**: Repo reorganizasyonu tamamlandı (modüler yapı)
-- **23 Aralık 2025**: PINN finalizasyonu
-- **16 Aralık 2025**: Keşif ve deney haftası
-- **9 Aralık 2025**: İlk MATLAB baseline
+- **5 Ocak 2026**: Repo reorganizasyonu - CURRENT/ (v4), shared/datasets/, archive/ eklendi
+- **3 Ocak 2026**: Profesör v4 two-phase model gönderdi (12 başarılı fit)
+- **23 Aralık 2025**: PINN finalizasyonu (v3 ile, arşivlendi)
+- **16 Aralık 2025**: Keşif ve deney haftası (v2/v3 ile, arşivlendi)
+- **9 Aralık 2025**: İlk MATLAB baseline (v1 ile, arşivlendi)
 
 ---
 

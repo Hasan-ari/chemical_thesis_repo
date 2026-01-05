@@ -1,8 +1,8 @@
 # CURRENT - Şu An Çalışılacak Materyaller
 
-⭐ **Bu klasördeki dosyalar profesörün 3 Ocak 2026 akşam mailinden (107 dosya)**
+⭐ **Bu klasördeki dosyalar 3 Ocak 2026 akşam mailinden (107 dosya)**
 
-## 🎯 Ne ile çalışmalısın?
+## Üzerinde çalışacak olduğumuz data.
 
 ### v4 İki Fazlı Model (Two-Phase)
 **Kod Versiyonu**: v4 (en güncel)
@@ -82,13 +82,13 @@ ls archive/reactions_old/Matlab codes/
 
 ---
 
-## 📋 HAFTALIK ÇALIŞMA YOL HARİTASI
+## HAFTALIK ÇALIŞMA YOL HARİTASI
 
-### 📅 HAFTA 1-2: Model Anlama (Şu An Buradayız!)
+### Model Anlama 
 
 **Hedef**: v4 iki fazlı modelini tam anlamak
 
-#### 📌 Gün 1-2: Kod Yapısını Anla
+#### Kod Yapısını Anla
 
 ```matlab
 % 1. Sandstone 25°C kodunu aç
@@ -117,7 +117,7 @@ edit anaerobic_model_two_phase_mixedSR_25C_v4.m
 
 ---
 
-#### 📌 Gün 3-4: Parametreleri İncele
+#### Parametreleri İncele
 
 ```matlab
 % Fitted parametreleri yükle
@@ -144,7 +144,7 @@ writetable(T, 'parameter_analysis.xlsx');
 
 ---
 
-#### 📌 Gün 5-7: Modeli Çalıştır ve Analiz Et
+#### 📌 Modeli Çalıştır ve Analiz Et
 
 ```matlab
 % Kodu çalıştır
@@ -166,7 +166,7 @@ saveas(gcf, '../../../HAFTA_1/sandstone_25C_H2_production.png');
 
 ---
 
-#### 📌 Hafta Sonu: Diğer Kayaçları Karşılaştır
+#### Hafta Sonu: Diğer Kayaçları Karşılaştır
 
 ```matlab
 % Aynı sıcaklıkta (25°C) farklı kayaçları karşılaştır
@@ -194,7 +194,7 @@ saveas(gcf, '../../../HAFTA_1/rock_comparison_25C.png');
 
 ---
 
-### 📅 HAFTA 3-4: Python Çevirisi
+### 📅 Python Çevirisi
 
 **Hedef**: v4 MATLAB kodunu Python'a çevirmek
 
@@ -221,7 +221,7 @@ cd HAFTA_3
 
 ---
 
-#### 📌 Gün 1-3: ODE Sistemini Python'a Çevir
+#### 📌 ODE Sistemini Python'a Çevir
 
 ```python
 # anaerobic_model_v4.py
@@ -412,7 +412,7 @@ if __name__ == "__main__":
 
 ---
 
-#### 📌 Gün 4-5: Test ve MATLAB Karşılaştırması
+#### 📌 Test ve MATLAB Karşılaştırması
 
 ```python
 # test_vs_matlab.py
@@ -467,7 +467,7 @@ else:
 
 ---
 
-### 📅 HAFTA 5-6: Tüm Kayaçları Python'a Çevir
+### 📅  Tüm Kayaçları Python'a Çevir
 
 **Hedef**: 12 durum için Python kodu
 
@@ -571,7 +571,7 @@ print(f"Başarılı (RMSE<0.1): {sum(1 for r in rmse_table if r['RMSE'] < 0.1)}"
 
 ---
 
-### 📅 HAFTA 7-10: PyTorch + GPU Hazırlık
+### 📅 PyTorch + GPU Hazırlık
 
 **Hedef**: LSTM/PINN eğitimi için veri hazırlığı
 
@@ -700,17 +700,8 @@ CURRENT/
 └── docs/                [3 .docx - Henry yasası, Fe pool, fit açıklamaları]
 ```
 
-## 🎓 Profesörden Mesaj
+## 🎓 Mesaj
 
-> "Artık tüm kayaçlar için algoritmaları standard hale getirdim ki **senin işin daha kolay olsun**."
-
-**Ne anlama geliyor?**
-- Fiziksel model tamamen doğru ✅
-- 12 durum için fitted parametreler ✅
-- Kod standardize ✅
-- **Sadece neural network eğitimi kaldı!** ✅
-
----
 
 **Son Güncelleme**: 5 Ocak 2026
-**Kaynak**: Profesör maili (3 Ocak 2026, 19:18)
+**Kaynak**: Mail (3 Ocak 2026, 19:18)

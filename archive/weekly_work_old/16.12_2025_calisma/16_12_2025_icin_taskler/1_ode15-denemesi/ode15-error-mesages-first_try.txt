@@ -1,0 +1,1672 @@
+>> rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim
+
+                                            Norm of      First-order 
+ Iteration  Func-count      Resnorm            step       optimality
+     0         14           25.8105                             9.19
+     1         28           17.8548         1.08866             1.09      
+     2         42           10.8375        0.886092              544      
+     3         56           9.39112        0.190625         1.79e+03      
+     4         70           8.53372        0.142961              765      
+     5         84           8.53372        0.129952              765      
+     6         98           7.76776        0.032488              116      
+     7        112           7.76776       0.0649761              116      
+     8        126           7.70572        0.016244             21.3      
+     9        140           7.70572        0.032488             21.3      
+    10        154           7.68817      0.00812201             18.9      
+    11        168           7.68817        0.016244             18.9      
+    12        182           7.67789        0.004061            0.496      
+    13        196           7.61297      0.00812201            0.984      
+    14        210           7.48993        0.016244            0.394      
+    15        224           7.38266        0.032488              140      
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586544e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586542e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586542e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586577e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586544e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=4.586543e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (1.421085e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    16        238           7.38266        0.026015              140      
+    17        252            7.3754      0.00130075             1.53      
+    18        266           7.35486       0.0026015            0.913      
+    19        280           7.31913      0.00520301            0.424      
+    20        294           7.25149        0.010406            0.916      
+    21        308           7.16524        0.020812             44.4      
+    22        322           7.16524       0.0416241             44.4      
+    23        336           7.14896        0.010406             37.3      
+    24        350           7.14896        0.020812             37.3      
+    25        364           7.14011      0.00520301             4.43      
+    26        378           7.13149        0.010406              102      
+    27        392           7.11179        0.010406             32.8      
+    28        406           7.10444        0.020812              214      
+    29        420           7.06458        0.020812             68.1      
+    30        434           7.04387       0.0416241              256      
+    31        448           6.99453       0.0416241              211      
+    32        462           6.99453       0.0832481              211      
+    33        476           6.96825        0.020812             54.6      
+    34        490           6.95045       0.0416241              294      
+    35        504           6.90615       0.0416241              140      
+    36        518           6.90615       0.0832481              140      
+    37        532           6.89073        0.020812             59.6      
+    38        546           6.86306       0.0416241             84.4      
+    39        560           6.86306       0.0832481             84.4      
+    40        574           6.84986        0.020812             85.3      
+    41        588           6.82653       0.0416241              175      
+    42        602           6.77578       0.0832481              207      
+    43        616           6.68951        0.166496              566      
+    44        630           6.43886        0.291312         1.49e+03      
+    45        644           6.39373        0.212594         4.39e+03      
+    46        658           6.06878       0.0531485              793      
+    47        672           6.06878        0.106297              793      
+    48        686            6.0536       0.0265742              596      
+    49        700            6.0536       0.0531485              596      
+    50        714           6.04319       0.0132871              442      
+    51        728           6.01792       0.0265742              282      
+    52        742           5.97883       0.0531485              354      
+    53        756           5.89059        0.106297         1.67e+03      
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044057e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044054e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044049e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044059e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=1.044056e+01.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    54        770           5.89059        0.180357         1.67e+03      
+    55        784           5.87724      0.00901786              561      
+    56        798           5.86836       0.0180357         1.33e+03      
+    57        812           5.83976       0.0360714         6.78e+03      
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191439e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191420e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191390e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191456e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191438e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.191437e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    58        826           5.83976       0.0800641         6.78e+03      
+    59        840           5.82279      0.00360714              282      
+    60        854           5.81827      0.00721429             80.8      
+    61        868            5.8121       0.0144286             82.8      
+    62        882           5.79619        0.027332              326      
+    63        896           5.77032       0.0577143         3.07e+03      
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458379e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458359e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458317e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458397e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458378e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.458377e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    64        910           5.77032        0.122872         3.07e+03      
+    65        924           5.76354      0.00577143              524      
+    66        938           5.76118       0.0115429              622      
+    67        952           5.75466       0.0230857         4.96e+03      
+    68        966           5.75466       0.0461714         4.96e+03      
+    69        980           5.74229       0.0115429         3.04e+03      
+    70        994           5.72965       0.0230857         1.55e+04      
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009347e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009327e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009299e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009365e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009346e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.009345e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    71       1008           5.72965       0.0230857         1.55e+04      
+    72       1022           5.72265      0.00115429           0.0928      
+    73       1036            5.7216      0.00230857         1.95e+03      
+    74       1050            5.7188      0.00461714              919      
+    75       1064           5.71485      0.00923429         3.07e+03      
+    76       1078           5.70571       0.0184686         1.69e+04      
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013481e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013461e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013428e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013499e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013480e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.013479e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    77       1092           5.70571       0.0355169         1.69e+04      
+    78       1106            5.7022      0.00177584            0.129      
+    79       1120           5.70094      0.00355169              121      
+    80       1134           5.69972      0.00710337         2.41e+03      
+    81       1148           5.69235       0.0142067         7.97e+03      
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000986e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000966e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000934e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.001004e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000985e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.000984e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    82       1162           5.69235       0.0284135         7.97e+03      
+    83       1176           5.69145      0.00142067              190      
+    84       1190           5.69106      0.00284135              225      
+    85       1204           5.69019       0.0056827              768      
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In snls (line 340)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002064e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002044e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002014e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002083e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002063e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Warning: Failure at t=9.002062e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 692)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+Objective function returned NaN; trying a new point...
+    86       1218           5.69019       0.0113654              768      
+    87       1232           5.68999      0.00056827              117      
+Warning: Failure at t=9.002581e+00.  Unable to meet integration tolerances without reducing the step size below the smallest value
+allowed (2.842171e-14) at time t. 
+> In ode15s (line 632)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>residuals_multiguild (line 334)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>@(p)residuals_multiguild(p,t_exp,data_exp,x0) (line 304)
+In finDiffEvalAndChkErr
+In finitedifferences
+In computeFinDiffGradAndJac
+In sfdnls (line 51)
+In snls (line 345)
+In lsqncommon (line 178)
+In lsqnonlin (line 264)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+In rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29) 
+    88       1246            5.6896      0.00113654              NaN      
+Error using trdog (line 120)
+Trust region step contains NaN's.
+
+Error in snls (line 322)
+      [sx,snod,qp,posdef,pcgit,Z] = trdog(x,g,A,D,delta,dv,...
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in lsqncommon (line 178)
+            snls(funfcn,xC,lb,ub,flags.verbosity,options,defaultopt,F,Jac,caller, ...
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in lsqnonlin (line 264)
+    lsqncommon(funfcn,xCurrent,lb,ub,options,defaultopt,caller,...
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim>fit_mechanistic_params (line 304)
+    p_fit = lsqnonlin(@(p) residuals_multiguild(p, t_exp, data_exp, x0), p0, lb, ub, options);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error in rnn_transport_multiguild_uq_v3_9_12_2025_grafikler_kestirim (line 29)
+    p_fit = fit_mechanistic_params(t_exp, data_exp, x0);
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+
+>> 

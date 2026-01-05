@@ -11,7 +11,10 @@
       "Bash(dir:*)",
       "Bash(git check-ignore:*)",
       "Bash(powershell -Command:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "mcp__serena__execute_shell_command",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__replace_content"
     ],
     "deny": [],
     "ask": []

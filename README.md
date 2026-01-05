@@ -1,5 +1,3 @@
-# H₂ Biyokimyasal Reaktif Transport Modellemesi: MATLAB'dan PyTorch'a Dönüşüm
-
 **Tez Projesi**: Biyokimyasal Reaktif Transport için Derin Öğrenme
 **Dönem**: Aralık 2025 - Devam Ediyor
 **Son Güncelleme**: 5 Ocak 2026
@@ -29,9 +27,9 @@ chemical_thesis_repo/
 └── [haftalık klasörler]  # Gelecekte: 2025-W50, 2025-W51, vb.
 ```
 
-### 🎯 CURRENT/ - Şu An Çalışılacak Dosyalar
+### CURRENT/ - Şu An Çalışılacak Dosyalar
 
-**⭐ En önemli klasör!** Profesörün 3 Ocak 2026 akşam mailinden:
+** En önemli klasör!** 3 Ocak 2026 akşam mailinden:
 
 ```
 CURRENT/
@@ -111,13 +109,6 @@ anaerobic_model_two_phase_mixedSR_25C_v4
 % Her biri .m ve .mat dosyası içerir
 ```
 
-**Python'a çevirme** (gelecek adım):
-```bash
-# Henüz yapılmadı - HAFTA 3-4'te gelecek
-cd CURRENT/code
-# v4 MATLAB kodunu Python'a çevir
-```
-
 ---
 
 ## 📊 Haftalık İlerleme Günlüğü
@@ -131,14 +122,6 @@ cd CURRENT/code
 - ✅ shared/datasets/ ortak veri klasörü hazırlandı
 - ✅ archive/ eski çalışmalar arşivlendi
 - ✅ 12 rock/temperature kombinasyonu organize edildi
-
-**Profesör Mesajı** (3 Ocak akşam):
-> "Artık tüm kayaçlar için algoritmaları standard hale getirdim ki **senin işin daha kolay olsun**."
-
-**Sonraki Adımlar**:
-- HAFTA 1-2: v4 kodunu anla (14 state, 28 param, Henry yasası)
-- HAFTA 3-4: v4'ü Python'a çevir
-- AY 2-3: Tüm kayaçlar + GPU + LSTM/PINN eğitimi
 
 ---
 
@@ -177,9 +160,9 @@ Bu kodu kullanıyorsanız:
 
 ```bibtex
 @software{h2_reactive_transport_2025,
-  author = {Hasan Tahsin Öztürk},
+  author = {Hasan Arı},
   title = {H₂ Biyokimyasal Reaktif Transport: MATLAB'dan PyTorch'a},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/lynxrafu/chemical_thesis_repo}
 }
 ```
@@ -204,4 +187,4 @@ MIT License - Detaylar için [LICENSE](LICENSE) dosyasına bakın
 
 ## 📧 İletişim
 
-Öğrenci: Hasan Tahsin Öztürk
+Öğrenci: Hasan Arı

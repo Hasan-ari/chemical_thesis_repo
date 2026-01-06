@@ -38,13 +38,26 @@
 - ✅ İlk haftalık klasör (2026-W01_model_anlama) hazırlandı
 - 💡 Fikir: ISO hafta + konu bazlı isimlendirme mükemmel oldu!
 
+### Pazartesi (6 Ocak 2026) - 📚 KOD ANALİZİ GÜNÜ
+- ⏰ Kod okuma ve analiz (3 saat)
+- ✅ Sandstone 25°C v4 kodu okundu (527 satır)
+- ✅ **4 Detaylı MD Dosyası Oluşturuldu:**
+  1. `01_setup_kodu.md` - Satır 1-113: Veri okuma, parametre tanımlama
+  2. `02_fitting_kodu.md` - Satır 114-276: lsqnonlin, residuals_full
+  3. `03_ode_function_kodu.md` - Satır 278-392: model_mixed detaylı
+  4. `04_simulation_postprocess.md` - Satır 118-256: Dense simulation, plots
+- ✅ Her bölüm için SATIR SATIR kod açıklaması yapıldı
+- ✅ MATLAB → Python çeviri notları eklendi
+- 💡 Kimya DEĞİL, sadece KOD MANTIĞI açıklandı (kullanıcı isteği)
+- 📝 Anonymous functions, struct usage, element-wise ops anlaşıldı
+
 ---
 
-## Toplam Çalışma Saati: ~4 saat
+## Toplam Çalışma Saati: ~7 saat
 
 ### Detay:
-- Organizasyon ve planlama: 4 saat ✅
-- Model anlama (kod okuma): 0 saat (sonraki hafta başlayacak)
+- Organizasyon ve planlama: 4 saat ✅ (5 Ocak)
+- Model anlama (kod okuma): 3 saat ✅ (6 Ocak)
 
 ---
 
@@ -56,11 +69,12 @@
 - ✅ Eksik verileri ekle: Tamamlandı (%100)
 - ✅ Haftalık sistem tasarla: Tamamlandı (%100)
 
-### Model Anlama Hedefleri (Ertelendi - Hafta 2'ye)
-- ⏳ Sandstone 25°C kodunu oku: Başlamadı (%0)
-- ⏳ State variables listesi: Başlamadı (%0)
-- ⏳ Parameters tablosu: Başlamadı (%0)
-- ⏳ Henry yasası anlama: Başlamadı (%0)
+### Model Anlama Hedefleri (BAŞLANDI - 6 Ocak)
+- ✅ Sandstone 25°C kodunu oku: Tamamlandı (%100) - Kod mantığı anlaşıldı
+- ✅ Kod akışı dokümantasyonu: Tamamlandı (%100) - kod_akisi_satir_satir.md
+- ⏳ State variables kimyasal detayları: Başlamadı (%0) - Kod seviyesi yeterli
+- ⏳ Parameters kimyasal detayları: Başlamadı (%0) - Kod seviyesi yeterli
+- ⏳ MATLAB kodunu çalıştırma: Başlamadı (%0) - Sonraki adım
 
 ---
 

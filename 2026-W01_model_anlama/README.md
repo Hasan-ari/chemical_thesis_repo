@@ -27,6 +27,17 @@
 - ✅ CURRENT/README.md detaylı çalışma rehberi ile güncellendi
 - ✅ Haftalık klasörleme sistemi tasarlandı
 
+### Kod Analizi (6 Ocak)
+- ✅ Sandstone 25°C v4 kodu okundu (527 satır MATLAB kodu)
+- ✅ **4 Detaylı MD Dosyası Oluşturuldu (Satır satır açıklama):**
+  1. `01_setup_kodu.md` - Setup (satır 1-113)
+  2. `02_fitting_kodu.md` - Fitting (satır 114-276, lsqnonlin + residuals_full)
+  3. `03_ode_function_kodu.md` - ODE (satır 278-392, model_mixed detaylı)
+  4. `04_simulation_postprocess.md` - Simulation + Post-processing
+  5. `kod_akisi_satir_satir.md` - Genel akış özeti
+- ✅ Her satır için KOD MANTIĞI açıklandı (kimya detayları değil)
+- ✅ MATLAB → Python çeviri notları eklendi
+
 ---
 
 ## 🔬 Sonuçlar
@@ -43,6 +54,12 @@
 - State variables: 10 → 14'e çıktı (Fe_pool, HCO3, S_tot, Lag eklendi)
 - Parameters: 13 → 28'e çıktı (Henry sabitleri, kLa değerleri, vb.)
 - Fiziksel model artık doğru: Henry yasası + pH speciation
+- **Kod Yapısı**:
+  - ODE solver: `ode15s` (stiff system için)
+  - Optimizer: `lsqnonlin` (least-squares fitting)
+  - Anonymous functions: `@(t,y)` kullanımı
+  - Struct kullanımı: `env.Vg`, `env.pH_fun(t)` vb.
+  - Element-wise operations: `./ , .^, .*`
 
 ### Zorluklar ⚠️
 - Eski klasörleme sistemi karmaşıktı (9_12_2025_calisma, vb.)
@@ -63,6 +80,11 @@
 - `WEEKLY_STRUCTURE.md` - Haftalık klasörleme sistem dokümantasyonu
 - `CURRENT/README.md` - Detaylı çalışma rehberi (günlük adımlar + kod örnekleri)
 - `archive/weekly_work_old/README.md` - Eski çalışmaların açıklaması
+- `notes/01_setup_kodu.md` - **YENİ!** Setup kısmı (satır 1-113)
+- `notes/02_fitting_kodu.md` - **YENİ!** Fitting (lsqnonlin + residuals_full)
+- `notes/03_ode_function_kodu.md` - **YENİ!** ODE function (model_mixed)
+- `notes/04_simulation_postprocess.md` - **YENİ!** Simulation + Post-processing
+- `notes/kod_akisi_satir_satir.md` - Genel akış özeti
 
 ### Veri Organizasyonu
 - `CURRENT/code/v4_two_phase/` - 12/12 klasör tam set
@@ -97,12 +119,16 @@
 
 ## 📈 İlerleme İstatistikleri
 
-- **Toplam çalışma saati**: ~4 saat (organizasyon + dokümantasyon)
-- **Tamamlanan hedefler**: 6/6 organizasyon hedefi ✅
-- **Git commit sayısı**: 3 (reorganization, updates, structure)
-- **Oluşturulan dosya sayısı**: 50+ (CURRENT/, shared/, archive/)
+- **Toplam çalışma saati**: ~7 saat (organizasyon 4h + kod analizi 3h)
+- **Tamamlanan hedefler**:
+  - 6/6 organizasyon hedefi ✅
+  - 2/6 model anlama hedefi ✅ (kod okuma + 5 MD dokümantasyon)
+- **Git commit sayısı**: 3+ (reorganization, updates, structure)
+- **Oluşturulan dosya sayısı**: 55+ (CURRENT/, shared/, archive/, notes/)
+- **Analiz edilen kod satırı**: 527 satır (Sandstone 25°C v4)
+- **Oluşturulan MD sayısı**: 5 detaylı kod analizi dosyası
 
 ---
 
 **Git Commit Hash**: (Bu hafta sonunda eklenecek)
-**Son Güncelleme**: 5 Ocak 2026, 21:00
+**Son Güncelleme**: 6 Ocak 2026

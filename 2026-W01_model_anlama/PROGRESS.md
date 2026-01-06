@@ -38,26 +38,45 @@
 - ✅ İlk haftalık klasör (2026-W01_model_anlama) hazırlandı
 - 💡 Fikir: ISO hafta + konu bazlı isimlendirme mükemmel oldu!
 
-### Pazartesi (6 Ocak 2026) - 📚 KOD ANALİZİ GÜNÜ
+### Pazartesi (6 Ocak 2026) - 📚 KOD ANALİZİ GÜNÜ (Part 1)
 - ⏰ Kod okuma ve analiz (3 saat)
 - ✅ Sandstone 25°C v4 kodu okundu (527 satır)
-- ✅ **4 Detaylı MD Dosyası Oluşturuldu:**
+- ✅ **5 Detaylı MD Dosyası Oluşturuldu (notes/):**
   1. `01_setup_kodu.md` - Satır 1-113: Veri okuma, parametre tanımlama
   2. `02_fitting_kodu.md` - Satır 114-276: lsqnonlin, residuals_full
   3. `03_ode_function_kodu.md` - Satır 278-392: model_mixed detaylı
   4. `04_simulation_postprocess.md` - Satır 118-256: Dense simulation, plots
+  5. `kod_akisi_satir_satir.md` - Genel kod akışı özeti
 - ✅ Her bölüm için SATIR SATIR kod açıklaması yapıldı
 - ✅ MATLAB → Python çeviri notları eklendi
 - 💡 Kimya DEĞİL, sadece KOD MANTIĞI açıklandı (kullanıcı isteği)
 - 📝 Anonymous functions, struct usage, element-wise ops anlaşıldı
 
+### Pazartesi Devam (6 Ocak 2026) - 🎯 YORUMLU KOD YAZIMI (Part 2)
+- ⏰ Türkçe yorumlu kod yazımı (3 saat)
+- ✅ **7 Yorumlu .m Dosyası Oluşturuldu (notes/commented_code/):**
+  1. `part1_setup.m` - Her sabiti açıklayan yorumlar (Vg, Vl, Henry, pH_fun)
+  2. `part2_initial_states_params.m` - y0, p0, lb, ub, env struct detaylı
+  3. `part3_fitting.m` - lsqnonlin çağrısının ne yaptığı adım adım
+  4. `part5_residuals_full.m` - Hata fonksiyonu (ODE + log transform + weights)
+  5. `part6_model_mixed_ODE.m` - **ÇOK DETAYLI!** 127 satır türevi (dnH2_g, dH2_aq, dSO4, ...)
+  6. `part7_helper_functions.m` - rate_out_mixed, speciate_sulfide, rmse_equal
+  7. `part4_simulation_plots_OZET.m` - Simulation kısmı özet
+- 💡 **HER SATIR** Türkçe açıklama ile:
+  - FORMÜL ne yapıyor
+  - NEDEN bu formül
+  - ÖRNEK değerlerle hesap
+  - FİZİKSEL ANLAM (kod seviyesinde)
+- 📝 Struct access, anonymous functions, element-wise, guards, interpolation hepsi açıklandı
+
 ---
 
-## Toplam Çalışma Saati: ~7 saat
+## Toplam Çalışma Saati: ~10 saat
 
 ### Detay:
 - Organizasyon ve planlama: 4 saat ✅ (5 Ocak)
-- Model anlama (kod okuma): 3 saat ✅ (6 Ocak)
+- Model anlama (MD yazımı): 3 saat ✅ (6 Ocak - Part 1)
+- Yorumlu kod yazımı: 3 saat ✅ (6 Ocak - Part 2)
 
 ---
 

@@ -80,11 +80,23 @@
 - `WEEKLY_STRUCTURE.md` - Haftalık klasörleme sistem dokümantasyonu
 - `CURRENT/README.md` - Detaylı çalışma rehberi (günlük adımlar + kod örnekleri)
 - `archive/weekly_work_old/README.md` - Eski çalışmaların açıklaması
-- `notes/01_setup_kodu.md` - **YENİ!** Setup kısmı (satır 1-113)
-- `notes/02_fitting_kodu.md` - **YENİ!** Fitting (lsqnonlin + residuals_full)
-- `notes/03_ode_function_kodu.md` - **YENİ!** ODE function (model_mixed)
-- `notes/04_simulation_postprocess.md` - **YENİ!** Simulation + Post-processing
+
+#### Kod Analizi (notes/)
+- `notes/01_setup_kodu.md` - Setup kısmı (satır 1-113)
+- `notes/02_fitting_kodu.md` - Fitting (lsqnonlin + residuals_full)
+- `notes/03_ode_function_kodu.md` - ODE function (model_mixed)
+- `notes/04_simulation_postprocess.md` - Simulation + Post-processing
 - `notes/kod_akisi_satir_satir.md` - Genel akış özeti
+
+#### Yorumlu Kod Dosyaları (notes/commented_code/) - **YENİ! 🎉**
+**Satır satır Türkçe yorumlu MATLAB kodu (kimya değil, KOD mantığı):**
+- `part1_setup.m` - Sabitler, veri yükleme, Henry sabitleri (satır 1-117)
+- `part2_initial_states_params.m` - y0 vektörü, p0/lb/ub, env struct (satır 118-178)
+- `part3_fitting.m` - lsqnonlin çağrısı ve optimizasyon akışı (satır 180-182)
+- `part5_residuals_full.m` - Hata fonksiyonu (ODE çözümü + model-data farkı) (satır 328-346)
+- `part6_model_mixed_ODE.m` - **ANA ODE FONKSİYONU** (127 satır türevi hesapla) (satır 349-475)
+- `part7_helper_functions.m` - rate_out_mixed, speciate_sulfide, rmse_equal (satır 477-527)
+- `part4_simulation_plots_OZET.m` - Simulation + plotting özeti
 
 ### Veri Organizasyonu
 - `CURRENT/code/v4_two_phase/` - 12/12 klasör tam set
@@ -119,14 +131,21 @@
 
 ## 📈 İlerleme İstatistikleri
 
-- **Toplam çalışma saati**: ~7 saat (organizasyon 4h + kod analizi 3h)
+- **Toplam çalışma saati**: ~10 saat
+  - Organizasyon: 4h
+  - Kod analizi (MD): 3h
+  - Yorumlu kod yazımı: 3h
 - **Tamamlanan hedefler**:
   - 6/6 organizasyon hedefi ✅
-  - 2/6 model anlama hedefi ✅ (kod okuma + 5 MD dokümantasyon)
+  - 2/6 model anlama hedefi ✅ (kod okuma + dokümantasyon)
 - **Git commit sayısı**: 3+ (reorganization, updates, structure)
-- **Oluşturulan dosya sayısı**: 55+ (CURRENT/, shared/, archive/, notes/)
+- **Oluşturulan dosya sayısı**: 62+
+  - 55 dosya (CURRENT/, shared/, archive/, notes/)
+  - 7 yorumlu kod dosyası (commented_code/)
 - **Analiz edilen kod satırı**: 527 satır (Sandstone 25°C v4)
-- **Oluşturulan MD sayısı**: 5 detaylı kod analizi dosyası
+- **Oluşturulan dokümantasyon**:
+  - 5 MD kod analizi dosyası
+  - 7 yorumlu .m dosyası (Türkçe satır satır açıklama)
 
 ---
 

@@ -1,13 +1,15 @@
 """
 ============================================================================
-LSTM RECURSIVE FORECAST VALIDATION - Week 02
+LSTM RECURSIVE FORECAST VALIDATION - Week 02 (v2 - Multi-Step Horizon)
 ============================================================================
-This script:
-1. Generates ODE data with FIXED step size (np.linspace)
-2. Strict 80/20 train/test split (model never sees test data)
-3. Trains Stacked LSTM with SEQ_LEN=100 using PyTorch
-4. Validates using RECURSIVE forecast (no teacher forcing)
-5. Generates chain_test.png and divergence report
+
+1. Chain correction ile recursive forecast
+2. Multi-step horizon: 10, 20, 30 step atlayarak git
+3. SEQ_LEN = 100 
+4. FORECAST = 150 step
+5. Fixed step size
+6. Random başlangıç noktası
+7. Divergence analizi: 50, 100, 150 step'lerde
 
 Author: Chemical Thesis Project
 Date: 2026-W02
@@ -43,10 +45,18 @@ class Config:
     TEST_SIZE = 500
     
     # LSTM Architecture
-    SEQ_LEN = 100          # Increased from 50
+    SEQ_LEN = 100          # Hocam: 100 adım sequence length
     HIDDEN_1 = 128
     HIDDEN_2 = 64
     N_FEATURES = 14
+    
+    # ========== HOCAMIN İSTEDİĞİ: Multi-Step Horizon ==========
+    # "10 step gidelim, 20 step" - 1 step yerine N step atlayarak öğren
+    PRED_HORIZON = 10      # Kaç step sonrasını tahmin etsin
+    
+    # Test edilecek horizon değerleri (3 senaryo)
+    HORIZONS_TO_TEST = [10, 20, 30]
+    # ==========================================================
     
     # Training
     EPOCHS = 500
@@ -54,15 +64,13 @@ class Config:
     LEARNING_RATE = 5e-4
     
     # Recursive Forecast
-    FORECAST_STEPS = 150
+    FORECAST_STEPS = 150   # Hocam: 100-150 tahmin yapsın
     
     # Preprocessing
     LOG_COLS = [3, 7, 9, 12, 13]  # nH2S_g, FeS, Acetate, Lag, Fe_pool
     
-    # Paths (UPDATE THESE FOR YOUR ENVIRONMENT)
-    # For Colab: '/content/drive/MyDrive/chemical_thesis_repo/...'
-    # For Local: 'd:/chemical_thesis_repo/...'
-    BASE_DIR = None  # Will be set based on environment
+    # Paths
+    BASE_DIR = None
 
 # ============================================================================
 # ODE MODEL (v4 Two-Phase)
@@ -322,18 +330,24 @@ def inverse_preprocess(data_norm, scaler, config):
     return data_processed
 
 # ============================================================================
-# SEQUENCE CREATION
+# SEQUENCE CREATION (Multi-Step Horizon)
 # ============================================================================
-def create_sequences(data, seq_len):
+def create_sequences(data, seq_len, horizon=1):
     """
-    Create sequences for LSTM training.
-    X: (N, SEQ_LEN, 14)
-    Y: (N, 14)
+    Create sequences for LSTM training with multi-step horizon.
+    
+    Hocamın isteği: "10 step gidelim, 20 step"
+    - horizon=1:  t+1 tahmin et (eski yöntem - identity mapping riski)
+    - horizon=10: t+10 tahmin et (daha büyük değişim - öğrenmesi kolay)
+    - horizon=20: t+20 tahmin et
+    
+    X: (N, SEQ_LEN, 14) - Son SEQ_LEN adım
+    Y: (N, 14) - horizon adım sonrası
     """
     X, Y = [], []
-    for i in range(len(data) - seq_len):
+    for i in range(len(data) - seq_len - horizon + 1):
         X.append(data[i:i + seq_len])
-        Y.append(data[i + seq_len])
+        Y.append(data[i + seq_len + horizon - 1])  # horizon adım sonrası
     
     return np.array(X), np.array(Y)
 
@@ -511,26 +525,88 @@ def train_model(model, X_train, Y_train, config, device):
     return history
 
 # ============================================================================
-# RECURSIVE FORECAST (THE CORE TEST) - PyTorch
+# RECURSIVE FORECAST (Multi-Step Chain) - PyTorch
 # ============================================================================
-def recursive_forecast(model, initial_context, n_steps, config, device):
+def recursive_forecast(model, initial_context, n_steps, horizon, config, device):
     """
-    Perform recursive (free-running) forecast using PyTorch.
+    Perform recursive (free-running) forecast with multi-step horizon.
     
-    This is the CRITICAL test:
-    - Model receives its own predictions as input
-    - No teacher forcing (no ground truth during prediction)
-    - Tests stability and error accumulation
+    Hocamın isteği: "Chain correction yaparak gidelim, 3 seferde gibi"
+    
+    Çalışma mantığı:
+    - Model her seferinde 'horizon' adım sonrasını tahmin eder
+    - Tahmin context'e eklenir
+    - Tekrar tahmin yapılır
+    - Bu şekilde chain devam eder
+    
+    Örnek (horizon=10, n_steps=150):
+    - Adım 1: [t-99...t] -> t+10 tahmin
+    - Adım 2: [t-89...t+10] -> t+20 tahmin
+    - ...
+    - 15 chain adımda 150 step tamamlanır
     
     Args:
         model: Trained PyTorch LSTM model
-        initial_context: Array of shape (SEQ_LEN, 14) - normalized (numpy)
-        n_steps: Number of steps to forecast
+        initial_context: Array of shape (SEQ_LEN, 14) - normalized
+        n_steps: Total number of steps to forecast
+        horizon: Steps to predict at each chain iteration
         config: Configuration object
         device: torch device
     
     Returns:
-        predictions: Array of shape (n_steps, 14) - normalized (numpy)
+        predictions: Array of shape (n_steps, 14) - normalized
+    """
+    model.eval()
+    predictions = []
+    context = initial_context.copy()
+    
+    # Kaç chain adımı gerekli?
+    n_chains = (n_steps + horizon - 1) // horizon
+    
+    with torch.no_grad():
+        for chain_idx in range(n_chains):
+            # Convert to tensor: (1, seq_len, features)
+            context_tensor = torch.FloatTensor(context).unsqueeze(0).to(device)
+            
+            # Predict horizon steps ahead
+            pred = model(context_tensor)
+            pred = pred.cpu().numpy()[0]  # Back to numpy, remove batch dim
+            
+            # Store prediction
+            predictions.append(pred)
+            
+            # Update context: slide window by 1 and add prediction
+            # Not: Context'i horizon kadar kaydırmak yerine 1 kaydırıyoruz
+            # çünkü model horizon sonrasını tahmin ediyor
+            context = np.vstack([context[1:], pred])
+    
+    # Tam n_steps döndür
+    predictions = np.array(predictions)
+    
+    # Eğer chain adımları n_steps'ten fazlaysa, kes
+    if len(predictions) > n_steps:
+        predictions = predictions[:n_steps]
+    
+    return predictions
+
+
+def recursive_forecast_dense(model, initial_context, n_steps, horizon, config, device):
+    """
+    Dense recursive forecast - her adımı tahmin et.
+    
+    Hocamın isteği: "Uzadıkça kopma olacak mı" kontrolü için
+    
+    Bu fonksiyon:
+    - Model horizon adım sonrasını öğrenmiş
+    - Ama biz her adımı görmek istiyoruz
+    - Lineer interpolasyon ile ara değerleri doldurabiliriz
+    - VEYA: model'i her adımda çalıştırıp context'i 1'er kaydırırız
+    
+    Args:
+        Same as recursive_forecast
+    
+    Returns:
+        predictions: Array of shape (n_steps, 14) - tüm adımlar
     """
     model.eval()
     predictions = []
@@ -538,17 +614,17 @@ def recursive_forecast(model, initial_context, n_steps, config, device):
     
     with torch.no_grad():
         for step in range(n_steps):
-            # Convert to tensor: (1, seq_len, features)
+            # Convert to tensor
             context_tensor = torch.FloatTensor(context).unsqueeze(0).to(device)
             
-            # Predict next step
+            # Predict (model horizon adım sonrasını tahmin ediyor)
             pred = model(context_tensor)
-            pred = pred.cpu().numpy()[0]  # Back to numpy, remove batch dim
+            pred = pred.cpu().numpy()[0]
             
             # Store prediction
             predictions.append(pred)
             
-            # Update context: remove oldest, add newest prediction
+            # Context'i 1 adım kaydır ve tahmini ekle
             context = np.vstack([context[1:], pred])
     
     return np.array(predictions)
@@ -643,14 +719,18 @@ def plot_chain_test(predictions, ground_truth, start_idx, output_path, config):
     print(f"   [OK] Saved: {output_path}")
 
 # ============================================================================
-# MAIN EXECUTION
+# MAIN EXECUTION (Multi-Horizon Test)
 # ============================================================================
 def main():
     """
-    Main execution pipeline.
+    Main execution pipeline - Hocamın istekleri:
+    1. Multi-step horizon testi (10, 20, 30)
+    2. Chain correction ile recursive forecast
+    3. Divergence analizi
     """
     print("=" * 70)
-    print("LSTM RECURSIVE FORECAST VALIDATION - Week 02")
+    print("LSTM RECURSIVE FORECAST - Multi-Step Horizon Test")
+    print("Hocamın isteği: 10 step, 20 step, 30 step karşılaştırması")
     print("=" * 70)
     print("")
     
@@ -678,116 +758,223 @@ def main():
     
     # Step 2: Generate ODE data with FIXED step size
     t_eval, data_raw = generate_ode_data(p_fit, y0, env, config)
+    dt = t_eval[1] - t_eval[0]
     
     # Step 3: STRICT Train/Test Split
     print(f"[3/7] Splitting data (STRICT 80/20)...")
     train_data = data_raw[:config.TRAIN_SIZE]
-    test_data = data_raw[config.TRAIN_SIZE:]
-    print(f"   Train: {len(train_data)} points (indices 0-{config.TRAIN_SIZE-1})")
-    print(f"   Test:  {len(test_data)} points (indices {config.TRAIN_SIZE}-{config.N_POINTS-1})")
+    print(f"   Train: {len(train_data)} points")
+    print(f"   dt = {dt:.6f} days per step")
     
-    # Step 4: Preprocess (fit scaler ONLY on training data!)
+    # Step 4: Preprocess
     print(f"[4/7] Preprocessing (log1p + Z-score)...")
     train_norm, scaler = preprocess_data(train_data, config, fit_scaler=True)
-    test_norm, _ = preprocess_data(test_data, config, fit_scaler=False, scaler=scaler)
-    
-    # Also preprocess full data for ground truth comparison
     full_norm, _ = preprocess_data(data_raw, config, fit_scaler=False, scaler=scaler)
     
-    # Create sequences (ONLY from training data)
-    X_train, Y_train = create_sequences(train_norm, config.SEQ_LEN)
-    print(f"   Training sequences: {X_train.shape}")
+    # Fixed random seed for reproducibility
+    np.random.seed(42)
     
-    # Step 5: Build and train model (PyTorch)
-    # Set device (GPU if available)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"[GPU] PyTorch device: {device}")
-    if torch.cuda.is_available():
-        print(f"   GPU Name: {torch.cuda.get_device_name(0)}")
-    
-    model = build_lstm_model(config, device)
-    print(model)
-    print(f"   Total parameters: {sum(p.numel() for p in model.parameters()):,}")
-    
-    history = train_model(model, X_train, Y_train, config, device)
-    
-    # Step 6: Recursive Forecast Test
-    print(f"[6/7] Running RECURSIVE FORECAST test...")
-    
-    # Pick a random starting point from TEST set
-    np.random.seed(42)  # Reproducibility
-    
-    # The test set starts at index TRAIN_SIZE
-    # We need SEQ_LEN steps BEFORE the starting point for context
-    # So valid start indices are: TRAIN_SIZE to (N_POINTS - FORECAST_STEPS)
+    # Fixed start point for fair comparison
     min_start = config.TRAIN_SIZE
     max_start = config.N_POINTS - config.FORECAST_STEPS
-    
     start_idx = np.random.randint(min_start, max_start)
-    print(f"   Random start index: {start_idx} (from test set)")
+    print(f"   Test start index: {start_idx} (fixed for all horizons)")
     
-    # Get context: SEQ_LEN steps before start_idx
+    # Get context and ground truth (same for all tests)
     context_start = start_idx - config.SEQ_LEN
     initial_context = full_norm[context_start:start_idx]
-    print(f"   Context: indices {context_start} to {start_idx-1}")
-    
-    # Get ground truth for comparison
     ground_truth_norm = full_norm[start_idx:start_idx + config.FORECAST_STEPS]
-    
-    # Run recursive forecast
-    predictions_norm = recursive_forecast(model, initial_context, config.FORECAST_STEPS, config, device)
-    
-    # Inverse transform to original scale
-    predictions_orig = inverse_preprocess(predictions_norm, scaler, config)
     ground_truth_orig = inverse_preprocess(ground_truth_norm, scaler, config)
     
-    # Step 7: Analysis and Visualization
-    print(f"[7/7] Generating outputs...")
+    # Device
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"[GPU] Device: {device}")
     
-    # Divergence report
-    report, errors = analyze_divergence(predictions_orig, ground_truth_orig, config)
+    # ========== HOCAMIN İSTEĞİ: 3 Farklı Horizon Testi ==========
+    horizons = config.HORIZONS_TO_TEST  # [10, 20, 30]
+    all_results = {}
+    
+    print("")
+    print("=" * 70)
+    print(f"TESTING {len(horizons)} HORIZONS: {horizons}")
+    print("=" * 70)
+    
+    for horizon in horizons:
+        print(f"\n{'='*60}")
+        print(f"HORIZON = {horizon} steps ({horizon * dt:.4f} days)")
+        print(f"{'='*60}")
+        
+        # Create sequences with this horizon
+        X_train, Y_train = create_sequences(train_norm, config.SEQ_LEN, horizon)
+        print(f"   Training sequences: {X_train.shape}")
+        
+        # Build fresh model for each horizon
+        model = build_lstm_model(config, device)
+        
+        # Train
+        print(f"[5/7] Training LSTM for horizon={horizon}...")
+        history = train_model(model, X_train, Y_train, config, device)
+        
+        # Recursive forecast
+        print(f"[6/7] Running recursive forecast...")
+        predictions_norm = recursive_forecast_dense(
+            model, initial_context.copy(), 
+            config.FORECAST_STEPS, horizon, config, device
+        )
+        
+        # Inverse transform
+        predictions_orig = inverse_preprocess(predictions_norm, scaler, config)
+        
+        # Store results
+        all_results[horizon] = {
+            'predictions': predictions_orig,
+            'model': model,
+            'history': history
+        }
+        
+        # Quick divergence check
+        rmse = np.sqrt(np.mean((predictions_orig - ground_truth_orig)**2))
+        print(f"   Overall RMSE: {rmse:.6f}")
+    
+    # ========== Karşılaştırmalı Analiz ==========
+    print("\n" + "=" * 70)
+    print("KARŞILAŞTIRMALI ANALİZ")
+    print("=" * 70)
+    
+    # State names
+    state_names = ['nH2_g', 'nCO2_g', 'nCH4_g', 'nH2S_g', 'H2_aq', 'CO2_aq',
+                   'SO4', 'FeS', 'X', 'Acetate', 'HCO3', 'S_tot', 'Lag', 'Fe_pool']
+    key_vars = [0, 3, 6]  # nH2_g, nH2S_g, SO4
+    
+    # Error comparison table
+    print(f"\n{'Variable':<12}", end="")
+    for h in horizons:
+        print(f"H={h:<8}", end="")
+    print("Best")
+    print("-" * 50)
+    
+    best_horizons = {}
+    for var_idx in range(14):
+        print(f"{state_names[var_idx]:<12}", end="")
+        errors = []
+        for h in horizons:
+            pred = all_results[h]['predictions'][:, var_idx]
+            true = ground_truth_orig[:, var_idx]
+            rmse = np.sqrt(np.mean((pred - true)**2))
+            errors.append(rmse)
+            print(f"{rmse:<10.4f}", end="")
+        
+        best_h = horizons[np.argmin(errors)]
+        best_horizons[state_names[var_idx]] = best_h
+        print(f"H={best_h}")
+    
+    # ========== Plot Comparison ==========
+    print(f"\n[7/7] Generating comparison plots...")
+    
+    fig, axes = plt.subplots(3, 1, figsize=(14, 12))
+    steps = np.arange(config.FORECAST_STEPS)
+    colors = ['red', 'green', 'purple']
+    
+    for ax, var_idx, var_name in zip(axes, key_vars, [state_names[i] for i in key_vars]):
+        # Ground truth
+        ax.plot(steps, ground_truth_orig[:, var_idx], 'b-', linewidth=2.5, 
+                label='Ground Truth (ODE)')
+        
+        # Each horizon
+        for h, color in zip(horizons, colors):
+            pred = all_results[h]['predictions'][:, var_idx]
+            ax.plot(steps, pred, '--', color=color, linewidth=1.5, 
+                    label=f'Horizon={h}')
+        
+        # Checkpoints
+        for cp in [50, 100, 150]:
+            if cp <= len(steps):
+                ax.axvline(x=cp, color='gray', linestyle=':', alpha=0.5)
+        
+        ax.set_title(f'{var_name} - Multi-Horizon Comparison', fontsize=12)
+        ax.set_xlabel('Forecast Step')
+        ax.set_ylabel(var_name)
+        ax.legend(loc='best')
+        ax.grid(True, alpha=0.3)
+    
+    plt.suptitle(f'LSTM Recursive Forecast - Horizon Comparison (Start: {start_idx})', 
+                 fontsize=14, fontweight='bold')
+    plt.tight_layout()
+    
+    plot_path = os.path.join(output_dir, 'figures', 'horizon_comparison.png')
+    plt.savefig(plot_path, dpi=150)
+    plt.close()
+    print(f"   Saved: {plot_path}")
+    
+    # ========== Detailed Report ==========
+    report_lines = []
+    report_lines.append("=" * 70)
+    report_lines.append("MULTI-HORIZON COMPARISON REPORT")
+    report_lines.append(f"Horizons tested: {horizons}")
+    report_lines.append(f"Start index: {start_idx}")
+    report_lines.append(f"Forecast steps: {config.FORECAST_STEPS}")
+    report_lines.append(f"dt: {dt:.6f} days/step")
+    report_lines.append("=" * 70)
+    report_lines.append("")
+    
+    # Divergence at checkpoints for each horizon
+    for h in horizons:
+        report_lines.append(f"\n--- HORIZON = {h} ---")
+        pred = all_results[h]['predictions']
+        
+        for cp in [50, 100, 150]:
+            if cp <= len(pred):
+                report_lines.append(f"\nStep {cp}:")
+                for var_idx in key_vars:
+                    err = abs(pred[cp-1, var_idx] - ground_truth_orig[cp-1, var_idx])
+                    report_lines.append(f"  {state_names[var_idx]}: Error = {err:.6f}")
+    
+    report_lines.append("\n" + "=" * 70)
+    report_lines.append("BEST HORIZON FOR EACH VARIABLE:")
+    report_lines.append("=" * 70)
+    for var, best_h in best_horizons.items():
+        report_lines.append(f"  {var}: Horizon = {best_h}")
+    
+    report = "\n".join(report_lines)
     print(report)
     
-    # Save report
-    report_path = os.path.join(output_dir, 'data', 'divergence_report.txt')
+    report_path = os.path.join(output_dir, 'data', 'horizon_comparison_report.txt')
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write(report)
-    print(f"   [OK] Saved: {report_path}")
+    print(f"   Saved: {report_path}")
     
-    # Plot
-    plot_path = os.path.join(output_dir, 'figures', 'chain_test.png')
-    plot_chain_test(predictions_orig, ground_truth_orig, start_idx, plot_path, config)
+    # Save best model
+    best_overall = max(set(best_horizons.values()), key=list(best_horizons.values()).count)
+    print(f"\n   Best overall horizon: {best_overall}")
     
-    # Save model (PyTorch format)
-    model_path = os.path.join(output_dir, 'data', 'lstm_recursive_model.pt')
+    model_path = os.path.join(output_dir, 'data', f'lstm_horizon_{best_overall}.pt')
     torch.save({
-        'model_state_dict': model.state_dict(),
+        'model_state_dict': all_results[best_overall]['model'].state_dict(),
         'config': {
             'input_size': config.N_FEATURES,
             'hidden1': config.HIDDEN_1,
             'hidden2': config.HIDDEN_2,
             'output_size': config.N_FEATURES,
-            'seq_len': config.SEQ_LEN
+            'seq_len': config.SEQ_LEN,
+            'horizon': best_overall
         }
     }, model_path)
-    print(f"   [OK] Saved: {model_path}")
+    print(f"   Saved: {model_path}")
     
-    # Save scaler for future use
+    # Save scaler
     import pickle
     scaler_path = os.path.join(output_dir, 'data', 'scaler.pkl')
     with open(scaler_path, 'wb') as f:
         pickle.dump(scaler, f)
-    print(f"   [OK] Saved: {scaler_path}")
     
     print("")
     print("=" * 70)
     print("COMPLETE!")
     print("=" * 70)
     print(f"Outputs in: {output_dir}")
-    print("  - figures/chain_test.png")
-    print("  - data/divergence_report.txt")
-    print("  - data/lstm_recursive_model.pt")
-    print("  - data/scaler.pkl")
+    print("  - figures/horizon_comparison.png")
+    print("  - data/horizon_comparison_report.txt")
+    print(f"  - data/lstm_horizon_{best_overall}.pt")
 
 # ============================================================================
 # ENTRY POINT

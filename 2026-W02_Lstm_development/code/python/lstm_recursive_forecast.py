@@ -440,8 +440,7 @@ def train_model(model, X_train, Y_train, config, device):
         mode='min',
         factor=0.5,
         patience=30,
-        min_lr=1e-7,
-        verbose=True
+        min_lr=1e-7
     )
     
     # Training loop with early stopping

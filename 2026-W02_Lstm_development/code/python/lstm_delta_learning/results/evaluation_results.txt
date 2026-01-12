@@ -1,0 +1,20 @@
+============================================================
+[6/6] Evaluation Results
+============================================================
+
+RMSE per state variable:
+----------------------------------------
+  nH2_g       : RMSE = 0.044857, RelErr = 1.60%
+  nCO2_g      : RMSE = 0.017558, RelErr = 11.58%
+  nCH4_g      : RMSE = 0.002742, RelErr = 0.87%
+  nH2S_g      : RMSE = 0.000528, RelErr = 0.38%
+  H2_aq       : RMSE = 0.000387, RelErr = 4.48%
+  CO2_aq      : RMSE = 0.103819, RelErr = 12.75%
+  SO4         : RMSE = 0.032885, RelErr = 2.24%
+  FeS         : RMSE = 0.000000, RelErr = 0.00%
+  X           : RMSE = 0.311998, RelErr = 0.70%
+  Acetate     : RMSE = 1.056094, RelErr = 1.44%
+  HCO3        : RMSE = 0.000000, RelErr = 0.00%
+  S_tot       : RMSE = 0.013977, RelErr = 0.60%
+  Lag         : RMSE = 0.001224, RelErr = 0.12%
+  Fe_pool     : RMSE = 0.000000, RelErr = 0.00%

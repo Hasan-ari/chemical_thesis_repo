@@ -1,0 +1,77 @@
+======================================================================
+MULTI-HORIZON COMPARISON REPORT
+Horizons tested: [10, 20, 30]
+Start index: 2102
+Forecast steps: 150
+dt: 0.008003 days/step
+======================================================================
+
+
+--- HORIZON = 10 ---
+
+Step 50:
+  nH2_g: Error = 0.130418
+  nH2S_g: Error = 0.002663
+  SO4: Error = 0.017777
+
+Step 100:
+  nH2_g: Error = 0.227772
+  nH2S_g: Error = 0.004864
+  SO4: Error = 0.040976
+
+Step 150:
+  nH2_g: Error = 0.317357
+  nH2S_g: Error = 0.007239
+  SO4: Error = 0.085984
+
+--- HORIZON = 20 ---
+
+Step 50:
+  nH2_g: Error = 0.199912
+  nH2S_g: Error = 0.004076
+  SO4: Error = 0.015158
+
+Step 100:
+  nH2_g: Error = 0.298983
+  nH2S_g: Error = 0.006273
+  SO4: Error = 0.038060
+
+Step 150:
+  nH2_g: Error = 0.388187
+  nH2S_g: Error = 0.008637
+  SO4: Error = 0.083055
+
+--- HORIZON = 30 ---
+
+Step 50:
+  nH2_g: Error = 0.135379
+  nH2S_g: Error = 0.002480
+  SO4: Error = 0.024239
+
+Step 100:
+  nH2_g: Error = 0.229918
+  nH2S_g: Error = 0.004632
+  SO4: Error = 0.047946
+
+Step 150:
+  nH2_g: Error = 0.318713
+  nH2S_g: Error = 0.006993
+  SO4: Error = 0.092970
+
+======================================================================
+BEST HORIZON FOR EACH VARIABLE:
+======================================================================
+  nH2_g: Horizon = 10
+  nCO2_g: Horizon = 10
+  nCH4_g: Horizon = 30
+  nH2S_g: Horizon = 30
+  H2_aq: Horizon = 30
+  CO2_aq: Horizon = 30
+  SO4: Horizon = 20
+  FeS: Horizon = 20
+  X: Horizon = 30
+  Acetate: Horizon = 10
+  HCO3: Horizon = 20
+  S_tot: Horizon = 10
+  Lag: Horizon = 30
+  Fe_pool: Horizon = 20

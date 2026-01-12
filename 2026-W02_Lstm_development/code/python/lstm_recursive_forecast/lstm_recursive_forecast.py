@@ -70,7 +70,7 @@ class Config:
     LOG_COLS = [3, 7, 9, 12, 13]  # nH2S_g, FeS, Acetate, Lag, Fe_pool
     
     # Paths
-    BASE_DIR = None
+    BASE_DIR = '/content/drive/Othercomputers/my_pc/chemical_thesis_repo/2026-W02_Lstm_development/code/matlab/Basalt/25C'
 
 # ============================================================================
 # ODE MODEL (v4 Two-Phase)
@@ -592,42 +592,69 @@ def recursive_forecast(model, initial_context, n_steps, horizon, config, device)
 
 def recursive_forecast_dense(model, initial_context, n_steps, horizon, config, device):
     """
-    Dense recursive forecast - her adımı tahmin et.
+    Dense recursive forecast - DOĞRU chain mantığı ile.
     
-    Hocamın isteği: "Uzadıkça kopma olacak mı" kontrolü için
+    DÜZELTME: Model horizon adım sonrasını öğrendi.
+    Bu yüzden context'i de horizon adım kaydırmalıyız.
+    Ara adımlar için interpolasyon yapıyoruz.
     
-    Bu fonksiyon:
-    - Model horizon adım sonrasını öğrenmiş
-    - Ama biz her adımı görmek istiyoruz
-    - Lineer interpolasyon ile ara değerleri doldurabiliriz
-    - VEYA: model'i her adımda çalıştırıp context'i 1'er kaydırırız
+    Örnek (horizon=10):
+    - Chain 0: context[0:100] → pred_10 (t+10 tahmini)
+    - Chain 1: context[10:100] + pred_10 → pred_20 (t+20 tahmini)
+    - Ara değerler: linear interpolasyon
     
     Args:
-        Same as recursive_forecast
+        model: Trained PyTorch LSTM
+        initial_context: (SEQ_LEN, 14) normalized
+        n_steps: Total forecast steps
+        horizon: Steps model was trained to predict
+        config: Config object
+        device: torch device
     
     Returns:
-        predictions: Array of shape (n_steps, 14) - tüm adımlar
+        predictions: (n_steps, 14) - interpolated dense predictions
     """
     model.eval()
-    predictions = []
     context = initial_context.copy()
     
-    with torch.no_grad():
-        for step in range(n_steps):
-            # Convert to tensor
-            context_tensor = torch.FloatTensor(context).unsqueeze(0).to(device)
-            
-            # Predict (model horizon adım sonrasını tahmin ediyor)
-            pred = model(context_tensor)
-            pred = pred.cpu().numpy()[0]
-            
-            # Store prediction
-            predictions.append(pred)
-            
-            # Context'i 1 adım kaydır ve tahmini ekle
-            context = np.vstack([context[1:], pred])
+    # Sparse predictions at horizon intervals
+    sparse_preds = [context[-1]]  # Start point
     
-    return np.array(predictions)
+    n_chains = (n_steps + horizon - 1) // horizon
+    
+    with torch.no_grad():
+        for chain_idx in range(n_chains):
+            context_tensor = torch.FloatTensor(context).unsqueeze(0).to(device)
+            pred = model(context_tensor).cpu().numpy()[0]
+            sparse_preds.append(pred)
+            
+            # DÜZELTME: Context'i HORIZON kadar kaydır
+            # Son (SEQ_LEN - horizon) satırı tut, horizon tane yeni ekle
+            if horizon < config.SEQ_LEN:
+                # Tahminle doldurulan kısım: pred'i horizon kez tekrarla
+                # (basitleştirilmiş - ideal olarak interpolasyon olmalı)
+                new_rows = np.tile(pred, (horizon, 1))
+                context = np.vstack([context[horizon:], new_rows])
+            else:
+                # Horizon >= SEQ_LEN ise tüm context yenilenir
+                context = np.tile(pred, (config.SEQ_LEN, 1))
+    
+    # Linear interpolation for dense output
+    sparse_preds = np.array(sparse_preds)  # (n_chains+1, 14)
+    
+    # Interpolate between sparse predictions
+    sparse_times = np.arange(len(sparse_preds)) * horizon
+    dense_times = np.arange(n_steps)
+    
+    dense_preds = np.zeros((n_steps, config.N_FEATURES))
+    for feat in range(config.N_FEATURES):
+        dense_preds[:, feat] = np.interp(
+            dense_times, 
+            sparse_times[:len(sparse_preds)], 
+            sparse_preds[:, feat]
+        )
+    
+    return dense_preds
 
 # ============================================================================
 # DIVERGENCE ANALYSIS
@@ -741,12 +768,14 @@ def main():
     try:
         from google.colab import drive
         drive.mount('/content/drive')
-        config.BASE_DIR = '/content/drive/MyDrive/chemical_thesis_repo/2026-W01_model_anlama/code/matlab'
-        output_dir = '/content/drive/MyDrive/chemical_thesis_repo/2026-W02_Lstm_development/results'
+        # Colab paths (Google Drive)
+        config.BASE_DIR = '/content/drive/Othercomputers/my_pc/chemical_thesis_repo/2026-W02_Lstm_development/code/matlab/Basalt/25C'
+        output_dir = '/content/drive/Othercomputers/my_pc/chemical_thesis_repo/2026-W02_Lstm_development/code/python/lstm_recursive_forecast/v2_outputs'
         print("[ENV] Running on Google Colab")
     except ImportError:
-        config.BASE_DIR = r'd:\chemical_thesis_repo\2026-W01_model_anlama\code\matlab'
-        output_dir = r'd:\chemical_thesis_repo\2026-W02_Lstm_development\results'
+        # Local paths (Windows)
+        config.BASE_DIR = r'd:\chemical_thesis_repo\2026-W02_Lstm_development\code\matlab\Basalt\25C'
+        output_dir = r'd:\chemical_thesis_repo\2026-W02_Lstm_development\code\python\lstm_recursive_forecast\v2_outputs'
         print("[ENV] Running locally")
     
     # Create output directories

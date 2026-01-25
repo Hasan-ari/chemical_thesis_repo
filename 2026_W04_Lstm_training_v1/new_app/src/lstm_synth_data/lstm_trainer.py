@@ -261,6 +261,56 @@ class DataProcessor:
         """
         Create sequences for LSTM training with sliding window.
 
+        ============================================================================
+        SLIDING WINDOW SEQUENCE CREATION - Educational Overview
+        ============================================================================
+
+        The sliding window approach converts a continuous time series into
+        supervised learning (X, Y) pairs suitable for LSTM training.
+
+        CONCEPT:
+        --------
+        Given a time series: [p₀, p₁, p₂, p₃, ..., pₙ]
+
+        We create input-output pairs where:
+          - X (input):  A window of `seq_len` consecutive timesteps
+          - Y (target): The value `horizon` steps AFTER the window ends
+
+        VISUAL EXAMPLE (seq_len=100, horizon=10):
+        ------------------------------------------
+
+        Time series: [p₀, p₁, p₂, ..., p₉₉, p₁₀₀, ..., p₁₀₉, p₁₁₀, ...]
+                      |<--- seq_len=100 --->|     |<-h->|
+                      |      X[0]          |           Y[0]=p₁₀₉
+
+        Sequence 0:  X = [p₀,   p₁,  ..., p₉₉ ]  →  Y = p₁₀₉
+        Sequence 1:  X = [p₁,   p₂,  ..., p₁₀₀]  →  Y = p₁₁₀
+        Sequence 2:  X = [p₂,   p₃,  ..., p₁₀₁]  →  Y = p₁₁₁
+        ...
+        Sequence i:  X = [pᵢ, pᵢ₊₁, ..., pᵢ₊₉₉]  →  Y = pᵢ₊₁₀₉
+
+        WHY HORIZON > 1?
+        ----------------
+        - horizon=1 (next-step prediction) is too easy - model learns identity
+        - horizon=10 forces model to learn actual dynamics, not just "copy"
+        - Larger horizons test if model understands underlying ODE behavior
+
+        NUMBER OF SEQUENCES:
+        --------------------
+        n_sequences = len(data) - seq_len - horizon + 1
+
+        Example: 1750 points, seq_len=100, horizon=10
+                 1750 - 100 - 10 + 1 = 1641 sequences
+
+        OUTPUT SHAPES:
+        --------------
+        X: (n_sequences, seq_len, n_features)  = (1641, 100, 14)
+        Y: (n_sequences, n_features)           = (1641, 14)
+
+        Each X[i] is a 2D array (100 timesteps × 14 features)
+        Each Y[i] is a 1D array (14 features) - the target state
+        ============================================================================
+
         Args:
             data: Normalized data array (N, n_features)
             seq_len: Sequence length (default: config.seq_len)
@@ -274,8 +324,19 @@ class DataProcessor:
         horizon = horizon or self.config.horizon
 
         X, Y = [], []
+
+        # Sliding window loop:
+        # - Start at i=0, end when we can't fit seq_len + horizon anymore
+        # - Each iteration slides the window by 1 timestep
         for i in range(len(data) - seq_len - horizon + 1):
+            # X[i] = data[i : i+seq_len]
+            # This is the input context: 100 consecutive timesteps
             X.append(data[i:i + seq_len])
+
+            # Y[i] = data[i + seq_len + horizon - 1]
+            # This is the target: the state `horizon` steps after X ends
+            # Note: We use (horizon - 1) because indices are 0-based
+            # If seq_len=100 and horizon=10, target is at index i+109
             Y.append(data[i + seq_len + horizon - 1])
 
         X = np.array(X)
@@ -796,10 +857,75 @@ class LSTMTrainer:
 
 
 # ============================================================================
-# RECURSIVE FORECASTING
+# RECURSIVE FORECASTING (CHAIN CORRECTION)
 # ============================================================================
+#
+# ============================================================================
+# RECURSIVE FORECASTING - Educational Overview
+# ============================================================================
+#
+# WHAT IS RECURSIVE FORECASTING?
+# ------------------------------
+# Unlike training where we have ground truth for every target, at inference
+# time we need to predict multiple steps into the future. Recursive forecasting
+# (also called "chain correction" or "autoregressive forecasting") feeds the
+# model's own predictions back as input to generate longer forecasts.
+#
+# TRAINING vs INFERENCE:
+# ----------------------
+#
+# TRAINING (Teacher Forcing):
+#   Input:  [t₀, t₁, ..., t₉₉]  (ground truth)
+#   Target: t₁₀₉                 (ground truth)
+#   → Model learns to predict horizon steps ahead given perfect history
+#
+# INFERENCE (Chain Correction):
+#   Step 1: Input [t₀...t₉₉]      → Predict t̂₁₀₉
+#   Step 2: Input [t₁...t₉₉, t̂₁₀₉] → Predict t̂₁₁₉
+#   Step 3: Input [t₂...t̂₁₀₉, t̂₁₁₉] → Predict t̂₁₂₉
+#   ...
+#   → Model uses its OWN predictions as future inputs (errors can compound!)
+#
+# VISUAL DIAGRAM:
+# ---------------
+#
+#   Context Window (100 steps)        Prediction
+#   ┌─────────────────────────┐          │
+#   │ t₀  t₁  t₂  ...  t₉₉   │ ──LSTM──▶ t̂₁₀₉
+#   └─────────────────────────┘
+#              │
+#              ▼ slide window, add prediction
+#   ┌─────────────────────────┐          │
+#   │ t₁  t₂  t₃  ...  t̂₁₀₉  │ ──LSTM──▶ t̂₁₁₉
+#   └─────────────────────────┘
+#              │
+#              ▼ repeat...
+#   ┌─────────────────────────┐          │
+#   │ t₂  t₃  t₄  ...  t̂₁₁₉  │ ──LSTM──▶ t̂₁₂₉
+#   └─────────────────────────┘
+#
+# WHY THIS MATTERS:
+# -----------------
+# 1. Tests if model learned TRUE dynamics (not just memorization)
+# 2. Errors can compound - small mistakes grow over time
+# 3. Divergence analysis checks if predictions "blow up" at steps 50, 100, 150
+# 4. A stable model maintains reasonable errors even after 150 recursive steps
+#
+# CHAIN vs DENSE FORECASTING:
+# ---------------------------
+# - forecast():       Sparse output at horizon intervals (every 10 steps)
+# - forecast_dense(): Interpolates between sparse predictions for smooth output
+#
+# ============================================================================
+
 class RecursiveForecaster:
-    """Performs recursive (autoregressive) forecasting."""
+    """
+    Performs recursive (autoregressive) forecasting.
+
+    This class implements "chain correction" where the model's predictions
+    are fed back as input to generate multi-step forecasts beyond the
+    training horizon.
+    """
 
     def __init__(
         self,
@@ -825,6 +951,14 @@ class RecursiveForecaster:
         The model predicts 'horizon' steps ahead, then feeds the prediction
         back as input to continue the chain.
 
+        ALGORITHM:
+        ----------
+        1. Start with initial context window [t₀, t₁, ..., t₉₉]
+        2. Predict t̂₁₀₉ (horizon=10 steps ahead)
+        3. Slide window: remove t₀, append t̂₁₀₉ → [t₁, t₂, ..., t̂₁₀₉]
+        4. Predict t̂₁₁₉
+        5. Repeat until we have n_steps predictions
+
         Args:
             initial_context: Starting context (seq_len, n_features) - normalized
             n_steps: Total number of steps to forecast
@@ -836,30 +970,37 @@ class RecursiveForecaster:
         horizon = horizon or self.config.horizon
         self.model.eval()
 
+        # Copy context to avoid modifying original
         context = initial_context.copy()
         predictions = []
 
-        # Number of chain iterations needed
+        # Calculate how many chain iterations we need
+        # Example: n_steps=150, horizon=10 → n_chains=15
         n_chains = (n_steps + horizon - 1) // horizon
 
         with torch.no_grad():
             for _ in range(n_chains):
-                # Convert to tensor: (1, seq_len, features)
+                # Step 1: Convert numpy context to PyTorch tensor
+                # Shape: (1, seq_len, features) - batch size of 1
                 context_tensor = torch.FloatTensor(context).unsqueeze(0).to(self.device)
 
-                # Predict horizon steps ahead
+                # Step 2: Forward pass through LSTM
+                # Model outputs prediction for `horizon` steps ahead
                 pred = self.model(context_tensor)
-                pred = pred.cpu().numpy()[0]
+                pred = pred.cpu().numpy()[0]  # Back to numpy, remove batch dim
 
-                # Store prediction
+                # Step 3: Store this prediction
                 predictions.append(pred)
 
-                # Update context: slide window and add prediction
+                # Step 4: CHAIN CORRECTION - Update context for next iteration
+                # Remove oldest timestep (context[0]), append our prediction
+                # context[1:] = [t₁, t₂, ..., t₉₉]  (99 steps)
+                # vstack adds pred → [t₁, t₂, ..., t₉₉, t̂₁₀₉]  (100 steps again)
                 context = np.vstack([context[1:], pred])
 
         predictions = np.array(predictions)
 
-        # Truncate to requested steps
+        # Truncate to requested steps (we might have generated extras)
         if len(predictions) > n_steps:
             predictions = predictions[:n_steps]
 
@@ -874,8 +1015,34 @@ class RecursiveForecaster:
         """
         Dense recursive forecast with interpolation for intermediate steps.
 
-        This version produces predictions at every step by interpolating
-        between the sparse chain predictions.
+        SPARSE vs DENSE FORECASTING:
+        ----------------------------
+        The model predicts every `horizon` steps (e.g., every 10 steps).
+        This gives us SPARSE predictions at times [0, 10, 20, 30, ...].
+
+        For visualization and evaluation, we often want DENSE predictions
+        at every timestep [0, 1, 2, 3, ...]. This method interpolates
+        between sparse predictions to fill in the gaps.
+
+        VISUAL EXAMPLE (horizon=10, n_steps=30):
+        ----------------------------------------
+
+        Sparse predictions from model:
+          Time:  0    10    20    30
+          Pred:  p₀   p₁₀   p₂₀   p₃₀
+                 •────•────•────•
+
+        Dense output after interpolation:
+          Time:  0  1  2  3  4  5  6  7  8  9 10 11 12 ... 30
+          Pred:  p₀ ·  ·  ·  ·  ·  ·  ·  ·  · p₁₀ ·  ·  ... p₃₀
+                 •──────────────────────•──────────...────•
+                       linear interp
+
+        WHY INTERPOLATION?
+        ------------------
+        1. Smooth visualization curves
+        2. Point-by-point comparison with ground truth
+        3. RMSE calculation at every timestep
 
         Args:
             initial_context: Starting context (seq_len, n_features) - normalized
@@ -889,7 +1056,9 @@ class RecursiveForecaster:
         self.model.eval()
 
         context = initial_context.copy()
-        sparse_preds = [context[-1]]  # Start point
+
+        # Start with the last point of context as our t=0 reference
+        sparse_preds = [context[-1]]
 
         n_chains = (n_steps + horizon - 1) // horizon
 
@@ -899,20 +1068,33 @@ class RecursiveForecaster:
                 pred = self.model(context_tensor).cpu().numpy()[0]
                 sparse_preds.append(pred)
 
-                # Shift context by horizon steps
+                # Shift context by horizon steps (not by 1 like in forecast())
+                # This is more aggressive context updating for dense mode
                 if horizon < self.config.seq_len:
+                    # Tile the prediction to fill `horizon` slots
                     new_rows = np.tile(pred, (horizon, 1))
                     context = np.vstack([context[horizon:], new_rows])
                 else:
+                    # If horizon >= seq_len, fill entire context with prediction
                     context = np.tile(pred, (self.config.seq_len, 1))
 
-        # Linear interpolation for dense output
+        # ================================================================
+        # LINEAR INTERPOLATION: Fill gaps between sparse predictions
+        # ================================================================
         sparse_preds = np.array(sparse_preds)
+
+        # Sparse times: [0, 10, 20, 30, ...] (at horizon intervals)
         sparse_times = np.arange(len(sparse_preds)) * horizon
+
+        # Dense times: [0, 1, 2, 3, ..., n_steps-1] (every timestep)
         dense_times = np.arange(n_steps)
 
+        # Interpolate each feature independently
         dense_preds = np.zeros((n_steps, self.config.n_features))
         for feat in range(self.config.n_features):
+            # np.interp does linear interpolation
+            # For time=5 with sparse points at 0 and 10, it computes:
+            #   pred[5] = pred[0] + (5/10) * (pred[10] - pred[0])
             dense_preds[:, feat] = np.interp(
                 dense_times,
                 sparse_times[:len(sparse_preds)],

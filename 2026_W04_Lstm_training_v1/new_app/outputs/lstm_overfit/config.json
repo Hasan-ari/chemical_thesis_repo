@@ -1,0 +1,38 @@
+{
+  "data_path": "data/output/basalt_25c_lstm_input_2500pts.npy",
+  "output_dir": "outputs/lstm_overfit",
+  "n_features": 14,
+  "hidden_1": 128,
+  "hidden_2": 64,
+  "dropout": 0.0,
+  "seq_len": 100,
+  "horizon": 10,
+  "train_ratio": 0.7,
+  "val_ratio": 0.15,
+  "test_ratio": 0.15,
+  "epochs": 1000,
+  "batch_size": 32,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0,
+  "patience": 1000,
+  "min_delta": 1e-07,
+  "scheduler_factor": 0.5,
+  "scheduler_patience": 30,
+  "min_lr": 1e-07,
+  "grad_clip_value": 0.5,
+  "log_cols": [
+    3,
+    7,
+    9,
+    12,
+    13
+  ],
+  "forecast_steps": 150,
+  "divergence_checkpoints": [
+    50,
+    100,
+    150
+  ],
+  "seed": 42,
+  "device": "auto"
+}

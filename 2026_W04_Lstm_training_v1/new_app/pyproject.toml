@@ -1,0 +1,17 @@
+[project]
+name = "lstm-synth-data"
+version = "0.1.0"
+description = "Synthetic data generation for LSTM training - Basalt 25C anaerobic model"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "torch",
+    "scikit-learn",
+    "pandas",
+]
+
+[project.scripts]
+generate-data = "lstm_synth_data.generate:main"

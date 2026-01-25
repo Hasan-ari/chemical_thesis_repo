@@ -1,0 +1,46 @@
+======================================================================
+LSTM EVALUATION REPORT
+Horizon: 10 steps
+Forecast length: 150 steps
+======================================================================
+
+--- RMSE PER STATE VARIABLE ---
+  nH2_g       : 1.069797
+  nCO2_g      : 0.367297
+  nCH4_g      : 0.082065
+  nH2S_g      : 0.020139
+  H2_aq       : 0.008313
+  CO2_aq      : 2.144959
+  SO4         : 0.137014
+  FeS         : 0.002989
+  X           : 6.883636
+  Acetate     : 10.659167
+  HCO3        : 0.000885
+  S_tot       : 0.361286
+  Lag         : 0.000328
+  Fe_pool     : 0.007593
+  Overall     : 3.454181
+
+--- DIVERGENCE ANALYSIS ---
+
+Step 50:
+  nH2_g: Error = 1.043044
+  nH2S_g: Error = 0.018638
+  SO4: Error = 0.056613
+
+Step 100:
+  nH2_g: Error = 1.154647
+  nH2S_g: Error = 0.022084
+  SO4: Error = 0.139875
+
+Step 150:
+  nH2_g: Error = 1.236879
+  nH2S_g: Error = 0.025714
+  SO4: Error = 0.289875
+
+--- STABILITY CHECK ---
+  nH2_g: Ratio = 1.19 -> STABLE
+  nH2S_g: Ratio = 1.38 -> STABLE
+  SO4: Ratio = 5.12 -> STABLE
+
+======================================================================

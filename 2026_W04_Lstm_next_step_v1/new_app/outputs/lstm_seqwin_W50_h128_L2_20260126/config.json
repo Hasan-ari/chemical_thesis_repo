@@ -1,0 +1,22 @@
+{
+  "data_path": "data/output/basalt_25c_lstm_input_500pts.npy",
+  "output_dir": "outputs/lstm_seq_window_W50_20260126",
+  "n_features": 14,
+  "hidden_size": 128,
+  "num_layers": 2,
+  "window_size": 50,
+  "epochs": 10000,
+  "batch_size": 450,
+  "learning_rate": 0.0005,
+  "target_loss": 1e-08,
+  "use_log_transform": true,
+  "log_cols": [
+    3,
+    7,
+    9,
+    12,
+    13
+  ],
+  "device": "auto",
+  "seed": 42
+}

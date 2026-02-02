@@ -1,0 +1,663 @@
+#TITLE Mura 2024 Start at Day 9 — MIX Pulse (H2=0.105 mol, CO2=0.030 mol, Mtg=0.005 mol)
+#############################################
+# 0) Extend database for acetate & formate
+#############################################
+SOLUTION_MASTER_SPECIES
+ Formate Formate- 1 Formate 45.017
+ Acetate Acetate- 1 Acetate 59.044
+SOLUTION_SPECIES
+ Formate- = Formate-
+  log_k 0
+ Formate- + H+ = FormateH
+  log_k 3.75
+ Acetate- = Acetate-
+  log_k 0
+ Acetate- + H+ = AcetateH
+  log_k 4.76
+#############################################
+# 1) Aqueous solution at the START OF DAY 9 (before pulse)
+#############################################
+SOLUTION 1
+ temp 36
+ units mol/kgw
+# pH 6.0
+ Alkalinity 0.0049 as HCO3  # HCO3- ~ 4.9e-3 mol/kg
+ Na 6.0e-4
+ K 1.5e-4
+ Mg 4.4e-4
+ Cl 3.0e-4
+ Fe(2) 6.5e-6  # trace total Fe as Fe(II)
+ S(6) 3.7e-4   # sulfate ~ 3.7e-4 mol/kg
+ Ca 4.1e-3     # calcium ~ 4.1e-3 mol/kg
+ Formate 0
+ Acetate 7.0e-4  # acetate ~ 7.0e-4 mol/kg
+ -water 0.20
+
+GAS_PHASE 1
+ -fixed_volume
+ -volume 0.25
+ -temperature 36
+ -pressure 59.2
+ # Use reasonable "initial guesses".
+ # PHREEQC will equilibrate them automatically.
+ Mtg(g) 2#1e-6  # methane
+ CO2(g) 1#1e-6  # Carbondioxide
+ H2(g) 15#1e-6  # hydrogen
+ H2S(g) 0       # hydrogen sulphate
+ N2(g) 60       # nitrogen, I think Mura controls pressure with tolune gas(CH3) or nitrogen, but most likely Nitrogen
+ 
+#############################################
+# 4) Gas phase AFTER mixing
+# Reconstructed at 60 bar (59.2 atm), 0.30 L, 36°C
+#
+# We use Mtg(g) for methane.
+# Partitioning will occur automatically during KINETICS.
+#############################################
+
+#############################################
+# 7) KINETICS (same reactions as before)
+#############################################
+
+# ====================== KINETIC REACTIONS  =====================
+KINETICS 1
+  # Sulfate reduction on acetate
+  SR_AC
+    -m 1
+    # CH3COO- + SO4-- -> HS- + 2 HCO3-
+    -formula SO4-2 -1 Acetate- -1 HS- 1 HCO3- 2
+
+  # Sulfate reduction on formate (overall: 4 HCOO- + SO4-- + 3 H+ -> HS- + 4 HCO3-)
+  SR_FOR
+    -m 1
+    -formula SO4-2 -1 Formate- -4 HS- 1 HCO3- 4 H+ -3
+
+  # Acetoclastic methanogenesis (active mainly after SO4 falls)
+  ACETO_METH
+    -m 1
+    # CH3COO- + H+ -> CH4(g) + HCO3-
+    -formula Acetate- -1 H+ -1 Mtg(g) 1 HCO3- 1
+
+  # Simple shuttle: Formate <-> H2 (tunable reversible coupling)
+
+  FORMATE_H2_EQ
+    -m 1
+    # Balanced forward reaction: Formate- + H2O -> H2 + HCO3-
+    -formula Formate- -1 H2 1 HCO3- 1 H2O -1
+
+
+# REDOX ==========================================================================
+
+ SR_H2
+  -m 1
+  -formula SO4-2 -1
+  -formula H2 -4
+  -formula CO2 -1.93
+  -formula H2S 0.93
+  -formula HS- 0.07
+  -formula HCO3- 1.93
+  -formula H2O 2.07
+ ACETO_H2
+  -m 1
+  -formula CO2 -1
+  -formula HCO3- -1
+  -formula H2 -4
+  -formula Acetate- 1
+  -formula H2O 3
+ FORMATE_H2
+  -m 1
+  -formula HCO3- -1
+  -formula H2 -1
+  -formula Formate- 1
+  -formula H2O 1
+ METH_H2
+  -m 1
+  -formula CO2 -1
+  -formula H2 -4
+  -formula Mtg(g) 1  # CH4 ? Mtg(g)
+  -formula H2O 2
+  
+ #  minerals based on the information of Mura 2024 -------------------------------------------------------------------
+
+ Quartz
+  -formula SiO2 1
+  -m0 1.331
+  -parms 0.906 0.2
+ Calcite
+  -formula CaCO3 1
+  -m0 0.00612620
+  -parms 0.0005 0.2     # <-- increase/decrease slightly A0 to fit Ca rise/plateau (only the parameter changed)
+ Pyrite
+  -formula Fe 1 S 2
+  -m0 0.0222
+  -parms 0.320 0.2
+ Barite
+  -formula BaSO4 1
+  -m0 0.0114
+  -parms 0.00356 0.2
+ Illite
+  -formula K 0.60 Al 1.30 Mg 0.30 Fe 0.10 Si 3.50 O 10 H 2
+  -m0 0.0670
+  -parms 5.926 0.2
+
+ #Gypsum
+ #   -m 0.01
+ #   # Stoichiometry for CaSO4·2H2O in elemental terms:
+ #   # Ca 1, S 1, O total 6 (SO4 -> O4; 2H2O -> H4 O2 => total O6, H4)
+ #   -formula Ca 1 S 1 O 6 H 4
+ #   # Parameters ( area A0 and a small reference "reactor" volume fraction)
+ #   -parms  0.01  0.2   # A0 [m2], volume 
+
+# numerical solver ----------------------------------
+ -cvode true  # that can be Runge Kutta based on the stiffness of the problem
+ -tol 1e-8 # relative tolerance enough can be decreased
+ -steps 8294400 in 200 # run 96 days (real day 9-105) steps 200 can be adjusted if you need stiff calculation for ODE, but this one is optimal for the moment
+INCREMENTAL_REACTIONS true # this one helps convergence at each time step for equilibrium for the reaction kinetics
+#############################################
+# RATES ( parameters updated to p_fit from MATLAB)
+# Time windows shifted:
+# t=0 in this file = real day 9
+# SR: 0–6 days  (ignored)
+# Aceto: 0–96 days
+# Formate:0–96 days
+# Meth: 26–96 days
+# Water add event at t=8 days ignored (was 17–17.1 days)
+#############################################
+RATES 1
+# ---- Water add at day 17 (H2O-only) ----
+#WATER_ADD
+#-start
+#10 dt = TIME
+#20 t = TOTAL_TIME
+#30 add_kg = 0.353
+#40 dur = 0.1*86400
+#50 rate_kg_s = add_kg/dur
+#60 kg = 0
+#70 IF (t >= 17*86400 AND t < 17.1*86400) THEN kg = rate_kg_s*dt
+#80 SAVE kg
+#-end
+
+# 1) Sulfate reduction (SR)
+# SO4-2 + 4 H2 + 1.93 CO2 -> 0.93 H2S + 0.07 HS- + 1.93 HCO3- + 2.07 H2O
+#SR_H2
+#-start
+#10 K    = 0.12     # <-- was 0.12
+#20 KH2  = 5e-4    # <-- was 5e-4
+#30 KSO4 = 9e-5     # <-- was 9e-5
+#40 KI_HS= 2e-3  # <-- was 2e-3
+#50 day2s = 86400.0
+#60 vL = SOLN_VOL
+#70 h2 = MOL("H2")
+#80 so4 = TOT("S(6)")
+#90 hs = MOL("HS-")
+#100 mH2  = h2 /(KH2 + h2)
+#110 mSO4 = so4/(KSO4 + so4)
+#120 finh  = KI_HS/(KI_HS + hs)
+#130 rate_c = (K/day2s)*mH2*mSO4*finh
+#140 r_mols = rate_c*vL
+## Stoichiometric limitation by reactants (H2/4, SO4/1)
+#150 lim = 0.9*MIN((h2*vL)/4.0, (so4*vL))
+#160 moles = r_mols*TIME
+#170 IF (moles > lim) THEN moles = lim
+#180 SAVE moles
+#-end
+
+# ---- SR on Acetate ----
+
+SR_AC
+-start
+# Kinetic parameters (your p_fit). Units: K in d^-1; half-sats in mol/kgw
+10 K     = 0.01      # Max specific rate for SR using acetate (per day)
+20 KAc   = 1e-3      # Half-saturation for acetate (Monod denominator)
+30 KSO4  = 1e-3      # Half-saturation for sulfate (Monod denominator)
+40 KI_HS = 1e-3      # HS- (sulfide) inhibition constant; lower => stronger inhibition
+# Convenience state variables
+50 vL = SOLN_VOL     # Solution "volume" scaling (L/kgw) for converting rates to moles
+60 ac = MOL("Acetate-")  # Aqueous acetate molality (mol/kgw)
+70 so4 = TOT("S(6)")     # Total sulfate-S (mol/kgw) ~ sulfate molality for this system
+80 hs = MOL("HS-")       # Aqueous bisulfide; inhibition proxy for sulfide toxicity
+# Monod terms & inhibition
+90  mAc  = ac /(KAc + ac)         # Saturation with respect to acetate
+100 mSO4 = so4/(KSO4+ so4)        # Saturation with respect to sulfate
+110 finh = KI_HS/(KI_HS + hs)     # Inhibition factor (0..1) that decreases as HS- grows
+# Rate (mol/kgw/s) = (K/day)/86400 × Monod(Ac) × Monod(SO4) × inhibition
+120 rate_c = (K/86400.0)*mAc*mSO4*finh
+# Convert to moles in this step: multiply by solution volume & elapsed time
+130 moles  = rate_c*vL*TIME
+# Stoichiometric safety: cannot consume more acetate than present nor more sulfate than present
+140 lim = 0.9*MIN(ac*vL, so4*vL)  # 0.9 leaves a small cushion for numerics
+150 IF (moles > lim) THEN moles = lim
+# Return moles advanced this time step to PHREEQC
+160 SAVE moles
+-end
+
+
+# ---- SR on Formate ----
+
+SR_FOR
+-start
+# Kinetic parameters (p_fit). K in d^-1
+10 K     = 0.008     # Max specific rate for SR using formate
+20 KFo   = 1e-3      # Half-saturation for formate
+30 KSO4  = 1e-3      # Half-saturation for sulfate
+40 KI_HS = 1e-3      # HS- inhibition constant
+# State variables
+50 vL = SOLN_VOL
+60 fo = MOL("Formate-")  # Formate molality (mol/kgw)
+70 so4 = TOT("S(6)")     # Total sulfate-S (mol/kgw)
+80 hs = MOL("HS-")       # Inhibitor
+# Monod saturation terms & inhibition
+90  mFo  = fo /(KFo + fo)
+100 mSO4 = so4/(KSO4+ so4)
+110 finh = KI_HS/(KI_HS + hs)
+# Core kinetic rate (mol/kgw/s)
+120 rate_c = (K/86400.0)*mFo*mSO4*finh
+# Integrate to moles in current step
+130 moles  = rate_c*vL*TIME
+# Stoichiometric limit: SR_FOR consumes 4 mol formate per 1 mol sulfate-reduced
+140 lim = 0.9*MIN((fo*vL)/4.0, (so4*vL))
+150 IF (moles > lim) THEN moles = lim
+160 SAVE moles
+-end
+
+
+# ---- Acetoclastic Methanogenesis ----
+
+ACETO_METH
+-start
+# Kinetic parameters (p_fit from MATLAB)
+10 K      = 0.03     # d^-1; max rate of acetate -> CH4 + HCO3-
+20 KAc    = 5e-4     # Half-saturation for acetate (note: lower than in SR_AC)
+30 KI_SO4 = 1e-4     # Inhibition by SO4 while present (suppresses acetoclastic during SR)
+40 KI_HS  = 1e-3     # HS- inhibition (general toxicity)
+# State variables
+50 vL = SOLN_VOL
+60 ac  = MOL("Acetate-")
+70 so4 = TOT("S(6)")
+80 hs  = MOL("HS-")
+# Saturation and combined inhibition (both sulfate and sulfide)
+90  mAc  = ac/(KAc + ac)
+100 finh = (KI_SO4/(KI_SO4 + so4))*(KI_HS/(KI_HS + hs))
+# Rate (mol/kgw/s)
+110 rate_c = (K/86400.0)*mAc*finh
+# Moles advanced
+120 moles  = rate_c*vL*TIME
+# Stoichiometry: cannot consume more acetate than present
+130 lim = 0.9*ac*vL
+140 IF (moles > lim) THEN moles = lim
+150 SAVE moles
+-end
+
+
+# ---- Reversible Formate <-> H2 shuttle (simple linear mass-action) ----
+# Here we treat net production as: H2 -> Formate- + H+ - HCO3- (and reverse via kb)
+# This keeps charge/alkalinity balanced through H+, HCO3-
+
+
+FORMATE_H2_EQ
+-start
+# p_fit shuttle rates from MATLAB (per day). When kb > kf and H2 is high, net goes H2 -> Formate-.
+10 kf = 0.03     # Formate- -> H2 + HCO3- this part important for trend adjustment 
+20 kb = 0.03    # H2 -> Formate-     this part important for trend adjustment 
+30 vL   = SOLN_VOL
+# State variables
+40 fo   = MOL("Formate-")    # Formate- molality
+50 h2aq = MOL("H2")        # Dissolved H2 (mol/kgw)
+55 hs   = MOL("HS-")        # Inhibitor
+56 KI_HS= 1e-3
+57 finh = KI_HS/(KI_HS + hs)
+# Soft start (12 h) to avoid stiffness/negatives right at t=0
+60 t    = TOTAL_TIME
+61 ramp = t/(12*3600)
+62 IF (ramp > 1) THEN ramp = 1   # cap
+# Net mass-action rate (mol/kgw/s). Positive => FO -> H2; Negative => H2 -> FO.
+70 rate_c = ((kf*fo) - (kb*h2aq))/86400.0 * finh * ramp
+# Convert to moles this step
+80 moles  = rate_c*vL*TIME
+# Clamps: avoid over-consuming either FO or H2 in a single step
+90 IF (moles > 0 AND moles > 0.9*fo*vL)    THEN moles = 0.9*fo*vL
+95 IF (moles < 0 AND -moles > 0.9*h2aq*vL) THEN moles = -0.9*h2aq*vL
+100 SAVE moles
+-end
+
+# ==========================================================================
+# Sulfate reducrion on H2
+SR_H2
+-start
+# p_fit kinetics from MATLAB for SR fed by H2
+10 K    = 0.02    # d^-1; max rate on H2
+20 KH2  = 5.0e-4    # H2 half-saturation
+30 KSO4 = 1.0e-4  # SO4 half-saturation
+40 KI_HS= 2e-4     # HS- inhibition (tighter than 1e-3 => stronger inhibition at low HS-)
+50 day2s = 86400.0
+# State variables
+60 vL = SOLN_VOL
+70 h2  = MOL("H2")
+80 so4 = TOT("S(6)")
+90 hs  = MOL("HS-")
+# Soft-start over the first day: prevents big initial draw
+95 t    = TOTAL_TIME
+96 ramp = t/(1*86400)
+97 IF (ramp > 1) THEN ramp = 1   # IMPORTANT: cap at 1 to avoid rate > K after day 1
+# Optional gate to first 6 days (keep commented unless you want SR_H2 shut off after day 6)
+#98 IF (t > 6*86400) THEN GOTO 900
+# Monod and inhibition
+100 mH2  = h2 /(KH2 + h2)
+110 mSO4 = so4/(KSO4+ so4)
+120 finh = KI_HS/(KI_HS + hs)
+# Rate (mol/kgw/s) with daily-to-second conversion
+130 rate_c = (K/day2s)*mH2*mSO4*finh*ramp
+# Convert to moles in this step
+140 r_mols = rate_c*vL
+# Stoichiometric limit (SO4 is 1 e- acceptor unit; H2 contributes 4 e-)
+150 lim = 0.9*MIN((h2*vL)/4.0, (so4*vL))
+160 moles = r_mols*TIME
+170 IF (moles > lim) THEN moles = lim
+180 SAVE moles
+# If you enable the "day>6 gate", the branch below zeros the rate after day 6:
+900 moles = 0
+910 SAVE moles
+-end
+
+# 2) Acetogenesis
+# CO2 + HCO3- + 4 H2 -> Ac- + 3 H2O
+
+
+ACETO_H2
+-start
+# p_fit from MATLAB: homoacetogenesis from H2 + DIC
+10 K    = 0.30      # d^-1; relatively fast (acetate)
+20 KH2  = 0.0015    # H2 half-saturation
+30 KDIC = 0.0030    # DIC (CO2 + HCO3-) half-saturation
+40 KI_HS= 0.0015    # HS- inhibition
+# Helpers
+50 day2s= 86400.0
+60 vL = SOLN_VOL
+# State
+70 h2  = MOL("H2")
+80 dic = MOL("CO2") + MOL("HCO3-")
+90 hs  = MOL("HS-")
+# Monod + inhibition
+100 mH2  = h2 /(KH2 + h2)
+110 mDIC = dic/(KDIC+ dic)
+120 finh = KI_HS/(KI_HS + hs)
+# Rate (mol/kgw/s)
+130 rate_c = (K/day2s)*mH2*mDIC*finh
+# Moles reacted this step
+140 r_mols = rate_c*vL
+# Stoichiometric limitation: 4 H2 per 1 Acetate; also limited by DIC
+150 lim = 0.9*MIN((h2*vL)/4.0, (dic*vL))
+160 moles = r_mols*TIME
+170 IF (moles > lim) THEN moles = lim
+180 SAVE moles
+-end
+
+
+
+# 3) Formate formation
+# HCO3- + H2 -> Fr- + H2O
+
+FORMATE_H2
+-start
+# p_fit from MATLAB: forward formation of Formate- from HCO3- + H2
+10 K      = 0.07076   # d^-1
+20 KH2    = 0.0015    # H2 half-sat
+30 KHCO3  = 0.0003    # HCO3- half-sat
+40 KI_HS  = 0.0014    # HS- inhibition (slightly stronger than in ACETO_H2)
+# Helpers
+50 day2s  = 86400.0
+60 vL     = SOLN_VOL
+# State
+70 h2     = MOL("H2")
+80 hco3   = MOL("HCO3-")
+90 hs     = MOL("HS-")
+# Saturation & inhibition
+100 mH2    = h2 /(KH2   + h2)
+110 mHCO3  = hco3/(KHCO3+ hco3)
+120 finh   = KI_HS/(KI_HS + hs)
+# Rate (mol/kgw/s)
+130 rate_c = (K/day2s)*mH2*mHCO3*finh
+# Moles this step
+140 r_mols = rate_c*vL
+# Stoichiometry: 1 H2 + 1 HCO3- per 1 Formate-
+150 lim = 0.9*MIN((h2*vL)/1.0, (hco3*vL))
+160 moles = r_mols*TIME
+170 IF (moles > lim) THEN moles = lim
+180 SAVE moles
+-end
+
+
+# 4) Hydrogenotrophic methanogenesis
+# CO2 + 4 H2 -> CH4(g) + 2 H2O
+
+METH_H2
+-start
+# p_fit from MATLAB: very low K to deprioritize H2->CH4 vs acetate/formate early
+10 K    = 0.0002     # d^-1
+20 KH2  = 0.0015
+30 KCO2 = 0.0083
+40 KI_HS= 5e-4
+# Helpers
+50 day2s= 86400.0
+60 vL = SOLN_VOL
+# Time gate: off until day 6 to let SR and acetogenesis dominate
+70 t  = TOTAL_TIME
+72 IF (t < 6*86400) THEN GOTO 900
+# State
+80 h2  = MOL("H2")
+90 co2 = MOL("CO2")
+100 hs = MOL("HS-")
+# Saturation & inhibition
+110 mH2  = h2 /(KH2 + h2)
+120 mCO2 = co2/(KCO2+ co2)
+130 finh = KI_HS/(KI_HS + hs)
+# Rate (mol/kgw/s)
+140 rate_c = (K/day2s)*mH2*mCO2*finh
+# Moles this step
+150 r_mols = rate_c*vL
+# Stoichiometry: 4 H2 per 1 CH4; also limited by CO2
+160 lim = 0.9*MIN((h2*vL)/4.0, (co2*vL))
+170 moles = r_mols*TIME
+180 IF (moles > lim) THEN moles = lim
+# Write result when active
+190 SAVE moles
+# "Off" branch before day 6
+900 moles = 0
+910 SAVE moles
+-end
+
+
+#############################################
+ # Mineral kinetics
+#############################################
+Quartz
+-start
+ 1 A0 = parm(1) # surface area of mineral
+ 2 V = parm(2)   # total volume of water
+ 10 H4SiO4 = tot("Si")  # this controls if SI runs out of water it goes to end 200
+ 20 if (H4SiO4 <= 0) then goto 200
+ 30 k1 = 2e-14  # reaction rate constant at 25 Celcius degree mol/m^2/s
+ 40 E = 90e3   # activation energy of that mineral J/mol
+ 50 R = 8.3145   # Universal gas constant J/mol/K/
+ 60 k2 = k1*exp(E/R*(1/TK - 1/298.15)) # reaction rate constant based on the temperature modification
+ 70 rate = (A0/V)*(m/m0)^0.67*k2*(1 - SR("Quartz"))  # rate calculation (Lasaga 1984)
+ 80 moles = rate*time
+ 90 if (moles < 0) then goto 200
+200 SAVE moles
+-end
+Calcite
+-start
+ 1 A0 = parm(1)
+ 2 V = parm(2)
+ 10 Ca = tot("Ca")
+ 20 if (Ca <= 0) then goto 200
+ 30 k1 = 1e-6
+ 40 E = 23.5e3
+ 50 R = 8.3145
+ 60 k2 = k1*exp(E/R*(1/TK - 1/298.15))
+ 70 rate = (A0/V)*(m/m0)^(2/3)*k2*(1 - SR("Calcite"))
+ 80 moles = rate*time
+ 90 if (moles < 0) then goto 200
+200 SAVE moles
+-end
+Pyrite
+-start
+ 1 A0 = parm(1)
+ 2 V = parm(2)
+ 30 k1 = 2.8184e-05
+ 40 E = 57e3
+ 50 R = 8.3145
+ 60 k2 = k1*exp(E/R*(1/TK - 1/298.15))
+ 70 rate = (A0/V)*(m/m0)^(2/3)*k2*(1 - SR("Pyrite"))
+ 80 moles = rate*time
+200 SAVE moles
+-end
+Barite
+-start
+ 1 A0 = parm(1)
+ 2 V = parm(2)
+10 k25 = 1e-8
+40 Ea = 60e3
+50 Rg = 8.3145
+60 kT = k25*EXP(Ea/Rg*(1/TK - 1/298.15))
+70 rate = (A0/V)*(m/m0)^(2/3)*kT*(1 - SR("Barite"))
+80 moles = rate*TIME
+200 SAVE moles
+-end
+Illite
+-start
+ 1 A0 = parm(1)
+ 2 V = parm(2)
+ 30 k1 = 6.6069e-10
+ 40 E = 22e3
+ 50 R = 8.3145
+ 60 k2 = k1*exp(E/R*(1/TK - 1/298.15))
+ 70 rate = (A0/V)*(m/m0)^(2/3)*k2*(1 - SR("Illite"))
+ 80 moles = rate*time
+200 SAVE moles
+-end
+
+
+#Gypsum
+#-start
+#  1 A0 = parm(1)
+#  2 V  = parm(2)
+# 10 k25 = 0.0016       # mol m^-2 s^-1 at 25°C (tune; start conservative)
+# 20 Ea  = 35e3             # J/mol, apparent activation energy (tune if needed)
+# 30 Rg  = 8.3145
+# 40 kT  = k25*EXP(Ea/Rg*(1/TK - 1/298.15))
+# 50 rate = (A0/V)*(m/m0)^(2/3)*kT*(1 - SR("Gypsum"))
+# 60 moles = rate*TIME
+# 70 SAVE moles
+#-end
+
+#############################################
+# 8) Output 
+#############################################
+# ----------- Output & Graphs  -----------
+SELECTED_OUTPUT
+ -file mura_simulation_results_v17.txt 
+ -reset true
+ -high_precision true
+ -user_punch true
+USER_PUNCH
+ -headings time_d pH Ptot_atm pH2_atm pCO2_atm pCH4_atm H2_g_mol CO2_g_mol CH4_g_mol SO4 Formate Acetate Ca
+-start
+10 t_d = TOTAL_TIME/86400.0
+20 PUNCH t_d, -LA("H+"), gas_p, PR_P("H2(g)"), PR_P("CO2(g)"), PR_P("Mtg(g)"), \
+ GAS("H2(g)"), GAS("CO2(g)"), GAS("Mtg(g)"), \
+ TOT("S(6)"), TOT("Formate"), TOT("Acetate"), TOT("Ca")
+-end
+#USER_GRAPH 1
+# -headings Time_d pH2 pCO2 pCH4
+# -chart_title "Gas partial pressures (atm)"
+# -axis_titles "Time (days)" "Partial pressure (atm)"
+# -plot_concentration_vs x
+#-start
+#10 GRAPH_X TOTAL_TIME/86400.0
+#20 GRAPH_Y PR_P("H2(g)")
+#30 GRAPH_Y PR_P("CO2(g)")
+#40 GRAPH_Y PR_P("Mtg(g)")
+#-end
+#USER_GRAPH 2
+# -headings Time_d H2 CO2 CH4
+# -chart_title "Gas moles in headspace"
+# -axis_titles "Time (days)" "Moles"
+# -plot_concentration_vs x
+#-start
+#10 GRAPH_X TOTAL_TIME/86400.0
+#20 GRAPH_Y GAS("H2(g)")
+#30 GRAPH_Y GAS("CO2(g)")
+#40 GRAPH_Y GAS("Mtg(g)")
+#-end
+#USER_GRAPH 3
+# -headings Time_d Ca
+# -chart_title "Aqueous totals (mol/kgw)"
+# -axis_titles "Time (days)" "mol/kgw"
+# -plot_concentration_vs x
+#-start
+#10 GRAPH_X TOTAL_TIME/86400.0
+#20 GRAPH_Y TOT("Ca")
+#-end
+#USER_GRAPH 4
+# -headings Time_d CO2_plus_CH4
+# -chart_title "S(CO2+CH4) in gas (mol)"
+# -axis_titles "Time (days)" "mol"
+# -plot_concentration_vs x
+#-start
+#10 GRAPH_X TOTAL_TIME/86400.0
+#20 GRAPH_Y GAS("CO2(g)")+GAS("Mtg(g)")
+#-end
+#
+#
+#USER_GRAPH 5
+# -headings Time_d Formate Acetate
+# -chart_title "Aqueous totals (mol/kgw)"
+# -axis_titles "Time (days)" "mol/kgw"
+# -plot_concentration_vs x
+#-start
+#10 GRAPH_X TOTAL_TIME/86400.0
+#20 GRAPH_Y TOT("Formate")
+#30 GRAPH_Y TOT("Acetate")
+#-end
+#
+#USER_GRAPH 6
+# -headings Time_d SO4
+# -chart_title "Aqueous totals (mol/kgw)"
+# -axis_titles "Time (days)" "mol/kgw"
+# -plot_concentration_vs x
+#-start
+#10 GRAPH_X TOTAL_TIME/86400.0
+#20 GRAPH_Y TOT("S(6)")
+#-end
+
+USER_GRAPH 7
+ -headings Time_d pH
+ -chart_title "pH"
+ -axis_titles "Time (days)" "pH"
+ -plot_concentration_vs x
+-start
+10 GRAPH_X TOTAL_TIME/86400.0
+20 GRAPH_Y -LA("H+")
+-end
+
+
+
+USER_GRAPH 8 # H2(g): model vs experiment
+  -headings time_d H2_model CH4_CO2_model SO4_model Formate_model Acetate_model Ca_model
+  -chart_title "H2(g) — model (line) vs Mura 2024 digitized points (symbols)"
+  -axis_titles "Time (days)" "H2 in headspace (mmol)"
+  -plot_concentration_vs time
+  # Add the external TSV file (first column = time_d). This will add all series,
+  # modify the path below where you run your pheeqc model and the reading text file
+  -plot_tsv_file  C:\Users\selcu\Documents\MATLAB\CRNN_algorithm\Mura 2024\Phreeqc_approx\pulse injection_test\Mura2024_Fig1_readoff_with_calcium.txt
+-start
+10  td = TOTAL_TIME/86400.0
+20  GRAPH_X td
+30 GRAPH_Y GAS("H2(g)")*1000                   # converted mol to mmol
+40 GRAPH_Y (GAS("Mtg(g)")+GAS("CO2(g)"))*1000  # converted mol to mmol
+50 GRAPH_Y TOT("S(6)")*1000                   # converted mol to mmol
+60 GRAPH_Y TOT("Formate")*1000           # converted mol to mmol
+70 GRAPH_Y TOT("Acetate")*1000            # converted mol to mmol
+80 GRAPH_Y MOL("Ca+2")*1000                  # converted mol to mmol
+-end
+END

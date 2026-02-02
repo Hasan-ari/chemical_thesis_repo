@@ -1,0 +1,22 @@
+Size daha önce söylediğim gibi geçen sefer size yolladığım Müller 2024 makalesindeki çalışma düşük basınç altında (2 bar civarı), deneyleri kapsıyordu. Bu kez size yüksek basınç ortamında (60 bar) gerçekleştirilmiş bir deneyin sonuçlarını fit etmek için bir matlab scripti hazırladım. Kodu, makaleyi, sonuçları zipli dosyada görebilirsiniz.Kod yine rekasiyon ratelerini ve diğer verileri output olarak dosyaya yazdırıyor. Kodun amacı ve çalışma metodu ekteki summary dosyasında.
+
+
+Bu kez Mura et al. 2024’deki yüksek basınçlı reaktör deneyinin (≈60 bar, 36 °C) iki fazlı (gaz ↔ sulu) kinetik modelini çözerek ve uyarlayarak, gaz halindeki H2/CO2 oluşumunu ve sulu SO4, formate, acetate ve kalsiyum eğilimlerini yeniden üretmek için kodu yazdım. Burada en önemli fark size daha önce bahsettiğim gibi düşük basınçda Henry gaz yasasını (ideal gaz) kullanıyorduk. Ancak yüksek basınç durumunda gaz idealden non-ideal (real gas) oluyor. Bu yüzden kullandığımız ana yasayı fugacity gaz yasalarından gaz halindeki ideal olmayan durumlar için Peng–Robinson hal denklemini (Equations of State) ve sıvı dengeleri için Henry + Sechenov salinity modeli (ϕ–γ çerçevesi) kullanıldım. Bunu yaparken ChatGPT destekli hazırladım ve temiz bir matlab dosyası oluşturdum, tüm adımlar kod içinde yorumlarla açıklandı, ve bir summary dosyası oluşturttum. Peng Robinson denklemini uyarlama ve fitleri sağlarken ChatGPT desteği (bizdeki sanırım paralı versiyonu) bayağı işime yaradı yoksa bu kod için haftalarca belki aylarca uğraşırdım.
+
+ 
+
+Bu modelde yine fizik ve matematiksel yaklaşım tüm yüksek basınçlı gaz-su-kayaç etkileşimleri için standard halde (en azında düşündüğümüz gerçekleşecek kimyasal reaksiyonlar için). Buradaki tek fark yine parametrelerdeki değerler ve burada Mura’nın deney protokolüne uyum sağlayarak fiti gerçekleştirmek istediğimiz için zaman çizelgesinde hidrojen veya diğer gazların basıldığı zaman aralıkları farklı sadece bunu ayarlanması gerekiyor. Bunu kod içinde deney verilerini okurken kod otomatik yapıyor.
+
+ 
+
+Özetle daha önceki Müller 2024’de biz 4 kayacı (kayaç mineral bilgisi verilmemiş müller’in makalesinde) düşük basınçda analiz ettik. Şimdi bir tane yüksek basınçta sandstone kayacını analiz ettik. Burada Mura 2024 (yani yüksek basınçlı sistem) kullandığı sandstone yani kumtaşı’nın mineral kompozisyonu bilgisi verilmiş. Normalde kumtaşı quartz mineral ağırlıklı oluşumu var. yüzde 90-95 civarı. Diğer yüzde 5-10 kil, demiroksit ve diğer mnerallerden oluşabiliyor. Özellikle bu yüzde 10 kısmındaki mineraller (kumtaşı için söylüyorum) reaksiyona girmeye daha çok meyilli.  Mura’nın deney sonuçlarına bakarsanız hem daha uzun deney 100 günlük hemde hidrojen kaybı daha az görünüyor. Çünkü Müller hem düşük basınçta hemde saf hidrojen basıyor. Buda hidrojen reaksiyonunu çok hızlı tetikliyor. Mura’nın deney protokolü daha açık ve gaz karışımı şeklinde basıyor. Cushion gas (yastık gazı) dedikleri yöntemi uyguluyor. Gerçektede yeraltına bu şekilde basılıyor. Yani hidrojen yer altına gönderilirken bazı gazlarla karıştırılıyor ya da Mura’nın deney protokolündeki gibi önce hidrojen ardından metan/karbondioksit yastık gazı olarak systemin basınç kaybını azaltmak ve sistemi bi arada tutmak için basılıyor. Gerçekte hidrojen yapısı gereği çok ince (molekül yapısı 2 elektron) olduğu için difusyonla kaçabiliyor ve basınç çok hızlı düşüyor. Ama molekül yapısı daha güçlü diğer gazlarla basıldığında gaz basıncı daha uzun sabit kalıyor.  Müllerin çalışması geçersiz değil, aksine elimizde düşük basınç koşulunuda kapsayan 4 farklı kayaçlı 3 farklı sıcaklıkta geniş bir veri yelpazeside veriyor. Bu koşullarda duruma göre gerçekte oluşabilir.
+
+ 
+
+Şimdi bundan sonra şöyle devam edeceğim, elimizde literatürden başka çok fazla bu şekilde zaman içinde gazların evrişimini analizleyen makale yok (bir iki tane ama genellikle başka şeyler üzerinde odaklanmışlar). O yüzden ben bu Mura’nın çalışmasına benzer çalışmayı jeokimyasal modelleme program PHREEQC ile tekrarlayacağım. Sonrasında kayaç/mineral kompozisyonunu değiştirerek yeni outputlar yani yeni veriler oluşturacağım. Bunları sonrasında size gönderdiğim matlab kodunda da test edeceğim. Burada Matlabda yazılı olan tüm fizik ve ODE’ler PHREEQC içinde gömülü biz bunu göremioyruz müdahele edemiyoruz ama matlabda bunu ben görüyorum. Müdahele etmek istersek kod içinde modifiye edebiliriz.
+
+Böylece phreeqcden bolca yüksek basınç altında farklı kayaçlardan veri elde edebilirsem bunlarıda training için kullanabiliriz.
+
+Selamlar
+
+Selçuk

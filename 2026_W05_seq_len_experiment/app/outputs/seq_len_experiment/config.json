@@ -1,0 +1,28 @@
+{
+  "data_path": "data/basalt_25c_lstm_input_500pts.npy",
+  "output_dir": "outputs/seq_len_experiment",
+  "seq_lengths": [
+    50,
+    30,
+    20,
+    10,
+    5
+  ],
+  "n_features": 14,
+  "hidden_size": 128,
+  "num_layers": 2,
+  "epochs": 10000,
+  "learning_rate": 0.0005,
+  "target_loss": 1e-08,
+  "use_log_transform": true,
+  "log_cols": [
+    3,
+    7,
+    9,
+    12,
+    13
+  ],
+  "rmse_threshold": 0.5,
+  "device": "auto",
+  "seed": 42
+}

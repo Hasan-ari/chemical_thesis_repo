@@ -1,0 +1,16 @@
+{
+  "n_features": 14,
+  "hidden_size": 128,
+  "num_layers": 2,
+  "epochs": 10000,
+  "learning_rate": 0.0005,
+  "use_log_transform": true,
+  "log_cols": [
+    3,
+    7,
+    9,
+    12,
+    13
+  ],
+  "seed": 42
+}

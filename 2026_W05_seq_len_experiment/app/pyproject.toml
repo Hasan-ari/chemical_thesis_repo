@@ -1,0 +1,17 @@
+[project]
+name = "lstm-seq-len-experiment"
+version = "0.1.0"
+description = "Sequence length threshold experiment - Finding minimum seq_len before overfit"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "torch",
+    "scikit-learn",
+    "pandas",
+]
+
+[project.scripts]
+run-experiment = "lstm_experiment.run_experiment:main"

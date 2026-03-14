@@ -138,3 +138,44 @@ PHREEQC v23 → 1000 randomized runs → Output time-series → Normalize → Sl
 - `chem_prof_mails/` is in `.gitignore` — sensitive, never commit
 - `archive/` is read-only — all active work in `src/`, `data/`, `experiments/`
 - PHREEQC model uses CVODE solver with tolerance 1e-6
+- Student's focus is DATA + DL — chemical reaction details are professor's domain, don't deep-dive into chemistry theory
+
+## Available Plugins & Skills
+
+Agent should use these proactively at the right moments.
+
+### Core Workflow
+| Skill | When to Use |
+|-------|-------------|
+| `/commit` | Her issue bitiminde temiz commit oluştur |
+| `/chemistry` | PHREEQC verisi veya model hakkında hızlı soru-cevap |
+| `superpowers:brainstorming` | Yeni modül veya feature tasarımından ÖNCE — intent ve requirements keşfet |
+| `superpowers:test-driven-development` | Modül yazarken önce test yaz, sonra implementasyon |
+| `superpowers:verification-before-completion` | Issue kapatmadan veya commit atmadan önce son doğrulama |
+| `superpowers:writing-plans` | Çok adımlı bir görev başlamadan önce plan yaz |
+| `superpowers:systematic-debugging` | Bug veya test failure durumunda sistematik debug |
+
+### Code Quality
+| Skill | When to Use |
+|-------|-------------|
+| `coderabbit:review` | Kod yazdıktan sonra otomatik AI code review |
+| `superpowers:requesting-code-review` | Major feature tamamlandığında review iste |
+| `superpowers:finishing-a-development-branch` | Branch tamamlandığında merge/PR kararı |
+| `/simplify` | Yazılan kodu sadeleştir ve kalitesini artır |
+
+### Documentation & Output
+| Skill | When to Use |
+|-------|-------------|
+| `document-skills:xlsx` | Deney sonuçlarını Excel tablosuna çıkar |
+| `document-skills:docx` | Tez bölümü taslağı veya hocaya rapor yaz |
+| `document-skills:pdf` | PDF okuma/oluşturma (araştırma makaleleri) |
+
+### Memory & Continuity
+| Skill | When to Use |
+|-------|-------------|
+| `episodic-memory:search-conversations` | "Geçen sefer ne yapmıştık?" — önceki konuşmaları ara |
+| `episodic-memory:remembering-conversations` | Benzer bir sorun daha önce çözüldü mü? |
+| `claude-md-management:revise-claude-md` | CLAUDE.md'yi güncel tut |
+
+### Not Relevant for This Repo
+figma, atlassian, pptx, slack-gif, brand-guidelines, frontend-design, webapp-testing — bu repo bilimsel Python, UI yok.

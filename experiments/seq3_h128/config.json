@@ -1,0 +1,26 @@
+{
+  "data_dir": "data/phreeqc_v23",
+  "test_ratio": 0.1,
+  "n_features": 12,
+  "hidden_size": 128,
+  "num_layers": 2,
+  "dropout": 0.1,
+  "seq_len": 3,
+  "epochs": 100,
+  "batch_size": 256,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0,
+  "grad_clip": 1.0,
+  "log_cols": [
+    2,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10
+  ],
+  "seed": 42,
+  "output_dir": "experiments",
+  "experiment_name": "seq3_h128"
+}

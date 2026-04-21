@@ -23,6 +23,7 @@ from src.evaluation.paper_metrics import (
     normalize_result_metrics,
     percentile_indices,
     select_reference_trajectory_index,
+    select_novelty_representative_indices,
     selected_feature_indices,
     summarize_generalization_bins,
 )
@@ -35,18 +36,18 @@ def save_figure(fig: plt.Figure, save_path: Path) -> None:
     print(f"Saved: {save_path}")
 
 
-def plot_representative_profile_panels(
+def plot_profile_panel_family(
     all_pred_raw: np.ndarray,
     test_raw: np.ndarray,
-    rmse_per_traj: np.ndarray,
     time_axis: np.ndarray,
     seq_len: int,
     save_path: Path,
-    selected_features: Sequence[str] = DEFAULT_PROFILE_FEATURES,
-) -> None:
+    representative_indices: Sequence[int],
+    representative_labels: Sequence[str],
+    title: str,
+    selected_features: Sequence[str],
+) -> list[int]:
     feature_indices = selected_feature_indices(FEATURE_NAMES, selected_features)
-    representative_indices = percentile_indices(rmse_per_traj, (10, 50, 90))
-    representative_labels = ("P10", "P50", "P90")
     colors = ("#2ca02c", "#1f77b4", "#d62728")
 
     fig, axes = plt.subplots(2, 3, figsize=(18, 10), sharex=True)
@@ -75,13 +76,58 @@ def plot_representative_profile_panels(
         axis.grid(True, alpha=0.25)
 
     axes[0].legend(ncol=2, fontsize=8)
-    fig.suptitle(
-        "Paper-Aligned Figures 4-5 - Representative Rollout Profiles",
-        fontsize=14,
-        fontweight="bold",
-    )
+    fig.suptitle(title, fontsize=14, fontweight="bold")
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     save_figure(fig, save_path)
+    return [int(idx) for idx in representative_indices]
+
+
+def plot_representative_profile_panels(
+    all_pred_raw: np.ndarray,
+    test_raw: np.ndarray,
+    rmse_per_traj: np.ndarray,
+    time_axis: np.ndarray,
+    seq_len: int,
+    save_path: Path,
+    selected_features: Sequence[str] = DEFAULT_PROFILE_FEATURES,
+) -> list[int]:
+    representative_indices = percentile_indices(rmse_per_traj, (10, 50, 90))
+    representative_labels = ("P10", "P50", "P90")
+    return plot_profile_panel_family(
+        all_pred_raw=all_pred_raw,
+        test_raw=test_raw,
+        time_axis=time_axis,
+        seq_len=seq_len,
+        save_path=save_path,
+        representative_indices=representative_indices,
+        representative_labels=representative_labels,
+        title="Paper-Aligned Figure 4 - Representative Rollout Profiles (RMSE percentiles)",
+        selected_features=selected_features,
+    )
+
+
+def plot_novelty_profile_panels(
+    all_pred_raw: np.ndarray,
+    test_raw: np.ndarray,
+    novelty_scores: np.ndarray,
+    time_axis: np.ndarray,
+    seq_len: int,
+    save_path: Path,
+    selected_features: Sequence[str] = DEFAULT_PROFILE_FEATURES,
+) -> list[int]:
+    representative_indices = select_novelty_representative_indices(novelty_scores)
+    representative_labels = ("low novelty", "mid novelty", "high novelty")
+    return plot_profile_panel_family(
+        all_pred_raw=all_pred_raw,
+        test_raw=test_raw,
+        time_axis=time_axis,
+        seq_len=seq_len,
+        save_path=save_path,
+        representative_indices=representative_indices,
+        representative_labels=representative_labels,
+        title="Paper-Aligned Figure 5 - Representative Rollout Profiles (novelty bins)",
+        selected_features=selected_features,
+    )
 
 
 def plot_feature_time_heatmaps(
@@ -139,9 +185,11 @@ def plot_breakthrough_summary(
     seq_len: int,
     save_path: Path,
     selected_features: Sequence[str] = DEFAULT_BREAKTHROUGH_FEATURES,
+    reference_idx: int | None = None,
 ) -> int:
     feature_indices = selected_feature_indices(FEATURE_NAMES, selected_features)
-    reference_idx = select_reference_trajectory_index(rmse_per_traj)
+    if reference_idx is None:
+        reference_idx = select_reference_trajectory_index(rmse_per_traj)
 
     fig, axes = plt.subplots(2, 3, figsize=(18, 10), sharex=True)
     axes = axes.flatten()

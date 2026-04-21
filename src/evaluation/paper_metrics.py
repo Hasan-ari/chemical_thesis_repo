@@ -106,3 +106,16 @@ def percentile_indices(values: np.ndarray, percentiles: Sequence[int]) -> list[i
 
 def select_reference_trajectory_index(rmse_per_traj: np.ndarray) -> int:
     return percentile_indices(np.asarray(rmse_per_traj, dtype=float), (50,))[0]
+
+
+def select_novelty_representative_indices(novelty_scores: np.ndarray) -> list[int]:
+    novelty_scores = np.asarray(novelty_scores, dtype=float)
+    grouped_indices = np.array_split(np.argsort(novelty_scores), 3)
+    representatives: list[int] = []
+
+    for group in grouped_indices:
+        if len(group) == 0:
+            continue
+        representatives.append(int(group[len(group) // 2]))
+
+    return representatives

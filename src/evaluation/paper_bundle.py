@@ -25,13 +25,18 @@ from src.evaluation.paper_metrics import (
     select_reference_trajectory_index,
 )
 from src.evaluation.paper_plots import (
-    plot_ablation_and_sensitivity,
     plot_breakthrough_summary,
     plot_feature_time_heatmaps,
     plot_generalization_novelty,
+    plot_novelty_profile_panels,
     plot_representative_profile_panels,
 )
 from src.evaluation.plotting import plot_loss_curve
+from src.evaluation.paper_writeups import (
+    cleanup_legacy_figure_outputs,
+    get_requested_figure_artifacts,
+    write_figure_markdown_files,
+)
 from src.models.lstm import PhreeqcLSTM
 from src.training.config import ExperimentConfig
 from src.training.trainer import setup_device
@@ -45,6 +50,27 @@ class SavedExperimentEvaluation:
     test_raw: np.ndarray
     time_axis: np.ndarray
     evaluation: dict[str, Any]
+
+
+def build_paper_figure_manifest(
+    experiment_name: str,
+    selected_features: list[str],
+    canonical_metrics: dict[str, float],
+    figure_artifacts: dict[str, dict[str, Any]],
+    checklist_path: str,
+    metric_contract_path: str,
+    generalization_bins: list[dict[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "experiment": experiment_name,
+        "metric_contract_version": METRIC_CONTRACT_VERSION,
+        "selected_features": selected_features,
+        "figures": figure_artifacts,
+        "paper_figure_checklist_path": checklist_path,
+        "metric_contract_path": metric_contract_path,
+        "canonical_metrics": canonical_metrics,
+        "generalization_bins": generalization_bins,
+    }
 
 
 def load_saved_experiment_evaluation(experiment_dir: Path) -> SavedExperimentEvaluation:
@@ -102,45 +128,71 @@ def generate_paper_figure_bundle(
     experiment_path = Path(experiment_dir)
     figure_output_dir = Path(output_dir) if output_dir else experiment_path / "paper_figures"
     figure_output_dir.mkdir(parents=True, exist_ok=True)
+    cleanup_legacy_figure_outputs(figure_output_dir)
+    selected_features = list(selected_features)
 
     saved_eval = load_saved_experiment_evaluation(experiment_path)
     config = saved_eval.config
     evaluation = saved_eval.evaluation
     result_payload = saved_eval.result_payload
+    novelty_scores = compute_initial_state_novelty(saved_eval.train_raw, saved_eval.test_raw)
+    artifact_specs = {
+        item["paper_figure"]: item for item in get_requested_figure_artifacts()
+    }
 
-    generated_files: dict[str, str] = {}
+    figure_artifacts: dict[str, dict[str, Any]] = {
+        figure_name: {
+            "image": spec["image_filename"],
+        }
+        for figure_name, spec in artifact_specs.items()
+    }
 
-    training_plot_path = figure_output_dir / "figure3_training_dynamics.png"
+    training_plot_path = figure_output_dir / artifact_specs["Figure 3"]["image_filename"]
     plot_loss_curve(
         result_payload["loss_history"],
         save_path=training_plot_path,
         title=f"[{config.experiment_name}] Paper-Aligned Figure 3 - Training Dynamics",
     )
-    generated_files["Figure 3"] = str(training_plot_path)
+    figure_artifacts["Figure 3"]["image"] = str(training_plot_path)
 
-    profile_path = figure_output_dir / "figure4_5_representative_profiles.png"
-    plot_representative_profile_panels(
+    figure4_path = figure_output_dir / artifact_specs["Figure 4"]["image_filename"]
+    figure4_indices = plot_representative_profile_panels(
         evaluation["all_pred_raw"],
         saved_eval.test_raw,
         evaluation["rmse_per_traj"],
         saved_eval.time_axis,
         config.seq_len,
-        save_path=profile_path,
+        save_path=figure4_path,
         selected_features=selected_features,
     )
-    generated_files["Figures 4-5"] = str(profile_path)
+    figure_artifacts["Figure 4"]["image"] = str(figure4_path)
+    figure_artifacts["Figure 4"]["representative_indices"] = figure4_indices
 
     reference_idx = select_reference_trajectory_index(evaluation["rmse_per_traj"])
-    heatmap_path = figure_output_dir / "figure6_truth_pred_error_heatmaps.png"
+    figure5_path = figure_output_dir / artifact_specs["Figure 5"]["image_filename"]
+    figure5_indices = plot_novelty_profile_panels(
+        evaluation["all_pred_raw"],
+        saved_eval.test_raw,
+        novelty_scores,
+        saved_eval.time_axis,
+        config.seq_len,
+        save_path=figure5_path,
+        selected_features=selected_features,
+    )
+    figure_artifacts["Figure 5"]["image"] = str(figure5_path)
+    figure_artifacts["Figure 5"]["representative_indices"] = figure5_indices
+
+    heatmap_path = figure_output_dir / artifact_specs["Figure 6"]["image_filename"]
     plot_feature_time_heatmaps(
         truth=saved_eval.test_raw[reference_idx],
         pred=evaluation["all_pred_raw"][reference_idx],
         time_axis=saved_eval.time_axis,
         save_path=heatmap_path,
     )
-    generated_files["Figure 6"] = str(heatmap_path)
+    figure_artifacts["Figure 6"]["image"] = str(heatmap_path)
+    figure_artifacts["Figure 6"]["reference_trajectory_index"] = reference_idx
 
-    breakthrough_path = figure_output_dir / "figure7_breakthrough_summary.png"
+    breakthrough_path = figure_output_dir / artifact_specs["Figure 7"]["image_filename"]
     plot_breakthrough_summary(
         evaluation["all_pred_raw"],
         saved_eval.test_raw,
@@ -149,10 +201,14 @@ def generate_paper_figure_bundle(
         config.seq_len,
         save_path=breakthrough_path,
         selected_features=selected_features,
+        reference_idx=reference_idx,
     )
-    generated_files["Figure 7"] = str(breakthrough_path)
+    figure_artifacts["Figure 7"]["image"] = str(breakthrough_path)
+    figure_artifacts["Figure 7"]["reference_trajectory_index"] = reference_idx
 
-    parity_path = figure_output_dir / "figure9_parity.png"
+    figure_artifacts["Figure 8"]["image"] = None
+
+    parity_path = figure_output_dir / artifact_specs["Figure 9"]["image_filename"]
     plot_predicted_vs_actual(
         evaluation["all_pred_raw"],
         saved_eval.test_raw,
@@ -160,25 +216,15 @@ def generate_paper_figure_bundle(
         save_path=parity_path,
         title=f"[{config.experiment_name}] Paper-Aligned Figure 9 - Predicted vs Actual",
     )
-    generated_files["Figure 9"] = str(parity_path)
+    figure_artifacts["Figure 9"]["image"] = str(parity_path)
 
-    novelty_scores = compute_initial_state_novelty(saved_eval.train_raw, saved_eval.test_raw)
-    generalization_path = figure_output_dir / "figure12_generalization_novelty.png"
+    generalization_path = figure_output_dir / artifact_specs["Figure 12"]["image_filename"]
     generalization_bins = plot_generalization_novelty(
         novelty_scores,
         evaluation["rmse_per_traj"],
         save_path=generalization_path,
     )
-    generated_files["Figure 12"] = str(generalization_path)
-
-    experiments_root_path = Path(experiments_root) if experiments_root else experiment_path.parent
-    summary_path = experiments_root_path / "summary.json"
-    if summary_path.exists():
-        with open(summary_path) as handle:
-            summary_results = json.load(handle)
-        ablation_path = figure_output_dir / "figure10_11_ablation_sensitivity.png"
-        plot_ablation_and_sensitivity(summary_results, experiments_root_path, save_path=ablation_path)
-        generated_files["Figures 10-11"] = str(ablation_path)
+    figure_artifacts["Figure 12"]["image"] = str(generalization_path)
 
     checklist_path = figure_output_dir / "paper_figure_checklist.json"
     with open(checklist_path, "w") as handle:
@@ -188,21 +234,29 @@ def generate_paper_figure_bundle(
     with open(metric_contract_path, "w") as handle:
         json.dump(get_metric_contract(), handle, indent=2)
 
-    manifest = {
-        "experiment": config.experiment_name,
-        "metric_contract_version": METRIC_CONTRACT_VERSION,
-        "selected_features": list(selected_features),
-        "reference_trajectory_index": reference_idx,
-        "generated_files": generated_files,
-        "paper_figure_checklist_path": str(checklist_path),
-        "metric_contract_path": str(metric_contract_path),
-        "canonical_metrics": {
+    for figure_name in ("Figure 4", "Figure 5", "Figure 6", "Figure 7", "Figure 12"):
+        figure_artifacts[figure_name]["selected_features"] = selected_features.copy()
+
+    markdown_paths = write_figure_markdown_files(
+        output_dir=figure_output_dir,
+        figure_artifacts=figure_artifacts,
+    )
+    for figure_name, markdown_path in markdown_paths.items():
+        figure_artifacts[figure_name]["markdown"] = markdown_path
+
+    manifest = build_paper_figure_manifest(
+        experiment_name=config.experiment_name,
+        selected_features=selected_features,
+        canonical_metrics={
             "nrmse_total": result_payload["nrmse_total"],
             "legacy_rmse_total_alias": result_payload["legacy_rmse_total_alias"],
             "overall_rmse_mean": float(np.mean(evaluation["rmse_per_traj"])),
         },
-        "generalization_bins": generalization_bins,
-    }
+        figure_artifacts=figure_artifacts,
+        checklist_path=str(checklist_path),
+        metric_contract_path=str(metric_contract_path),
+        generalization_bins=generalization_bins,
+    )
     manifest_path = figure_output_dir / "paper_figure_manifest.json"
     with open(manifest_path, "w") as handle:
         json.dump(manifest, handle, indent=2)

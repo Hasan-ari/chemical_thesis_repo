@@ -1,0 +1,32 @@
+[
+  {
+    "storage_key": "results.json:rmse_total",
+    "canonical_name": "nrmse_total",
+    "scale": "normalized",
+    "description": "Legacy key in saved experiment results; value is the normalized autoregressive total RMSE."
+  },
+  {
+    "storage_key": "results.json:nrmse_total",
+    "canonical_name": "nrmse_total",
+    "scale": "normalized",
+    "description": "Canonical key for normalized total RMSE in new tooling."
+  },
+  {
+    "storage_key": "results.json:rmse_per_var.*",
+    "canonical_name": "rmse_per_var",
+    "scale": "original",
+    "description": "Per-variable RMSE on the original chemistry scale."
+  },
+  {
+    "storage_key": "comprehensive_stats.json:overall_rmse.mean",
+    "canonical_name": "rmse_per_trajectory_mean",
+    "scale": "original",
+    "description": "Mean original-scale RMSE computed across test trajectories."
+  },
+  {
+    "storage_key": "comprehensive_stats.json:per_variable_rmse_mean.*",
+    "canonical_name": "rmse_per_traj_per_var_mean",
+    "scale": "original",
+    "description": "Mean per-trajectory RMSE for each variable on the original scale."
+  }
+]

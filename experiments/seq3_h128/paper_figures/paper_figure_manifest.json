@@ -1,0 +1,134 @@
+{
+  "experiment": "seq3_h128",
+  "metric_contract_version": "2026-04-hidden-rtnn-paper-figures",
+  "selected_features": [
+    "pH2_atm",
+    "pCH4_atm",
+    "CH4_g_mol",
+    "SO4",
+    "Formate",
+    "Acetate"
+  ],
+  "figures": {
+    "Figure 3": {
+      "image": "experiments/seq3_h128/paper_figures/figure03_training_dynamics.png",
+      "markdown": "experiments/seq3_h128/paper_figures/figure03.md"
+    },
+    "Figure 4": {
+      "image": "experiments/seq3_h128/paper_figures/figure04_representative_profiles_a.png",
+      "representative_indices": [
+        18,
+        39,
+        67
+      ],
+      "selected_features": [
+        "pH2_atm",
+        "pCH4_atm",
+        "CH4_g_mol",
+        "SO4",
+        "Formate",
+        "Acetate"
+      ],
+      "markdown": "experiments/seq3_h128/paper_figures/figure04.md"
+    },
+    "Figure 5": {
+      "image": "experiments/seq3_h128/paper_figures/figure05_representative_profiles_b.png",
+      "representative_indices": [
+        24,
+        8,
+        75
+      ],
+      "selected_features": [
+        "pH2_atm",
+        "pCH4_atm",
+        "CH4_g_mol",
+        "SO4",
+        "Formate",
+        "Acetate"
+      ],
+      "markdown": "experiments/seq3_h128/paper_figures/figure05.md"
+    },
+    "Figure 6": {
+      "image": "experiments/seq3_h128/paper_figures/figure06_truth_pred_error_heatmaps.png",
+      "reference_trajectory_index": 39,
+      "selected_features": [
+        "pH2_atm",
+        "pCH4_atm",
+        "CH4_g_mol",
+        "SO4",
+        "Formate",
+        "Acetate"
+      ],
+      "markdown": "experiments/seq3_h128/paper_figures/figure06.md"
+    },
+    "Figure 7": {
+      "image": "experiments/seq3_h128/paper_figures/figure07_breakthrough_summary.png",
+      "reference_trajectory_index": 39,
+      "selected_features": [
+        "pH2_atm",
+        "pCH4_atm",
+        "CH4_g_mol",
+        "SO4",
+        "Formate",
+        "Acetate"
+      ],
+      "markdown": "experiments/seq3_h128/paper_figures/figure07.md"
+    },
+    "Figure 8": {
+      "image": null,
+      "markdown": "experiments/seq3_h128/paper_figures/figure08.md"
+    },
+    "Figure 9": {
+      "image": "experiments/seq3_h128/paper_figures/figure09_parity.png",
+      "markdown": "experiments/seq3_h128/paper_figures/figure09.md"
+    },
+    "Figure 12": {
+      "image": "experiments/seq3_h128/paper_figures/figure12_generalization.png",
+      "selected_features": [
+        "pH2_atm",
+        "pCH4_atm",
+        "CH4_g_mol",
+        "SO4",
+        "Formate",
+        "Acetate"
+      ],
+      "markdown": "experiments/seq3_h128/paper_figures/figure12.md"
+    }
+  },
+  "paper_figure_checklist_path": "experiments/seq3_h128/paper_figures/paper_figure_checklist.json",
+  "metric_contract_path": "experiments/seq3_h128/paper_figures/metric_contract.json",
+  "canonical_metrics": {
+    "nrmse_total": 0.24108518020811828,
+    "legacy_rmse_total_alias": 0.24108518020811828,
+    "overall_rmse_mean": 0.047656165897741506
+  },
+  "generalization_bins": [
+    {
+      "bin_label": "low_novelty",
+      "count": 34,
+      "mean_novelty": 0.10612712648124148,
+      "min_novelty": 0.0004244535652339063,
+      "max_novelty": 0.2592291695630375,
+      "mean_rmse": 0.053706516520003966,
+      "std_rmse": 0.04849722277335217
+    },
+    {
+      "bin_label": "mid_novelty",
+      "count": 33,
+      "mean_novelty": 0.38989585872888466,
+      "min_novelty": 0.2691192127802139,
+      "max_novelty": 0.4672875521521696,
+      "mean_rmse": 0.04837512283383994,
+      "std_rmse": 0.027752014396645496
+    },
+    {
+      "bin_label": "high_novelty",
+      "count": 33,
+      "mean_novelty": 0.5756275120382546,
+      "min_novelty": 0.46793549530831086,
+      "max_novelty": 0.7104543155481031,
+      "mean_rmse": 0.04070351438113022,
+      "std_rmse": 0.029124273381389742
+    }
+  ]
+}

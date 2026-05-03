@@ -9,6 +9,8 @@ chem_prof_mails/
 .vscode/
 .idea/
 .serena/
+.agents/
+skills-lock.json
 
 # ============================================
 # PYTHON

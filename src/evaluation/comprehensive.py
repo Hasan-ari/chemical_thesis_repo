@@ -222,7 +222,7 @@ def plot_predicted_vs_actual(
         # R-squared
         ss_res = np.sum((truth_all[:, j] - pred_all[:, j]) ** 2)
         ss_tot = np.sum((truth_all[:, j] - np.mean(truth_all[:, j])) ** 2)
-        r2 = 1 - ss_res / ss_tot if ss_tot > 0 else 0.0
+        r2 = 1 - ss_res / ss_tot if ss_tot > 1e-24 else 0.0
 
         ax.set_title(f"{FEATURE_NAMES[j]}  (R² = {r2:.4f})", fontsize=10)
         ax.set_xlabel("Actual", fontsize=8)

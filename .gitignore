@@ -79,3 +79,26 @@ $RECYCLE.BIN/
 .claude
 .thesis
 .tmp*
+
+# ============================================
+# LATEX BUILD ARTIFACTS
+# ============================================
+*.aux
+*.bbl
+*.bcf
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+report/report.pdf
+
+# ============================================
+# LOCAL WORKSPACE
+# ============================================
+learning_notes/
+scratch/
+notes/

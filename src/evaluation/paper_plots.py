@@ -36,6 +36,189 @@ def save_figure(fig: plt.Figure, save_path: Path) -> None:
     print(f"Saved: {save_path}")
 
 
+def _draw_box(axis: plt.Axes, x: float, y: float, text: str) -> None:
+    axis.text(
+        x,
+        y,
+        text,
+        ha="center",
+        va="center",
+        fontsize=10,
+        bbox={
+            "boxstyle": "round,pad=0.45",
+            "facecolor": "#f5f7fb",
+            "edgecolor": "#4C72B0",
+            "linewidth": 1.4,
+        },
+    )
+
+
+def _draw_arrow(axis: plt.Axes, x0: float, y0: float, x1: float, y1: float) -> None:
+    axis.annotate(
+        "",
+        xy=(x1, y1),
+        xytext=(x0, y0),
+        arrowprops={"arrowstyle": "->", "linewidth": 1.5, "color": "#333333"},
+    )
+
+
+def _annotate_best_bar(axis: plt.Axes, index: int, value: float) -> None:
+    axis.text(
+        index,
+        value,
+        "best",
+        ha="center",
+        va="bottom",
+        fontsize=9,
+        fontweight="bold",
+    )
+
+
+def plot_workflow_schematic(save_path: Path) -> None:
+    fig, axis = plt.subplots(figsize=(14, 5))
+    axis.axis("off")
+
+    boxes = [
+        (0.08, 0.62, "PHREEQC v23\n1000 trajectories"),
+        (0.27, 0.62, "Train/test split\nsequential runs"),
+        (0.46, 0.62, "Normalize\ntrain statistics"),
+        (0.65, 0.62, "LSTM rollout\nautoregressive"),
+        (0.84, 0.62, "Figure bundle\nPNG + MD + manifest"),
+    ]
+    for x, y, text in boxes:
+        _draw_box(axis, x, y, text)
+
+    for (x0, y0, _), (x1, y1, _) in zip(boxes[:-1], boxes[1:]):
+        _draw_arrow(axis, x0 + 0.07, y0, x1 - 0.07, y1)
+
+    _draw_box(axis, 0.46, 0.24, "Ground truth: PHREEQC\nPrediction: trained LSTM")
+    _draw_arrow(axis, 0.65, 0.52, 0.52, 0.32)
+    _draw_arrow(axis, 0.46, 0.34, 0.78, 0.52)
+
+    axis.set_title(
+        "Paper-Aligned Figure 1 - Repo Surrogate Evaluation Workflow",
+        fontsize=14,
+        fontweight="bold",
+        pad=20,
+    )
+    save_figure(fig, save_path)
+
+
+def plot_lstm_architecture_schematic(save_path: Path) -> None:
+    fig, axis = plt.subplots(figsize=(13, 5))
+    axis.axis("off")
+
+    boxes = [
+        (0.12, 0.62, "Input window\n(seq_len x 12)"),
+        (0.34, 0.62, "LSTM\nhidden_size=128"),
+        (0.56, 0.62, "Linear head\n12 outputs"),
+        (0.78, 0.62, "Next state\nX(t+1)"),
+    ]
+    for x, y, text in boxes:
+        _draw_box(axis, x, y, text)
+
+    for (x0, y0, _), (x1, y1, _) in zip(boxes[:-1], boxes[1:]):
+        _draw_arrow(axis, x0 + 0.08, y0, x1 - 0.08, y1)
+
+    _draw_box(axis, 0.45, 0.22, "Autoregressive loop:\nprediction feeds next window")
+    _draw_arrow(axis, 0.78, 0.52, 0.54, 0.30)
+    _draw_arrow(axis, 0.36, 0.30, 0.14, 0.52)
+
+    axis.text(
+        0.5,
+        0.03,
+        "Adapted analog of HRTNet architecture: this repo does not encode PDE residuals or hidden pyrite mass.",
+        ha="center",
+        va="center",
+        fontsize=10,
+    )
+    axis.set_title(
+        "Paper-Aligned Figure 2 - Autoregressive LSTM Architecture",
+        fontsize=14,
+        fontweight="bold",
+        pad=20,
+    )
+    save_figure(fig, save_path)
+
+
+def plot_sequence_sensitivity_summary(
+    experiment_rows: Sequence[Mapping[str, Any]],
+    save_path: Path,
+) -> None:
+    rows = sorted(experiment_rows, key=lambda item: int(item["seq_len"]))
+    seq_lens = [int(row["seq_len"]) for row in rows]
+    original_rmse = [float(row["overall_rmse_mean"]) for row in rows]
+    normalized_rmse = [float(row["nrmse_total"]) for row in rows]
+
+    fig, axis = plt.subplots(figsize=(10, 5))
+    axis.plot(
+        seq_lens,
+        original_rmse,
+        marker="o",
+        linewidth=2,
+        label="Original-scale rollout RMSE",
+    )
+    axis.set_xlabel("Sequence length")
+    axis.set_ylabel("Original-scale RMSE")
+    axis.grid(True, alpha=0.3)
+
+    twin = axis.twinx()
+    twin.plot(
+        seq_lens,
+        normalized_rmse,
+        marker="s",
+        linewidth=2,
+        color="#C44E52",
+        label="Normalized RMSE",
+    )
+    twin.set_ylabel("Normalized RMSE")
+
+    handles, labels = axis.get_legend_handles_labels()
+    twin_handles, twin_labels = twin.get_legend_handles_labels()
+    axis.legend(handles + twin_handles, labels + twin_labels, loc="upper right")
+    axis.set_title(
+        "Paper-Aligned Figure 10 - Sequence-Length Sensitivity",
+        fontsize=13,
+        fontweight="bold",
+    )
+    save_figure(fig, save_path)
+
+
+def plot_metric_sensitivity_summary(
+    experiment_rows: Sequence[Mapping[str, Any]],
+    save_path: Path,
+) -> None:
+    rows = sorted(experiment_rows, key=lambda item: int(item["seq_len"]))
+    labels = [f"seq{int(row['seq_len'])}" for row in rows]
+    original_rmse = np.array([float(row["overall_rmse_mean"]) for row in rows])
+    normalized_rmse = np.array([float(row["nrmse_total"]) for row in rows])
+    best_original = int(np.argmin(original_rmse))
+    best_normalized = int(np.argmin(normalized_rmse))
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+    axes[0].bar(labels, original_rmse, color="#4C72B0", alpha=0.8)
+    axes[0].set_title("Original-scale rollout RMSE")
+    axes[0].set_ylabel("RMSE")
+    axes[0].tick_params(axis="x", rotation=20)
+    axes[0].grid(True, axis="y", alpha=0.25)
+    _annotate_best_bar(axes[0], best_original, original_rmse[best_original])
+
+    axes[1].bar(labels, normalized_rmse, color="#C44E52", alpha=0.8)
+    axes[1].set_title("Normalized RMSE")
+    axes[1].set_ylabel("NRMSE")
+    axes[1].tick_params(axis="x", rotation=20)
+    axes[1].grid(True, axis="y", alpha=0.25)
+    _annotate_best_bar(axes[1], best_normalized, normalized_rmse[best_normalized])
+
+    fig.suptitle(
+        "Paper-Aligned Figure 11 - Metric Sensitivity Across Saved Experiments",
+        fontsize=13,
+        fontweight="bold",
+    )
+    plt.tight_layout(rect=[0, 0, 1, 0.94])
+    save_figure(fig, save_path)
+
+
 def plot_profile_panel_family(
     all_pred_raw: np.ndarray,
     test_raw: np.ndarray,

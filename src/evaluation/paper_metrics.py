@@ -33,6 +33,34 @@ def normalize_result_metrics(result: Mapping[str, Any]) -> dict[str, Any]:
     return normalized
 
 
+def summarize_parity_quality(
+    all_pred_raw: np.ndarray,
+    test_raw: np.ndarray,
+    seq_len: int,
+    feature_names: Sequence[str],
+) -> dict[str, dict[str, float]]:
+    pred_all = np.asarray(all_pred_raw)[:, seq_len:, :].reshape(-1, all_pred_raw.shape[2])
+    truth_all = np.asarray(test_raw)[:, seq_len:, :].reshape(-1, test_raw.shape[2])
+
+    summary: dict[str, dict[str, float]] = {}
+    for feature_idx, feature_name in enumerate(feature_names):
+        pred_values = pred_all[:, feature_idx]
+        truth_values = truth_all[:, feature_idx]
+        residual = truth_values - pred_values
+        ss_res = float(np.sum(residual ** 2))
+        ss_tot = float(np.sum((truth_values - np.mean(truth_values)) ** 2))
+        r2 = 1.0 - ss_res / ss_tot if ss_tot > 1e-24 else 0.0
+        rmse = float(np.sqrt(np.mean(residual ** 2)))
+        mae = float(np.mean(np.abs(residual)))
+        summary[feature_name] = {
+            "r2": float(r2),
+            "rmse": rmse,
+            "mae": mae,
+        }
+
+    return summary
+
+
 def compute_initial_state_novelty(
     train_raw: np.ndarray,
     test_raw: np.ndarray,

@@ -1,0 +1,86 @@
+[
+  {
+    "paper_figure": "Figure 1",
+    "repo_status": "adapted",
+    "paper_role": "transport workflow schematic",
+    "repo_equivalent": "Repo-local PHREEQC -> LSTM evaluation workflow schematic",
+    "notes": "This is a workflow analog, not the paper's pyrite-column transport schematic."
+  },
+  {
+    "paper_figure": "Figure 2",
+    "repo_status": "adapted",
+    "paper_role": "HRTNet architecture schematic",
+    "repo_equivalent": "Autoregressive LSTM architecture schematic",
+    "notes": "This documents the current LSTM and explicitly excludes HRTNet PDE residual claims."
+  },
+  {
+    "paper_figure": "Figure 3",
+    "repo_status": "direct",
+    "paper_role": "training dynamics",
+    "repo_equivalent": "Loss history from saved LSTM experiments",
+    "notes": "This is a direct evaluation analog for convergence behavior."
+  },
+  {
+    "paper_figure": "Figure 4",
+    "repo_status": "adapted",
+    "paper_role": "representative profile panels",
+    "repo_equivalent": "Representative time-series profiles for selected test trajectories",
+    "notes": "Time replaces depth because the current data have no spatial coordinate."
+  },
+  {
+    "paper_figure": "Figure 5",
+    "repo_status": "adapted",
+    "paper_role": "second representative profile panel family",
+    "repo_equivalent": "A second representative profile panel family on repo-native variables",
+    "notes": "Keeps the paper's comparison role while staying within available data."
+  },
+  {
+    "paper_figure": "Figure 6",
+    "repo_status": "adapted",
+    "paper_role": "truth/prediction/error fields",
+    "repo_equivalent": "Feature-time heatmaps for one representative rollout",
+    "notes": "A representative rollout stands in for the paper's space-time field."
+  },
+  {
+    "paper_figure": "Figure 7",
+    "repo_status": "adapted",
+    "paper_role": "breakthrough curves",
+    "repo_equivalent": "Representative chemistry output curves for one reference rollout",
+    "notes": "Uses a median-RMSE rollout instead of an outlet transport experiment."
+  },
+  {
+    "paper_figure": "Figure 8",
+    "repo_status": "unsupported",
+    "paper_role": "derived solid-state diagnostics",
+    "repo_equivalent": "No repo-native equivalent without pyrite-mass or reaction-rate state",
+    "notes": "The current dataset does not expose the paper's mechanistic latent variables."
+  },
+  {
+    "paper_figure": "Figure 9",
+    "repo_status": "direct",
+    "paper_role": "parity and correlation plots",
+    "repo_equivalent": "Predicted-vs-actual scatter across all variables",
+    "notes": "This is a direct evaluation analog for agreement assessment."
+  },
+  {
+    "paper_figure": "Figure 10",
+    "repo_status": "unsupported",
+    "paper_role": "ablation / data density",
+    "repo_equivalent": "No repo-native equivalent without spatial grids or retrained temporal-density ablation experiments",
+    "notes": "Sequence length is not the same as the paper's spatial/temporal training-data density study."
+  },
+  {
+    "paper_figure": "Figure 11",
+    "repo_status": "adapted",
+    "paper_role": "sensitivity analysis",
+    "repo_equivalent": "Normalized-vs-original-scale sensitivity heatmaps",
+    "notes": "Reuses saved experiments to show metric sensitivity rather than physics-loss sensitivity."
+  },
+  {
+    "paper_figure": "Figure 12",
+    "repo_status": "adapted",
+    "paper_role": "generalization study",
+    "repo_equivalent": "Initial-state novelty vs rollout RMSE",
+    "notes": "Measures how far test initial conditions drift from the training manifold."
+  }
+]

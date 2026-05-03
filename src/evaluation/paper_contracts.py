@@ -112,10 +112,10 @@ PAPER_FIGURE_SPECS: tuple[PaperFigureSpec, ...] = (
     ),
     PaperFigureSpec(
         paper_figure="Figure 10",
-        repo_status="adapted",
+        repo_status="unsupported",
         paper_role="ablation / data density",
-        repo_equivalent="Sequence-length and hidden-size ablation heatmap",
-        notes="Uses the saved experiment matrix already present in the repository.",
+        repo_equivalent="No repo-native equivalent without spatial grids or retrained temporal-density ablation experiments",
+        notes="Sequence length is not the same as the paper's spatial/temporal training-data density study.",
     ),
     PaperFigureSpec(
         paper_figure="Figure 11",

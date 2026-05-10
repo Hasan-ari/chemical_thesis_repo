@@ -1,5 +1,30 @@
 # Agent Instructions
 
+## Operating Protocol
+
+Use this file as the repo-level router and enforcer. Keep detailed workflows in
+skills; do not duplicate skill bodies here.
+
+Before substantial code, data, thesis-writing, learning, or Obsidian-memory
+work:
+
+1. Read this file.
+2. Stop and load `thesis-socratic-code-ownership`.
+3. If that skill is unavailable, say so and manually follow its gates:
+   context, required skills, Socratic question, scientific understanding, code
+   ownership, debate, learning check, verification, and Obsidian memory.
+
+For all work:
+
+- Inspect real files before editing or summarizing.
+- Prefer GitHub connector tools for live PR/issue context; use local `gh` only
+  when needed and authenticated.
+- Keep PR scope explicit. Stage only files that belong to the requested change.
+- Keep Obsidian vault notes out of git.
+- Treat private mail and local data as sensitive unless the user explicitly
+  includes them in scope.
+- Verify before claiming completion.
+
 ## Project Context
 
 This repository is an MSc thesis project on LSTM/RNN surrogate models for
@@ -21,9 +46,12 @@ Team context:
 - Student: data pipeline, PyTorch LSTM/RNN surrogate modelling, evaluation, and
   thesis writing.
 
-## Current Repository State
+## Known Recent Repository State
 
-Active branch at the time this file was created: `report/ch2-data`.
+This section is a snapshot, not a substitute for live inspection. Always run
+`git status --short --branch` and inspect the relevant files before acting.
+
+Known recent branch context: `report/ch2-data`.
 
 The current report-writing effort is Chapter 2 / Data. The recent local history
 shows:
@@ -53,10 +81,12 @@ The intended workflow is issue-driven: understand, design, code or write, test,
 then commit. The thesis report plan expects one issue/PR per chapter or figure
 group.
 
-GitHub is the intended tracker for this repo, but local `gh` authentication may
-be invalid in this workspace. If GitHub issue/PR lookup fails, state that
-clearly and fall back to local git history and repo documents instead of
-inventing issue state.
+GitHub is the intended tracker for this repo. Prefer GitHub connector tools for
+live issue/PR context. Use local `gh` only when a connector workflow is
+insufficient and `gh` is authenticated.
+
+If GitHub lookup fails, state that clearly and fall back to local git history
+and repo documents instead of inventing issue state.
 
 ## Sensitive And Local-Only Data
 
@@ -69,7 +99,7 @@ generated LaTeX/build artifacts are local working context unless the user asks
 to version them.
 
 The worktree may already contain user changes. Do not revert unrelated changes.
-At creation time, these unrelated changes existed:
+Known local changes have included:
 
 - deleted `.cursor/...` files
 - untracked `data/Calcite_wat_sat_data/`
@@ -317,8 +347,81 @@ claims beyond the data/model.
 
 Use local skills when they apply:
 
+- `thesis-socratic-code-ownership` is mandatory for substantial code, data,
+  thesis-writing, learning, or Obsidian-memory work in this repo.
 - `karpathy-guidelines` for surgical, verifiable code work.
 - `grill-with-docs` for plan/domain terminology stress tests.
 - `improve-codebase-architecture` for architecture review.
 - `obsidian-*` and `json-canvas` for vault work.
-- GitHub plugin skills for issue/PR/CI/publish workflows when credentials work.
+- Use GitHub connector first for PR/issue context; use local `gh` only when
+  needed and authenticated.
+
+## Project Working Rules
+
+These rules apply to every task in this project unless explicitly overridden.
+Bias toward caution over speed on non-trivial work. Use judgment on trivial
+tasks.
+
+### Rule 1 — Think Before Coding
+
+State assumptions explicitly. If uncertain, ask rather than guess. Present
+multiple interpretations when ambiguity exists. Push back when a simpler
+approach exists. Stop when confused and name what is unclear.
+
+### Rule 2 — Simplicity First
+
+Use the minimum code that solves the problem. Add nothing speculative. Do not
+add features beyond what was asked. Do not add abstractions for single-use code.
+If a senior engineer would call it overcomplicated, simplify.
+
+### Rule 3 — Surgical Changes
+
+Touch only what is needed. Clean up only your own mess. Do not improve adjacent
+code, comments, or formatting. Do not refactor unrelated code. Match existing
+style.
+
+### Rule 4 — Goal-Driven Execution
+
+Define success criteria before doing substantial work. Loop until verified.
+Strong success criteria should make it clear what command, artifact, or behavior
+proves the task is handled.
+
+### Rule 5 — Use Deterministic Tools For Deterministic Work
+
+Use code and shell tools for routing, counting, parsing, retries, and mechanical
+transforms. Use the model for judgment, explanation, design, synthesis, and
+review. If code can answer a factual/mechanical question more reliably, run
+code.
+
+### Rule 6 — Read Before Writing
+
+Before adding or changing code, read the relevant exports, immediate callers,
+tests, and shared utilities. If the current structure is unclear, ask or inspect
+more before editing.
+
+### Rule 7 — Surface Conflicts, Do Not Average Them
+
+If two patterns contradict, choose one based on recency, test coverage, and
+local convention. Explain the choice. Flag the other for cleanup if needed. Do
+not blend conflicting patterns silently.
+
+### Rule 8 — Tests Verify Intent
+
+Tests should encode why behavior matters, not just what happened once. A test
+that cannot fail when the intended logic breaks is weak.
+
+### Rule 9 — Checkpoint After Significant Steps
+
+After meaningful progress, summarize what changed, what is verified, and what
+remains. Do not continue from a state you cannot describe clearly.
+
+### Rule 10 — Match Codebase Conventions
+
+Conformance beats personal taste inside this codebase. If a convention appears
+harmful, surface it and explain the tradeoff instead of forking silently.
+
+### Rule 11 — Fail Loud
+
+Do not hide skipped work, skipped tests, uncertainty, or partial completion.
+`Completed` is wrong if anything required was skipped silently. `Tests pass` is
+wrong if only a subset was run without saying so.

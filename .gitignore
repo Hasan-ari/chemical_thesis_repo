@@ -109,3 +109,8 @@ notes/
 # ============================================
 data/phreeqc_v23/preview/
 data/phreeqc_v23/eda/
+
+# ============================================
+# LOCAL PROFESSOR DATA (too large for normal git)
+# ============================================
+data/wat_sat_data/

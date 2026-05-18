@@ -25,6 +25,19 @@ For all work:
   includes them in scope.
 - Verify before claiming completion.
 
+Teaching and explanation standard:
+
+- Be highly explanatory. Do not assume the student remembers deep learning,
+  Python, statistics, linear algebra, calculus, or PHREEQC terminology.
+- When using an English technical term, define it in plain language on first
+  use. Prefer the pattern: `term` = short meaning, then why it matters here.
+- Break complex ideas into small parts: intuition first, then the technical
+  mechanism, then how it affects the code, data, model, or thesis claim.
+- For code and data questions, explain what the artifact does, where the value
+  comes from, why the behavior happens, and what assumption could be wrong.
+- Ask Socratic questions in Turkish. Use them to check understanding, not to
+  block progress unnecessarily.
+
 ## Project Context
 
 This repository is an MSc thesis project on LSTM/RNN surrogate models for
@@ -65,8 +78,6 @@ Root `README.md`, `CONTEXT.md`, and `docs/adr/` do not exist yet. Until those
 are created, use this file plus the files below as the repo memory:
 
 - `docs/plans/2026-05-03-thesis-report-design.md`
-- `docs/study_plan_lstm.md`
-- `docs/paper_figures/*.md`
 - `src/data/constants.py`
 - `src/data/*`
 - `src/evaluation/*`
@@ -102,9 +113,8 @@ The worktree may already contain user changes. Do not revert unrelated changes.
 Known local changes have included:
 
 - deleted `.cursor/...` files
-- untracked `data/Calcite_wat_sat_data/`
-- untracked `data/Trona_par_sat_data/`
-- untracked `data/Trona_par_sat_no_solution_data/`
+- local-only `data/wat_sat_data/` professor data, ignored because it is too
+  large for normal git history
 
 ## Active Data Contract: PHREEQC v23
 
@@ -134,23 +144,28 @@ Important discrepancy to check before changing data logic:
 gas equilibration occurs after the first integration step, but the current
 loader reads all 101 rows and only drops `time_d`.
 
-## New Professor Data: Trona And Calcite
+## New Professor Data: Water-Saturated Mineral Sets
 
-The current workspace includes three newer untracked data sets from May 2026:
+The current workspace includes newer local-only data under `data/wat_sat_data/`.
+This folder is ignored because it is roughly 902 MB and should not enter normal
+git history.
 
-- `data/Trona_par_sat_data/`
-- `data/Trona_par_sat_no_solution_data/`
-- `data/Calcite_wat_sat_data/`
+- `data/wat_sat_data/Calcite_wat_sat_data/`
+- `data/wat_sat_data/Dolomite_wat_sat_data/`
+- `data/wat_sat_data/Halite_wat_sat_data/`
+- `data/wat_sat_data/Trona_par_sat_data/`
+- `data/wat_sat_data/Trona_par_sat_no_solution_data/`
 
 These are not yet integrated into the active LSTM loader.
 
 Observed structure:
 
+- `Calcite_wat_sat_data`: 991 outputs, 9 failed inputs, 301 time steps, 33 columns.
+- `Dolomite_wat_sat_data`: 991 outputs, 9 failed inputs, 301 time steps, 33 columns.
+- `Halite_wat_sat_data`: 940 outputs, 60 failed inputs, 301 time steps, 33 columns.
 - `Trona_par_sat_data`: 993 outputs, 7 failed inputs, 301 time steps, 33 columns.
 - `Trona_par_sat_no_solution_data`: 989 outputs, 11 failed inputs, 301 time
   steps, 27 columns.
-- `Calcite_wat_sat_data`: 991 outputs, 9 failed inputs, 301 time steps, 33
-  columns.
 
 These data sets represent REV-style sampling: representative element volume
 around 1 cubic meter, porosity sampled roughly between 0.10 and 0.30, water/gas
@@ -293,12 +308,6 @@ Quality checks, if dependencies are installed:
 env/bin/python -m ruff check .
 env/bin/python -m ruff format --check .
 env/bin/python -m pre_commit run --all-files
-```
-
-Training smoke test, if needed:
-
-```bash
-env/bin/python run_experiment.py --seq_len 3 --hidden_size 64 --epochs 1 --output_dir /tmp/chemical_thesis_smoke
 ```
 
 Do not run full matrix training unless explicitly asked; it is expensive and

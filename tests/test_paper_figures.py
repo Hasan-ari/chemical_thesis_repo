@@ -9,14 +9,22 @@ import numpy as np
 from src.evaluation.paper_figures import (
     build_paper_figure_manifest,
     cleanup_legacy_figure_outputs,
+    collect_experiment_metric_rows,
     compute_initial_state_novelty,
+    generate_full_paper_figure_bundle,
+    get_full_requested_figure_artifacts,
     get_requested_figure_artifacts,
     get_metric_contract,
     get_paper_figure_checklist,
     normalize_result_metrics,
     select_reference_trajectory_index,
     select_novelty_representative_indices,
+    plot_lstm_architecture_schematic,
+    plot_metric_sensitivity_summary,
+    plot_sequence_sensitivity_summary,
+    plot_workflow_schematic,
     summarize_generalization_bins,
+    summarize_parity_quality,
     validate_repo_env_python,
     write_figure_markdown_files,
 )
@@ -67,6 +75,30 @@ class PaperFigureChecklistTests(unittest.TestCase):
         )
         self.assertIsNone(artifacts["Figure 8"]["image_filename"])
         self.assertEqual(artifacts["Figure 12"]["markdown_filename"], "figure12.md")
+
+    def test_full_requested_artifacts_cover_all_paper_figures(self) -> None:
+        artifacts = {
+            item["paper_figure"]: item for item in get_full_requested_figure_artifacts()
+        }
+
+        self.assertEqual(
+            list(artifacts),
+            [f"Figure {idx}" for idx in range(1, 13)],
+        )
+        self.assertEqual(
+            artifacts["Figure 1"]["image_filename"],
+            "figure01_workflow_schematic.png",
+        )
+        self.assertEqual(
+            artifacts["Figure 2"]["image_filename"],
+            "figure02_lstm_architecture.png",
+        )
+        self.assertIsNone(artifacts["Figure 8"]["image_filename"])
+        self.assertIsNone(artifacts["Figure 10"]["image_filename"])
+        self.assertEqual(
+            artifacts["Figure 12"]["markdown_filename"],
+            "figure12.md",
+        )
 
 
 class MetricContractTests(unittest.TestCase):
@@ -143,6 +175,26 @@ class GeneralizationHelperTests(unittest.TestCase):
 
         self.assertEqual(indices, [1, 3, 5])
 
+    def test_summarize_parity_quality_reports_r2_and_rmse(self) -> None:
+        truth = np.array(
+            [
+                [[1.0, 10.0], [2.0, 20.0], [3.0, 30.0]],
+                [[2.0, 20.0], [3.0, 30.0], [4.0, 40.0]],
+            ]
+        )
+        pred = truth.copy()
+
+        summary = summarize_parity_quality(
+            all_pred_raw=pred,
+            test_raw=truth,
+            seq_len=1,
+            feature_names=["a", "b"],
+        )
+
+        self.assertEqual(summary["a"]["r2"], 1.0)
+        self.assertEqual(summary["a"]["rmse"], 0.0)
+        self.assertEqual(summary["b"]["r2"], 1.0)
+
 
 class WriteupTests(unittest.TestCase):
     def test_cleanup_legacy_figure_outputs_removes_old_combined_files(self) -> None:
@@ -190,6 +242,77 @@ class WriteupTests(unittest.TestCase):
             self.assertIn("initial-state novelty", figure12_text)
             self.assertIn("not a spatial-zone relocation test", figure12_text)
 
+    def test_full_writeups_explain_original_and_repo_measurements(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="paper-figure-full-writeups-") as temp_dir:
+            output_dir = Path(temp_dir)
+            figure_artifacts = {
+                f"Figure {idx}": {
+                    "image": f"figure{idx:02d}.png",
+                    "repo_status": "adapted",
+                }
+                for idx in range(1, 13)
+            }
+            figure_artifacts["Figure 8"]["image"] = None
+            figure_artifacts["Figure 8"]["repo_status"] = "unsupported"
+            figure_artifacts["Figure 10"]["image"] = None
+            figure_artifacts["Figure 10"]["repo_status"] = "unsupported"
+
+            markdown_paths = write_figure_markdown_files(
+                output_dir=output_dir,
+                figure_artifacts=figure_artifacts,
+                full_package=True,
+            )
+            figure1_text = (output_dir / "figure01.md").read_text()
+            figure8_text = (output_dir / "figure08.md").read_text()
+            figure10_text = (output_dir / "figure10.md").read_text()
+
+            self.assertEqual(len(markdown_paths), 12)
+            self.assertIn("Original Paper Role", figure1_text)
+            self.assertIn("Repo Analog", figure1_text)
+            self.assertIn("What It Measures In This Study", figure1_text)
+            self.assertIn("No PNG is produced", figure8_text)
+            self.assertIn("pyrite mass", figure8_text)
+            self.assertIn("No PNG is produced", figure10_text)
+            self.assertIn("spatial/temporal data-density", figure10_text)
+
+
+class FullPackagePlotTests(unittest.TestCase):
+    def test_full_package_schematic_plots_create_png_files(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="paper-figure-schematics-") as temp_dir:
+            output_dir = Path(temp_dir)
+
+            plot_workflow_schematic(output_dir / "figure01.png")
+            plot_lstm_architecture_schematic(output_dir / "figure02.png")
+
+            self.assertTrue((output_dir / "figure01.png").exists())
+            self.assertTrue((output_dir / "figure02.png").exists())
+
+    def test_metric_sensitivity_plot_creates_png_file(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="paper-figure-sensitivity-") as temp_dir:
+            output_dir = Path(temp_dir)
+            rows = [
+                {
+                    "experiment": "seq3_h128",
+                    "seq_len": 3,
+                    "hidden_size": 128,
+                    "nrmse_total": 0.2,
+                    "overall_rmse_mean": 0.05,
+                    "training_time": 10.0,
+                },
+                {
+                    "experiment": "seq5_h128",
+                    "seq_len": 5,
+                    "hidden_size": 128,
+                    "nrmse_total": 0.3,
+                    "overall_rmse_mean": 0.06,
+                    "training_time": 12.0,
+                },
+            ]
+
+            plot_metric_sensitivity_summary(rows, output_dir / "figure11.png")
+
+            self.assertTrue((output_dir / "figure11.png").exists())
+
 
 class ManifestTests(unittest.TestCase):
     def test_build_manifest_includes_markdown_and_reference_metadata(self) -> None:
@@ -222,6 +345,38 @@ class ManifestTests(unittest.TestCase):
         self.assertIsNone(manifest["figures"]["Figure 8"]["image"])
         self.assertEqual(manifest["figures"]["Figure 8"]["markdown"], "figure08.md")
         self.assertEqual(manifest["canonical_metrics"]["overall_rmse_mean"], 0.2)
+
+    def test_collect_experiment_metric_rows_reads_saved_results_and_stats(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="paper-figure-metrics-") as temp_dir:
+            root = Path(temp_dir)
+            exp_dir = root / "seq3_h128"
+            stats_dir = exp_dir / "comprehensive"
+            stats_dir.mkdir(parents=True)
+            (exp_dir / "results.json").write_text(
+                '{"seq_len": 3, "hidden_size": 128, "rmse_total": 0.2, "training_time": 10.0}'
+            )
+            (stats_dir / "comprehensive_stats.json").write_text(
+                '{"overall_rmse": {"mean": 0.05}}'
+            )
+
+            rows = collect_experiment_metric_rows(root)
+
+            self.assertEqual(
+                rows,
+                [
+                    {
+                        "experiment": "seq3_h128",
+                        "seq_len": 3,
+                        "hidden_size": 128,
+                        "nrmse_total": 0.2,
+                        "overall_rmse_mean": 0.05,
+                        "training_time": 10.0,
+                    }
+                ],
+            )
+
+    def test_generate_full_bundle_api_is_exported(self) -> None:
+        self.assertTrue(callable(generate_full_paper_figure_bundle))
 
 
 class EnvValidationTests(unittest.TestCase):

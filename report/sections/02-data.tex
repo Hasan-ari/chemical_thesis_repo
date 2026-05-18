@@ -1,0 +1,100 @@
+\section{Data}\label{sec:data}
+
+\subsection{Source}\label{sec:data:source}
+
+The dataset is produced by PHREEQC version~3, driven by the
+\texttt{phreeqc.dat} thermodynamic database and a custom kinetic
+model file (\texttt{model\_v23.phr}). $N = 1000$ runs are generated;
+the database and the model file are identical across runs.
+
+\subsection{Per-run sampling}\label{sec:data:knobs}
+
+Each run is parameterised by $24$ input entries, four of which are
+sampled independently per run (\cref{tab:data:knobs}). Three of the
+four -- \texttt{ALKALINITY}, \texttt{CARBONDIOXIDE},
+\texttt{HYDROGEN\_SULFIDE} -- are scaled by an independent draw from
+$U(0.5, 1.5)$ around their default. The fourth, \texttt{QUARTZ},
+drives a cascade that partitions a fixed total rock mass
+$M_{\text{rock}} = 0.1$\,kg across the five mineral phases:
+\begin{align}
+m_{\text{Qz}}    &= M_{\text{rock}} \cdot u_1, \quad u_1 \sim U(0.65, 0.95) \label{eq:rock:qz} \\
+m_{\text{Cal}}   &= (M_{\text{rock}} - m_{\text{Qz}}) \cdot u_2, \quad u_2 \sim U(0.30, 0.80) \label{eq:rock:cal} \\
+m_{\text{Py}} = m_{\text{Ba}} = m_{\text{Il}}
+                 &= \tfrac{1}{3}\bigl(M_{\text{rock}} - m_{\text{Qz}} - m_{\text{Cal}}\bigr). \label{eq:rock:rest}
+\end{align}
+The total rock mass is conserved at $0.1$\,kg in every run.
+
+\begin{table}[ht]
+  \centering
+  \caption{The four input variables sampled per run. The first three
+  are scaled by an independent draw from $U(0.5, 1.5)$;
+  \texttt{QUARTZ} drives the rock partition in
+  \cref{eq:rock:qz,eq:rock:cal,eq:rock:rest}.}
+  \label{tab:data:knobs}
+  \begin{tabular}{llll}
+    \toprule
+    Variable & Default & Range & Unit \\
+    \midrule
+    \texttt{ALKALINITY}        & $4.90\times10^{-3}$ & $[2.45,\,7.35]\times10^{-3}$ & mol/kgw \\
+    \texttt{CARBONDIOXIDE}     & $2.9$               & $[1.45,\,4.35]$              & atm \\
+    \texttt{HYDROGEN\_SULFIDE} & $4\times10^{-3}$    & $[2,\,6]\times10^{-3}$       & atm \\
+    \texttt{QUARTZ}            & --- (cascade)        & see \cref{eq:rock:qz}        & kg \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The remaining ten species (sodium, potassium, magnesium, chloride,
+iron, sulfur, calcium, formate, methane, hydrogen) are held at their
+default values, and acetate is forced to $1\times10^{-6}$. Across all
+$1000$ runs these eleven entries are byte-identical.
+
+\subsection{Derived per-mineral quantities}\label{sec:data:derived}
+
+For each mineral, an initial mole count $n$ and a reactive surface
+area $A$ are derived from the per-run mass $m$ and three constants --
+molecular weight $M$, particle diameter $d$, and density $\rho$
+(\cref{tab:data:minprops}):
+\begin{equation}\label{eq:mol-area}
+  n = \frac{1000\,m}{M}, \qquad A = \frac{6\,m}{\rho\,d}.
+\end{equation}
+The factor $1000$ converts $m$ from kg to g. The surface-area
+expression assumes spherical particles. The triple $(M, d, \rho)$ is
+constant across runs.
+
+\begin{table}[ht]
+  \centering
+  \caption{Mineral constants used in \cref{eq:mol-area}.}
+  \label{tab:data:minprops}
+  \begin{tabular}{lrrr}
+    \toprule
+    Mineral & $M$ (g/mol) & $d$ ($\mu$m) & $\rho$ (kg/m$^3$) \\
+    \midrule
+    Quartz  &  60 & 200 & 2650 \\
+    Calcite & 100 & 100 & 2710 \\
+    Pyrite  & 120 &  10 & 5000 \\
+    Barite  & 234 &  10 & 4500 \\
+    Illite  & 390 &   1 & 2700 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Output structure}\label{sec:data:out}
+
+For each run, PHREEQC writes a tabular text file with one header row
+and $101$ data rows. Simulated time advances $96$ days in $100$ equal
+steps, so $\Delta t = 0.96$\,d ($\approx 23$\,h). Row~$1$ records the
+state at $t = 0$; rows $2$--$101$ record the state after each
+integration step. Each row contains $13$ columns:
+\texttt{time\_d}, \texttt{pH}, \texttt{Ptot\_atm}, \texttt{pH2\_atm},
+\texttt{pCO2\_atm}, \texttt{pCH4\_atm}, \texttt{CH4\_g\_mol},
+\texttt{H2\_g\_mol}, \texttt{CO2\_g\_mol}, \texttt{SO4},
+\texttt{Formate}, \texttt{Acetate}, \texttt{Ca}.
+
+The transition between row~$1$ and row~$2$ is not a smooth dynamic
+step. The user-specified initial conditions are echoed verbatim at
+$t = 0$, and the gas phase is equilibrated only during the first
+integration step. In run~$1$, for instance, \texttt{Ptot\_atm} jumps
+from $2.34$ to $79.84$\,atm and \texttt{pH2\_atm} from $0$ to
+$9.10$\,atm across that single step. The downstream pipeline
+therefore treats row~$2$ ($t = 0.96$\,d) as the effective starting
+state and drops row~$1$.

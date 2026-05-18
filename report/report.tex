@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Encoding and fonts ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% --- Math ---
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+
+% --- Layout ---
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% --- Figures and tables ---
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% --- Cross-references ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    urlcolor=blue
+}
+\usepackage{cleveref}
+
+% --- Bibliography ---
+\usepackage[backend=biber, style=numeric, sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+% --- Document metadata ---
+\title{LSTM Surrogate Modelling of PHREEQC Geochemical Simulations \\
+       for Underground Hydrogen Storage}
+\author{Hasan Ar\i \\ \small{MSc Thesis, Computer Science}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\input{sections/01-introduction}
+\input{sections/02-data}
+\input{sections/03-model}
+\input{sections/04-training}
+\input{sections/05-evaluation}
+\input{sections/06-results}
+
+\printbibliography
+
+\end{document}

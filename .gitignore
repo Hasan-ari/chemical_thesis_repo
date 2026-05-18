@@ -9,6 +9,8 @@ chem_prof_mails/
 .vscode/
 .idea/
 .serena/
+.agents/
+skills-lock.json
 
 # ============================================
 # PYTHON
@@ -77,3 +79,38 @@ $RECYCLE.BIN/
 .claude
 .thesis
 .tmp*
+
+# ============================================
+# LATEX BUILD ARTIFACTS
+# ============================================
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+report/report.pdf
+
+# ============================================
+# LOCAL WORKSPACE
+# ============================================
+learning_notes/
+scratch/
+notes/
+
+# ============================================
+# PHREEQC PREVIEW (regenerable from input/output txt)
+# ============================================
+data/phreeqc_v23/preview/
+data/phreeqc_v23/eda/
+
+# ============================================
+# LOCAL PROFESSOR DATA (too large for normal git)
+# ============================================
+data/wat_sat_data/

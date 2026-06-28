@@ -1,0 +1,91 @@
+{
+  "experiment_dir": "experiments/seq3_h128",
+  "output_image": "experiments/seq3_h128/trajectory_overlays/same_feature_overlay.png",
+  "output_json": "experiments/seq3_h128/trajectory_overlays/same_feature_overlay.json",
+  "trajectory_index": 90,
+  "source_trajectory_id": 900,
+  "seq_len": 3,
+  "checkpoint": "best_model.pt",
+  "selected_features": [
+    "pH",
+    "Ptot_atm",
+    "pH2_atm",
+    "pCO2_atm",
+    "pCH4_atm",
+    "H2_g_mol",
+    "CH4_g_mol",
+    "CO2_g_mol",
+    "SO4",
+    "Formate",
+    "Acetate",
+    "Ca"
+  ],
+  "feature_units": {
+    "pH": "-",
+    "Ptot_atm": "atm",
+    "pH2_atm": "atm",
+    "pCO2_atm": "atm",
+    "pCH4_atm": "atm",
+    "H2_g_mol": "mol",
+    "CH4_g_mol": "mol",
+    "CO2_g_mol": "mol",
+    "SO4": "mol/kgw",
+    "Formate": "mol/kgw",
+    "Acetate": "mol/kgw",
+    "Ca": "mol/kgw"
+  },
+  "feature_pairs": {
+    "pH": {
+      "truth": "pH",
+      "prediction": "pH"
+    },
+    "Ptot_atm": {
+      "truth": "Ptot_atm",
+      "prediction": "Ptot_atm"
+    },
+    "pH2_atm": {
+      "truth": "pH2_atm",
+      "prediction": "pH2_atm"
+    },
+    "pCO2_atm": {
+      "truth": "pCO2_atm",
+      "prediction": "pCO2_atm"
+    },
+    "pCH4_atm": {
+      "truth": "pCH4_atm",
+      "prediction": "pCH4_atm"
+    },
+    "H2_g_mol": {
+      "truth": "H2_g_mol",
+      "prediction": "H2_g_mol"
+    },
+    "CH4_g_mol": {
+      "truth": "CH4_g_mol",
+      "prediction": "CH4_g_mol"
+    },
+    "CO2_g_mol": {
+      "truth": "CO2_g_mol",
+      "prediction": "CO2_g_mol"
+    },
+    "SO4": {
+      "truth": "SO4",
+      "prediction": "SO4"
+    },
+    "Formate": {
+      "truth": "Formate",
+      "prediction": "Formate"
+    },
+    "Acetate": {
+      "truth": "Acetate",
+      "prediction": "Acetate"
+    },
+    "Ca": {
+      "truth": "Ca",
+      "prediction": "Ca"
+    }
+  },
+  "selection": "median normalized rollout RMSE",
+  "all_test_output_image": "experiments/seq3_h128/trajectory_overlays/all_test_same_feature_overlay.png",
+  "all_test_percentile_band_image": "experiments/seq3_h128/trajectory_overlays/all_test_percentile_band_overlay.png",
+  "n_test_trajectories": 100
+}

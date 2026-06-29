@@ -2,10 +2,10 @@
 
 This project uses two memory layers:
 
-- `docs/learning-log/`: human-readable daily Markdown notes.
+- `docs/learning-log/`: local-only human-readable daily Markdown notes.
 - `.mcp-memory/memory.jsonl`: private MCP Memory storage for agent-readable facts.
 
-Do not commit `.mcp-memory/`. It is ignored by git.
+Do not commit `.mcp-memory/` or `docs/learning-log/`. Both are ignored by git.
 
 ## Why This Split
 
@@ -56,11 +56,24 @@ Some MCP clients use JSON config instead of Codex TOML. For those clients:
 }
 ```
 
-## First Memory Facts To Store
+## Learning Memory Schema
 
-After the MCP server is connected, store these facts:
+Use MCP Memory for compact facts that should affect future sessions.
 
-- The user wants simple English and ELI10 analogies while coding.
-- The thesis pipeline target is `Input.txt conditions + time_d -> full Output.txt trajectory`.
-- The older model used sliding windows over real output rows.
-- The new pipeline should be Colab-friendly, config-driven, and tracked with SQLite plus CSV.
+Core entities:
+
+- `student_understanding_profile`: how the student learns best.
+- `learning_memory_protocol`: when and how to save learning progress.
+- `learning_session_<timestamp>`: one session or major slice, using
+  `YYYY-MM-DDTHH:MM:SS+03:00`.
+- `concept_<slug>`: one important concept, such as `concept_tensor` or
+  `concept_learning_rate`.
+
+Core relations:
+
+- `student_understanding_profile` `uses` `learning_memory_protocol`
+- `learning_session_<timestamp>` `covered` `concept_<slug>`
+- `concept_<slug>` `supports` the relevant code or workflow slice when useful
+
+Keep MCP Memory short. Long explanations, formulas, examples, and study notes
+belong in `docs/learning-log/`.

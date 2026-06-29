@@ -62,11 +62,45 @@ Calcite/Dolomite simulations. Keep new training-pipeline work under
 The user does not want Obsidian as the default memory surface for this project.
 Use this split instead:
 
-- `docs/learning-log/YYYY-MM-DD.md` for human-readable daily learning and work notes.
+- `docs/learning-log/YYYY-MM-DD.md` for local-only human-readable daily learning
+  and work notes.
 - `.mcp-memory/memory.jsonl` for private MCP Memory storage when the memory server is enabled.
 
-Do not commit `.mcp-memory/`. Keep daily notes concise, simple-English, and tied
-to code or pipeline progress.
+Do not commit `.mcp-memory/` or `docs/learning-log/`. Keep daily notes concise,
+simple-English, and tied to code or pipeline progress.
+
+## Learning Memory Hook
+
+Run this hook after each meaningful code or concept slice. A slice is meaningful
+when it changes code, clarifies a model/data contract, explains a new
+math/ML/statistics term, or changes the next thesis step.
+
+- Before the slice, state the goal, required concepts, and expected data/tensor
+  shapes. If no tensor is involved, state the relevant file/data shape instead.
+- During the slice, teach in this order: intuition, ELI10 analogy, minimal math,
+  shapes, code path, and verification.
+- Define every new technical term the first time it appears. If a prerequisite
+  is too large for pair-coding, mark it as a focused study stop instead of
+  pretending it was learned.
+- After the slice, ask 2-3 learning-check questions and record whether the
+  answer looked solid, partial, or weak.
+- Save a compact MCP Memory update for agent recall and a Markdown learning-log
+  entry for human review.
+
+Use MCP Memory for durable facts such as learning preferences, concept status,
+current pipeline decisions, and weak topics. Do not store secrets, tokens,
+private emails, raw sensitive data, or large dataset contents.
+
+Use Markdown logs for the readable study trail. These are local-only and ignored
+by git:
+
+- daily path: `docs/learning-log/YYYY-MM-DD.md`
+- template path: `docs/learning-log/templates/daily-learning-log.md`
+
+Each learning-log entry should include: today's goal, code slice, concepts
+touched, ELI10 analogy, minimal math, tensor/data shapes, code files/functions,
+what the student understood, what is still weak, learning checks, next review
+items, and MCP memory summary.
 
 # Operating Instructions
 

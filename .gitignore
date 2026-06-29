@@ -105,6 +105,9 @@ learning_notes/
 scratch/
 notes/
 .mcp-memory/
+docs/learning-log/
+runs/
+processed/
 
 # ============================================
 # PHREEQC PREVIEW (regenerable from input/output txt)

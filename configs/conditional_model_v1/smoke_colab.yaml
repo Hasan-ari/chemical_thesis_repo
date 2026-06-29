@@ -1,0 +1,44 @@
+experiment:
+  name: smoke_condition_lstm_colab
+  run_root: ${RUN_ROOT}
+
+data:
+  processed_root: ${PROCESSED_ROOT}
+  use_cache: true
+  rebuild_cache: true
+  write_outputs_csv: false
+  datasets:
+    - name: calcite_wat_sat_data_3
+      rock: Calcite
+      path: ${DATA_ROOT}/wat_sat/Calcite/Calcite_wat_sat_data_3
+      max_runs: 4
+    - name: dolomite_wat_sat_data_2
+      rock: Dolomite
+      path: ${DATA_ROOT}/wat_sat/Dolomite/Dolomite_wat_sat_data_2
+      max_runs: 4
+  split:
+    strategy: rock_aware_run_level
+    train: 0.8
+    val: 0.1
+    test: 0.1
+    seed: 42
+
+model:
+  hidden_size: 8
+  num_layers: 1
+  dropout: 0.0
+
+training:
+  epochs: 1
+  batch_size: 2
+  learning_rate: 0.001
+  weight_decay: 0.0
+  grad_clip: 1.0
+  num_workers: 0
+  seed: 42
+  scheduler:
+    type: none
+
+plots:
+  max_runs: 2
+  features: all

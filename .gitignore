@@ -118,7 +118,7 @@ data/phreeqc_v23/eda/
 # ============================================
 # LOCAL PROFESSOR DATA (too large for normal git)
 # ============================================
-data*
+/data*
 
 
 

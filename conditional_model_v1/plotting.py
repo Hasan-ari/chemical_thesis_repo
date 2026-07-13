@@ -82,6 +82,34 @@ def plot_trajectory_examples(
             plt.close()
 
 
+def plot_rock_overviews(
+    *,
+    time_axis: np.ndarray,
+    output_features: tuple[str, ...],
+    overviews: dict[str, dict[str, dict[str, object]]],
+    output_dir: Path | str,
+) -> None:
+    """Render best, worst, and mean all-output grids for every rock."""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    selected_features = list(output_features)
+    feature_to_index = {
+        feature: index for index, feature in enumerate(output_features)
+    }
+    for rock, rock_overviews in overviews.items():
+        for kind in ("best", "worst", "mean"):
+            overview = rock_overviews[kind]
+            _plot_all_outputs_grid(
+                time_axis=time_axis,
+                y_true=np.asarray(overview["y_true"]),
+                y_pred=np.asarray(overview["y_pred"]),
+                selected_features=selected_features,
+                feature_to_index=feature_to_index,
+                run_id=str(overview["label"]),
+                path=output_dir / f"{_safe_name(rock)}_{kind}_overview.png",
+            )
+
+
 def _plot_all_outputs_grid(
     *,
     time_axis: np.ndarray,

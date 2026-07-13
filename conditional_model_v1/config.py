@@ -39,6 +39,8 @@ class DataConfig:
 
     datasets: tuple[DatasetConfig, ...]
     processed_root: str
+    cache_name: str | None = None
+    require_cache: bool = False
     use_cache: bool = True
     rebuild_cache: bool = False
     write_outputs_csv: bool = False
@@ -76,6 +78,7 @@ class TrainingConfig:
     weight_decay: float = 0.0
     grad_clip: float | None = 1.0
     num_workers: int = 0
+    preprocessing_chunk_runs: int = 256
     seed: int = 42
     scheduler: SchedulerConfig = field(default_factory=SchedulerConfig)
 
@@ -104,6 +107,12 @@ class ExperimentConfig:
     training: TrainingConfig = field(default_factory=TrainingConfig)
     plots: PlotConfig = field(default_factory=PlotConfig)
 
+    @property
+    def cache_dir(self) -> Path:
+        """Return the shared processed-data directory for this experiment."""
+        cache_name = self.data.cache_name or self.name
+        return Path(self.data.processed_root) / cache_name
+
 
 def load_config(path: Path | str) -> ExperimentConfig:
     """Load a YAML config and expand `${ENV_VAR}` placeholders."""
@@ -116,14 +125,30 @@ def load_config(path: Path | str) -> ExperimentConfig:
 
 def parse_config(payload: dict[str, Any]) -> ExperimentConfig:
     """Convert a plain YAML mapping into typed config dataclasses."""
+    experiment_name = _safe_directory_name(payload["experiment"]["name"], "experiment.name")
     data_payload = payload["data"]
     split_payload = data_payload.get("split", {})
     datasets = tuple(DatasetConfig(**dataset) for dataset in data_payload["datasets"])
+    cache_name = data_payload.get("cache_name")
+    if cache_name is not None:
+        cache_name = _safe_directory_name(cache_name, "data.cache_name")
+    require_cache = bool(data_payload.get("require_cache", False))
+    use_cache = bool(data_payload.get("use_cache", True))
+    rebuild_cache = bool(data_payload.get("rebuild_cache", False))
+    if require_cache and rebuild_cache:
+        raise ValueError("data.require_cache and data.rebuild_cache cannot both be true")
+    if require_cache and not use_cache:
+        raise ValueError("data.require_cache requires data.use_cache=true")
+    if cache_name is not None and not require_cache:
+        raise ValueError("data.cache_name requires data.require_cache=true")
+
     data_config = DataConfig(
         datasets=datasets,
         processed_root=data_payload["processed_root"],
-        use_cache=bool(data_payload.get("use_cache", True)),
-        rebuild_cache=bool(data_payload.get("rebuild_cache", False)),
+        cache_name=cache_name,
+        require_cache=require_cache,
+        use_cache=use_cache,
+        rebuild_cache=rebuild_cache,
         write_outputs_csv=bool(data_payload.get("write_outputs_csv", False)),
         split=SplitConfig(**split_payload),
     )
@@ -136,11 +161,14 @@ def parse_config(payload: dict[str, Any]) -> ExperimentConfig:
         weight_decay=float(training_payload.get("weight_decay", 0.0)),
         grad_clip=training_payload.get("grad_clip", 1.0),
         num_workers=int(training_payload.get("num_workers", 0)),
+        preprocessing_chunk_runs=int(
+            training_payload.get("preprocessing_chunk_runs", 256)
+        ),
         seed=int(training_payload.get("seed", 42)),
         scheduler=SchedulerConfig(**scheduler_payload),
     )
     return ExperimentConfig(
-        name=payload["experiment"]["name"],
+        name=experiment_name,
         run_root=payload["experiment"]["run_root"],
         data=data_config,
         model=ModelConfig(**payload.get("model", {})),
@@ -159,3 +187,18 @@ def _parse_plot_config(payload: dict[str, Any]) -> PlotConfig:
         max_runs=None if max_runs is None else int(max_runs),
         features=features,
     )
+
+
+def _safe_directory_name(value: Any, field_name: str) -> str:
+    """Validate config names that become directories below managed roots."""
+    name = str(value)
+    if (
+        not name
+        or name != name.strip()
+        or name in {".", ".."}
+        or "/" in name
+        or "\\" in name
+        or "\x00" in name
+    ):
+        raise ValueError(f"{field_name} must be a single safe directory name")
+    return name

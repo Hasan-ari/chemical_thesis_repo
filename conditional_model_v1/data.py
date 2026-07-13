@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import re
 import json
+import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
@@ -219,6 +220,181 @@ class FullTrajectoryDataset(Dataset):
         return self.x[index], self.y[index]
 
 
+class IndexedTrajectoryDataset(Dataset):
+    """Build one condition+time trajectory sample from a disk-backed target file."""
+
+    def __init__(
+        self,
+        *,
+        conditions_norm: np.ndarray,
+        time_norm: np.ndarray,
+        targets_path: Path | str,
+        indices: np.ndarray,
+    ) -> None:
+        if conditions_norm.ndim != 2:
+            raise ValueError(
+                f"conditions_norm must be 2D, got {conditions_norm.shape}"
+            )
+        if conditions_norm.dtype != np.dtype(np.float32):
+            raise ValueError("conditions_norm must be float32")
+        if conditions_norm.shape[1] == 0:
+            raise ValueError("conditions_norm must contain at least one condition feature")
+        if not np.isfinite(conditions_norm).all():
+            raise ValueError("conditions_norm must be finite")
+        if time_norm.ndim != 1:
+            raise ValueError(f"time_norm must be 1D, got {time_norm.shape}")
+        if time_norm.dtype != np.dtype(np.float32):
+            raise ValueError("time_norm must be float32")
+        if len(time_norm) == 0:
+            raise ValueError("time_norm must contain at least one timestep")
+        if not np.isfinite(time_norm).all():
+            raise ValueError("time_norm must be finite")
+
+        selected = _validated_dataset_indices(indices, conditions_norm.shape[0])
+        self.conditions_norm = np.array(
+            conditions_norm,
+            dtype=np.float32,
+            order="C",
+            copy=True,
+        )
+        self.time_norm = np.array(
+            time_norm,
+            dtype=np.float32,
+            order="C",
+            copy=True,
+        )
+        self.indices = selected
+        self.targets_path = Path(targets_path)
+        self._expected_target_shape: tuple[int, int, int]
+        self._targets: np.memmap | None = None
+        self._target_pid: int | None = None
+
+        header_map = _load_target_memmap(self.targets_path)
+        try:
+            self._expected_target_shape = _validate_target_contract(
+                header_map,
+                n_runs=self.conditions_norm.shape[0],
+                n_timesteps=len(self.time_norm),
+            )
+        finally:
+            header_map._mmap.close()
+
+    def __len__(self) -> int:
+        return len(self.indices)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        if isinstance(index, (bool, np.bool_)) or not isinstance(
+            index,
+            (int, np.integer),
+        ):
+            raise TypeError("dataset index must be an integer")
+        if index < 0 or index >= len(self):
+            raise IndexError("dataset index is outside the split range")
+
+        global_index = int(self.indices[index])
+        targets = self._targets_for_current_process()
+        x = np.empty(
+            (len(self.time_norm), self.conditions_norm.shape[1] + 1),
+            dtype=np.float32,
+        )
+        x[:, :-1] = self.conditions_norm[global_index]
+        x[:, -1] = self.time_norm
+        y = np.array(
+            targets[global_index],
+            dtype=np.float32,
+            order="C",
+            copy=True,
+        )
+        return torch.from_numpy(x), torch.from_numpy(y)
+
+    def close(self) -> None:
+        """Close this process's target mapping; the next item reopens it lazily."""
+        targets = getattr(self, "_targets", None)
+        if targets is not None:
+            targets._mmap.close()
+        self._targets = None
+        self._target_pid = None
+
+    def __getstate__(self) -> dict[str, Any]:
+        """Do not pickle an open mmap into spawned DataLoader workers."""
+        state = self.__dict__.copy()
+        state["_targets"] = None
+        state["_target_pid"] = None
+        return state
+
+    def __del__(self) -> None:
+        try:
+            self.close()
+        except Exception:
+            pass
+
+    def _targets_for_current_process(self) -> np.memmap:
+        current_pid = os.getpid()
+        if self._targets is not None and self._target_pid == current_pid:
+            return self._targets
+
+        self.close()
+        candidate = _load_target_memmap(self.targets_path)
+        try:
+            shape = _validate_target_contract(
+                candidate,
+                n_runs=self.conditions_norm.shape[0],
+                n_timesteps=len(self.time_norm),
+            )
+            if shape != self._expected_target_shape:
+                raise ValueError("targets shape changed after dataset construction")
+        except BaseException:
+            candidate._mmap.close()
+            raise
+        self._targets = candidate
+        self._target_pid = current_pid
+        return candidate
+
+
+def _load_target_memmap(path: Path) -> np.memmap:
+    targets = np.load(path, mmap_mode="r", allow_pickle=False)
+    if not isinstance(targets, np.memmap):
+        raise ValueError(f"targets must be a memory-mappable NPY file: {path}")
+    return targets
+
+
+def _validate_target_contract(
+    targets: np.memmap,
+    *,
+    n_runs: int,
+    n_timesteps: int,
+) -> tuple[int, int, int]:
+    if targets.ndim != 3:
+        raise ValueError(f"targets must be 3D, got {targets.shape}")
+    if targets.dtype != np.dtype(np.float32):
+        raise ValueError("targets must be float32")
+    if targets.shape[0] != n_runs:
+        raise ValueError("target run count must match conditions_norm")
+    if targets.shape[1] != n_timesteps:
+        raise ValueError("target timestep count must match time_norm")
+    if targets.shape[2] <= 0:
+        raise ValueError("targets must contain at least one output feature")
+    return tuple(int(size) for size in targets.shape)
+
+
+def _validated_dataset_indices(indices: np.ndarray, n_runs: int) -> np.ndarray:
+    selected = np.asarray(indices)
+    if selected.ndim != 1:
+        raise ValueError("indices must be one-dimensional")
+    if np.issubdtype(selected.dtype, np.bool_) or not np.issubdtype(
+        selected.dtype,
+        np.integer,
+    ):
+        raise ValueError("indices must contain integer values")
+    if len(selected) == 0:
+        raise ValueError("indices must be non-empty")
+    if len(np.unique(selected)) != len(selected):
+        raise ValueError("indices must be unique")
+    if selected.min() < 0 or selected.max() >= n_runs:
+        raise ValueError("indices contain values outside the valid run range")
+    return selected.astype(np.int64, copy=True)
+
+
 def build_bundle(
     specs: Sequence[DatasetSpec],
     *,
@@ -320,19 +496,21 @@ def write_processed_bundle(
     processed_dir = Path(processed_dir)
     processed_dir.mkdir(parents=True, exist_ok=True)
     inputs.to_csv(processed_dir / "inputs.csv", index=False)
-    outputs.to_csv(processed_dir / "outputs.csv", index=False)
     inventory.to_csv(processed_dir / "run_inventory.csv", index=False)
+    outputs_path = processed_dir / "outputs.csv"
     if not outputs.empty:
-        outputs.to_csv(processed_dir / "outputs.csv", index=False)
+        outputs.to_csv(outputs_path, index=False)
+    else:
+        outputs_path.unlink(missing_ok=True)
     np.savez_compressed(
         processed_dir / "bundle.npz",
         conditions=bundle.conditions,
         trajectories=bundle.trajectories,
         time_axis=bundle.time_axis,
-        run_ids=np.array(bundle.run_ids, dtype=object),
-        rocks=bundle.rocks,
-        condition_features=np.array(bundle.condition_features, dtype=object),
-        output_features=np.array(bundle.output_features, dtype=object),
+        run_ids=np.asarray(bundle.run_ids, dtype=np.str_),
+        rocks=np.asarray(bundle.rocks, dtype=np.str_),
+        condition_features=np.asarray(bundle.condition_features, dtype=np.str_),
+        output_features=np.asarray(bundle.output_features, dtype=np.str_),
     )
     (processed_dir / "schema.json").write_text(
         json.dumps(
@@ -352,16 +530,98 @@ def write_processed_bundle(
 
 def load_cached_bundle(cache_path: Path | str) -> TrajectoryBundle:
     """Load the fast training arrays produced by `write_processed_bundle`."""
-    payload = np.load(cache_path, allow_pickle=True)
-    return TrajectoryBundle(
-        conditions=payload["conditions"],
-        trajectories=payload["trajectories"],
-        time_axis=payload["time_axis"],
-        run_ids=payload["run_ids"].astype(str).tolist(),
-        rocks=payload["rocks"],
-        condition_features=tuple(payload["condition_features"].astype(str).tolist()),
-        output_features=tuple(payload["output_features"].astype(str).tolist()),
+    cache_path = Path(cache_path)
+    required_keys = {
+        "conditions",
+        "trajectories",
+        "time_axis",
+        "run_ids",
+        "rocks",
+        "condition_features",
+        "output_features",
+    }
+    try:
+        with np.load(cache_path, allow_pickle=False) as payload:
+            missing = sorted(required_keys - set(payload.files))
+            if missing:
+                raise ValueError(f"Data cache is missing required arrays: {missing}")
+            conditions = payload["conditions"]
+            trajectories = payload["trajectories"]
+            time_axis = payload["time_axis"]
+            run_ids_array = payload["run_ids"]
+            rocks_array = payload["rocks"]
+            condition_features_array = payload["condition_features"]
+            output_features_array = payload["output_features"]
+    except ValueError as exc:
+        if "Object arrays cannot be loaded" in str(exc):
+            raise ValueError(
+                f"Data cache must use pickle-free Unicode metadata: {cache_path}"
+            ) from exc
+        raise
+
+    metadata_arrays = (
+        run_ids_array,
+        rocks_array,
+        condition_features_array,
+        output_features_array,
     )
+    if any(array.ndim != 1 for array in metadata_arrays):
+        raise ValueError("Cached string arrays must use one-dimensional metadata")
+    run_ids = run_ids_array.astype(str).tolist()
+    rocks = rocks_array.astype(str)
+    condition_features = tuple(condition_features_array.astype(str).tolist())
+    output_features = tuple(output_features_array.astype(str).tolist())
+
+    if conditions.ndim != 2 or trajectories.ndim != 3 or time_axis.ndim != 1:
+        raise ValueError("Cached conditions/time/trajectories have invalid dimensions")
+    n_runs = conditions.shape[0]
+    if n_runs == 0 or trajectories.shape[1] == 0:
+        raise ValueError("Cached data arrays must not be empty")
+    if trajectories.shape[0] != n_runs or len(run_ids) != n_runs or len(rocks) != n_runs:
+        raise ValueError("Cached run arrays and metadata have inconsistent lengths")
+    if trajectories.shape[1] != len(time_axis):
+        raise ValueError("Cached trajectory length does not match the time axis")
+    if conditions.shape[1] != len(condition_features):
+        raise ValueError("Cached condition feature count does not match conditions")
+    if trajectories.shape[2] != len(output_features):
+        raise ValueError("Cached output feature count does not match trajectories")
+    for name, array in (
+        ("conditions", conditions),
+        ("trajectories", trajectories),
+        ("time_axis", time_axis),
+    ):
+        if not np.issubdtype(array.dtype, np.number) or np.issubdtype(
+            array.dtype, np.complexfloating
+        ):
+            raise ValueError(f"Cached {name} must contain real numeric values")
+        if not _all_finite(array):
+            raise ValueError(f"Cached {name} must contain only finite values")
+    if not np.all(np.diff(time_axis) > 0):
+        raise ValueError("Cached time axis must be strictly increasing")
+    if len(set(run_ids)) != len(run_ids):
+        raise ValueError("Cached run ids must be unique")
+    if condition_features != CONDITION_FEATURES:
+        raise ValueError("Cached condition feature order does not match the model contract")
+    if output_features != OUTPUT_FEATURES:
+        raise ValueError("Cached output feature order does not match the model contract")
+
+    return TrajectoryBundle(
+        conditions=conditions,
+        trajectories=trajectories,
+        time_axis=time_axis,
+        run_ids=run_ids,
+        rocks=rocks,
+        condition_features=condition_features,
+        output_features=output_features,
+    )
+
+
+def _all_finite(array: np.ndarray, *, chunk_size: int = 256) -> bool:
+    """Check large arrays without allocating one full-size boolean array."""
+    for start in range(0, array.shape[0], chunk_size):
+        if not np.isfinite(array[start : start + chunk_size]).all():
+            return False
+    return True
 
 
 def _coerce_value(value: str) -> str | float:

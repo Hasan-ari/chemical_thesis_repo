@@ -123,12 +123,41 @@ def train_model(
 @torch.no_grad()
 def predict(model: nn.Module, loader: DataLoader, device: torch.device) -> np.ndarray:
     """Return normalized predictions for every batch in loader order."""
+    predictions, _targets = predict_with_targets(model, loader, device)
+    return predictions
+
+
+@torch.no_grad()
+def predict_with_targets(
+    model: nn.Module,
+    loader: DataLoader,
+    device: torch.device,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return normalized predictions and targets without list/concatenate copies."""
     model.eval()
-    batches: list[np.ndarray] = []
-    for x_batch, _y_batch in loader:
-        output = model(x_batch.to(device)).detach().cpu().numpy()
-        batches.append(output)
-    return np.concatenate(batches, axis=0)
+    sample_count = len(loader.dataset)
+    predictions: np.ndarray | None = None
+    targets: np.ndarray | None = None
+    offset = 0
+    non_blocking = device.type == "cuda"
+    for x_batch, y_batch in loader:
+        output = (
+            model(x_batch.to(device, non_blocking=non_blocking))
+            .detach()
+            .cpu()
+            .numpy()
+        )
+        y_numpy = y_batch.numpy()
+        if predictions is None:
+            predictions = np.empty((sample_count, *output.shape[1:]), dtype=output.dtype)
+            targets = np.empty((sample_count, *y_numpy.shape[1:]), dtype=y_numpy.dtype)
+        stop = offset + output.shape[0]
+        predictions[offset:stop] = output
+        targets[offset:stop] = y_numpy
+        offset = stop
+    if predictions is None or targets is None or offset != sample_count:
+        raise ValueError("Prediction loader did not yield the expected number of samples")
+    return predictions, targets
 
 
 def _run_epoch(
@@ -146,11 +175,13 @@ def _run_epoch(
     total_loss = 0.0
     total_samples = 0
     is_train = optimizer is not None
+    model.train(is_train)
     context = torch.enable_grad() if is_train else torch.no_grad()
+    non_blocking = device.type == "cuda"
     with context:
         for x_batch, y_batch in loader:
-            x_batch = x_batch.to(device)
-            y_batch = y_batch.to(device)
+            x_batch = x_batch.to(device, non_blocking=non_blocking)
+            y_batch = y_batch.to(device, non_blocking=non_blocking)
             prediction = model(x_batch)
             loss = loss_fn(prediction, y_batch)
             if is_train:

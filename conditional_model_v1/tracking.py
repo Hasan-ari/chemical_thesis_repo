@@ -26,9 +26,12 @@ class ExperimentTracker:
         self.history_path = self.run_dir / "history.csv"
         self.metrics_path = self.run_dir / "metrics.json"
         self.feature_metrics_path = self.run_dir / "feature_metrics.csv"
+        self.rock_feature_metrics_path = self.run_dir / "rock_feature_metrics.csv"
         self.summary_csv_path = Path(config.run_root) / "summary.csv"
         self.registry_path = Path(config.run_root) / "registry.sqlite"
-        self.write_json(self.run_dir / "resolved_config.json", asdict(config))
+        resolved_config = asdict(config)
+        self.write_json(self.run_dir / "config.json", resolved_config)
+        self.write_json(self.run_dir / "resolved_config.json", resolved_config)
 
     def copy_config(self, config_path: Path | str) -> None:
         """Keep the exact YAML file used to launch this run."""
@@ -73,7 +76,21 @@ class ExperimentTracker:
             writer.writeheader()
             writer.writerows(rows)
 
-    def record_registry(self, config: ExperimentConfig, metrics: dict[str, Any]) -> None:
+    def write_rock_feature_metrics(self, rows: list[dict[str, Any]]) -> None:
+        """Write one original/normalized RMSE row per rock and output feature."""
+        if not rows:
+            return
+        with self.rock_feature_metrics_path.open("w", newline="") as file_obj:
+            writer = csv.DictWriter(file_obj, fieldnames=list(rows[0].keys()))
+            writer.writeheader()
+            writer.writerows(rows)
+
+    def record_registry(
+        self,
+        config: ExperimentConfig,
+        metrics: dict[str, Any],
+        rock_feature_rows: list[dict[str, Any]] | None = None,
+    ) -> None:
         """Mirror final run metadata to SQLite and CSV for comparison."""
         row = {
             "run_name": self.run_dir.name,
@@ -85,10 +102,14 @@ class ExperimentTracker:
             "rmse_mean_original": metrics.get("rmse_mean_original"),
             "mae_mean_original": metrics.get("mae_mean_original"),
         }
-        self._record_sqlite(row)
+        self._record_sqlite(row, rock_feature_rows or [])
         self._record_summary_csv(row)
 
-    def _record_sqlite(self, row: dict[str, Any]) -> None:
+    def _record_sqlite(
+        self,
+        row: dict[str, Any],
+        rock_feature_rows: list[dict[str, Any]],
+    ) -> None:
         with sqlite3.connect(self.registry_path) as connection:
             connection.execute(
                 """
@@ -113,6 +134,31 @@ class ExperimentTracker:
                 )
                 """,
                 row,
+            )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS rock_feature_metrics (
+                    run_name TEXT,
+                    rock TEXT,
+                    feature TEXT,
+                    n_runs INTEGER,
+                    rmse_original REAL,
+                    rmse_normalized REAL,
+                    PRIMARY KEY (run_name, rock, feature)
+                )
+                """
+            )
+            connection.executemany(
+                """
+                INSERT OR REPLACE INTO rock_feature_metrics VALUES (
+                    :run_name, :rock, :feature, :n_runs,
+                    :rmse_original, :rmse_normalized
+                )
+                """,
+                [
+                    {"run_name": row["run_name"], **feature_row}
+                    for feature_row in rock_feature_rows
+                ],
             )
 
     def _record_summary_csv(self, row: dict[str, Any]) -> None:

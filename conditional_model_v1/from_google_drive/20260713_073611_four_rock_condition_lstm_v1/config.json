@@ -1,0 +1,72 @@
+{
+  "name": "four_rock_condition_lstm_v1",
+  "run_root": "/content/runs",
+  "data": {
+    "datasets": [
+      {
+        "name": "Calcite_wat_sat_data_3",
+        "rock": "Calcite",
+        "path": "/content/data/wat_sat/Calcite/Calcite_wat_sat_data_3",
+        "max_runs": null
+      },
+      {
+        "name": "Dolomite_wat_sat_data_2",
+        "rock": "Dolomite",
+        "path": "/content/data/wat_sat/Dolomite/Dolomite_wat_sat_data_2",
+        "max_runs": null
+      },
+      {
+        "name": "Halite_wat_sat_data_2",
+        "rock": "Halite",
+        "path": "/content/data/wat_sat/Halite/Halite_wat_sat_data_2",
+        "max_runs": null
+      },
+      {
+        "name": "Trona_par_sat_data_3",
+        "rock": "Trona",
+        "path": "/content/data/wat_sat/Trona/Trona_par_sat_data_3",
+        "max_runs": null
+      }
+    ],
+    "processed_root": "/content/processed",
+    "cache_name": "four_rocks_v1",
+    "require_cache": true,
+    "use_cache": true,
+    "rebuild_cache": false,
+    "write_outputs_csv": false,
+    "split": {
+      "train": 0.8,
+      "val": 0.1,
+      "test": 0.1,
+      "seed": 42,
+      "strategy": "rock_aware_run_level"
+    }
+  },
+  "model": {
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.0
+  },
+  "training": {
+    "epochs": 100,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "grad_clip": 1.0,
+    "num_workers": 2,
+    "preprocessing_chunk_runs": 256,
+    "seed": 42,
+    "scheduler": {
+      "type": "none",
+      "factor": 0.5,
+      "patience": 10,
+      "min_lr": 1e-06,
+      "step_size": 50,
+      "gamma": 0.5
+    }
+  },
+  "plots": {
+    "max_runs": 0,
+    "features": "all"
+  }
+}

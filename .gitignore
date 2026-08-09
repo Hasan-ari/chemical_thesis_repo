@@ -49,6 +49,8 @@ results/tmp/
 # ============================================
 *.pt
 *.pth
+# İstisna: Drive'dan indirilen run checkpoint'leri küçük ve LFS ile takipte
+!conditional_model_v1/from_google_drive/**/*.pt
 
 # ============================================
 # LSTM OGRENME MATERYALLERI (kisisel)
@@ -101,6 +103,9 @@ report/report.pdf
 # ============================================
 # LOCAL WORKSPACE
 # ============================================
+# Yerel roadmap/hafıza ve oturum notları — GitHub'a gitmesin
+docs/roadmap/
+docs/plans/2026-07-27_rmse_boxplot_handoff.md
 learning_notes/
 scratch/
 notes/

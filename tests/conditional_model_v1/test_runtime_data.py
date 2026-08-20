@@ -306,10 +306,15 @@ class RuntimeDataTests(unittest.TestCase):
                         manifest=manifest,
                         runtime_root=root / "runtime",
                     )
-            one_run_value_count = 3 * len(OUTPUT_FEATURES)
+            # Only trajectories, which dominate memory, must be checked one run at
+            # a time; the small conditions array is still checked in one call.
+            largest_allowed_check = max(
+                3 * len(OUTPUT_FEATURES),
+                2 * len(CONDITION_FEATURES),
+            )
             self.assertGreaterEqual(len(finite_sizes), 1)
             self.assertTrue(
-                all(value_count <= one_run_value_count for value_count in finite_sizes)
+                all(value_count <= largest_allowed_check for value_count in finite_sizes)
             )
             self.assertTrue(any(finite_has_nan))
 

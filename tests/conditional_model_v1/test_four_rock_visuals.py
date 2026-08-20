@@ -7,7 +7,11 @@ from unittest import mock
 
 import numpy as np
 
-from conditional_model_v1.data import CONDITION_FEATURES, OUTPUT_FEATURES
+from conditional_model_v1.data import (
+    CONDITION_FEATURES,
+    OUTPUT_FEATURES,
+    SCALAR_CONDITION_FEATURES,
+)
 from scripts.four_rock_visuals import generate as visual_module
 from scripts.four_rock_visuals.generate import (
     DatasetLayout,
@@ -209,7 +213,7 @@ class FourRockVisualTests(unittest.TestCase):
 
         input_lines = [
             f"{{{feature}}} {offset + index + 1.0}"
-            for index, feature in enumerate(CONDITION_FEATURES[:-2])
+            for index, feature in enumerate(SCALAR_CONDITION_FEATURES)
         ]
         input_lines.extend(
             [

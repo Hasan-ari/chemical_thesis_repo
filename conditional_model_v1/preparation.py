@@ -503,13 +503,12 @@ def _parse_matched_run(
     data_columns = [
         column for column in output_frame.columns if column not in {"output_path", "run_id"}
     ]
-    expected_columns = {"time_d", *OUTPUT_FEATURES}
+    # Multi-mineral datasets (e.g. Sandstone) report extra per-mineral columns such
+    # as `Barite`/`Calcite`. Only the 32 OUTPUT_FEATURES plus `time_d` are selected;
+    # unknown extra columns are ignored, while missing expected columns still raise.
     missing = [column for column in ("time_d", *OUTPUT_FEATURES) if column not in data_columns]
-    unexpected = [column for column in data_columns if column not in expected_columns]
     if missing:
         raise ValueError(f"{record.output_path} missing outputs: {missing}")
-    if unexpected:
-        raise ValueError(f"{record.output_path} has unexpected outputs: {unexpected}")
     try:
         time_axis = output_frame["time_d"].to_numpy(dtype=np.float64)
         trajectory = output_frame.loc[:, list(OUTPUT_FEATURES)].to_numpy(dtype=np.float64)

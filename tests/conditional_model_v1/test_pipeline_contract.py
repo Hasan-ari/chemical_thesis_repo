@@ -600,7 +600,7 @@ class PipelineContractTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "real numeric"):
                         load_cached_bundle(complex_path)
 
-    def test_input_parser_maps_rock_specific_mineral_fields_to_generic_features(self) -> None:
+    def test_input_parser_projects_mineral_fields_onto_the_fixed_vocabulary(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             input_path = Path(tmp_dir) / "1_Input.txt"
             input_path.write_text(
@@ -634,8 +634,10 @@ class PipelineContractTests(unittest.TestCase):
 
         self.assertEqual(row["run_id"], "1")
         self.assertEqual(row["rock"], "Dolomite")
-        self.assertEqual(row["mineral_moles"], 12.74)
-        self.assertEqual(row["mineral_area"], 50.35)
+        self.assertEqual(row["DOLOMITE_MOLES"], 12.74)
+        self.assertEqual(row["DOLOMITE_AREA"], 50.35)
+        self.assertEqual(row["CALCITE_MOLES"], 0.0)
+        self.assertEqual(row["QUARTZ_AREA"], 0.0)
         for feature in CONDITION_FEATURES:
             self.assertIn(feature, row)
 

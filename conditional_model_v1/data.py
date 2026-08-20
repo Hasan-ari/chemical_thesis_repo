@@ -12,7 +12,7 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
-CONDITION_FEATURES: tuple[str, ...] = (
+SCALAR_CONDITION_FEATURES: tuple[str, ...] = (
     "TEMPERATURE",
     "POROSITY",
     "WATER_VOLUME",
@@ -30,8 +30,43 @@ CONDITION_FEATURES: tuple[str, ...] = (
     "CO2",
     "N2",
     "H2S",
-    "mineral_moles",
-    "mineral_area",
+)
+
+# Fixed mineral dictionary shared by every dataset, single-mineral or not.
+# A run gets one slot per vocabulary mineral; minerals absent from that run's
+# input file are encoded as 0.0 instead of being renamed to a generic feature.
+MINERAL_VOCAB: tuple[str, ...] = (
+    "ALBITE",
+    "ANDALUSITE",
+    "BARITE",
+    "CALCITE",
+    "DOLOMITE",
+    "EPIDOTE",
+    "HALITE",
+    "HEMATITE",
+    "ILLITE",
+    "KAOLINITE",
+    "MONTMOR_CA",
+    "MONTMOR_NA",
+    "MUSCOVITE",
+    "PARAGONITE",
+    "PYRITE",
+    "QUARTZ",
+    "TRONA",
+)
+
+# Deterministic block layout: all `<MINERAL>_MOLES` in MINERAL_VOCAB order first,
+# then all `<MINERAL>_AREA` in MINERAL_VOCAB order (not interleaved).
+MINERAL_CONDITION_FEATURES: tuple[str, ...] = (
+    *(f"{mineral}_MOLES" for mineral in MINERAL_VOCAB),
+    *(f"{mineral}_AREA" for mineral in MINERAL_VOCAB),
+)
+
+# 17 scalar conditions + 34 mineral-dictionary slots = 51 condition features.
+# `build_condition_time_tensor` appends the normalized time channel on top (52).
+CONDITION_FEATURES: tuple[str, ...] = (
+    *SCALAR_CONDITION_FEATURES,
+    *MINERAL_CONDITION_FEATURES,
 )
 
 OUTPUT_FEATURES: tuple[str, ...] = (
@@ -112,6 +147,7 @@ class TrajectoryBundle:
 
 
 _INPUT_LINE = re.compile(r"^\{(?P<key>[^}]+)\}\s*(?P<value>.*)$")
+_MINERAL_KEY = re.compile(r"([A-Z0-9_]+)_(?:MOLES|AREA)")
 
 
 def run_id_from_path(path: Path) -> str:
@@ -123,9 +159,12 @@ def run_id_from_path(path: Path) -> str:
 def load_input_parameters(path: Path | str, spec: DatasetSpec) -> dict[str, Any]:
     """Parse one professor-generated `*_Input.txt` file into generic numeric conditions.
 
-    Rock-specific mineral fields such as `CALCITE_MOLES` and `DOLOMITE_MOLES`
-    are mapped into the shared `mineral_moles` / `mineral_area` names. The rock
-    label remains metadata only; it is not a model input feature.
+    Mineral fields such as `CALCITE_MOLES` or `QUARTZ_AREA` are projected onto the
+    fixed `MINERAL_VOCAB` dictionary: every vocabulary mineral always gets a
+    `<MINERAL>_MOLES` / `<MINERAL>_AREA` slot, set to 0.0 when the run does not
+    contain that mineral. Single-mineral and multi-mineral rocks therefore share
+    one condition vector. The rock label remains metadata only; it is not a model
+    input feature.
     """
     path = Path(path)
     values: dict[str, str] = {}
@@ -146,14 +185,23 @@ def load_input_parameters(path: Path | str, spec: DatasetSpec) -> dict[str, Any]
     for key, value in values.items():
         row[key] = _coerce_value(value)
 
-    mineral_moles_key = f"{spec.rock.upper()}_MOLES"
-    mineral_area_key = f"{spec.rock.upper()}_AREA"
-    if mineral_moles_key not in row or mineral_area_key not in row:
-        raise ValueError(
-            f"{path} is missing {mineral_moles_key}/{mineral_area_key} for {spec.rock}"
-        )
-    row["mineral_moles"] = float(row[mineral_moles_key])
-    row["mineral_area"] = float(row[mineral_area_key])
+    unknown_minerals = sorted(
+        {
+            match.group(1)
+            for key in values
+            if (match := _MINERAL_KEY.fullmatch(key)) and match.group(1) not in MINERAL_VOCAB
+        }
+    )
+    if unknown_minerals:
+        raise ValueError(f"{path} declares minerals outside MINERAL_VOCAB: {unknown_minerals}")
+    for feature in MINERAL_CONDITION_FEATURES:
+        raw_value = row.get(feature, 0.0)
+        try:
+            row[feature] = float(raw_value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"{path} has a non-numeric {feature} value: {raw_value!r}") from exc
+    if not any(row[f"{mineral}_MOLES"] > 0.0 for mineral in MINERAL_VOCAB):
+        raise ValueError(f"{path} declares no mineral with positive moles")
 
     missing = [feature for feature in CONDITION_FEATURES if feature not in row]
     if missing:
@@ -162,7 +210,11 @@ def load_input_parameters(path: Path | str, spec: DatasetSpec) -> dict[str, Any]
 
 
 def load_output_trajectory(path: Path | str) -> pd.DataFrame:
-    """Read one `*_Output.txt` PHREEQC trajectory as a wide dataframe."""
+    """Read one `*_Output.txt` PHREEQC trajectory as a wide dataframe.
+
+    Every column present in the file is returned. Callers select the fixed
+    `OUTPUT_FEATURES` contract, so dataset-specific extra columns are ignored.
+    """
     path = Path(path)
     frame = pd.read_csv(path, sep=r"\s+", engine="python")
     frame.insert(0, "run_id", run_id_from_path(path))

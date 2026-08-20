@@ -14,6 +14,7 @@ from sklearn.preprocessing import StandardScaler
 
 NORMALIZED_TARGET_DISK_HEADROOM = 1.05
 NPY_HEADER_ALLOWANCE_BYTES = 4096
+CONDITION_STD_EPSILON = 1e-12
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ class ConditionScaler:
 
     def fit(self, conditions: np.ndarray) -> ConditionScaler:
         candidate = StandardScaler().fit(conditions)
+        _guard_zero_variance(candidate)
         self.scaler = candidate
         self.fitted = True
         return self
@@ -43,6 +45,7 @@ class ConditionScaler:
         for start in range(0, len(selected), chunk_runs):
             index_chunk = selected[start : start + chunk_runs]
             candidate.partial_fit(conditions[index_chunk])
+        _guard_zero_variance(candidate)
         self.scaler = candidate
         self.fitted = True
         return self
@@ -51,6 +54,23 @@ class ConditionScaler:
         if not self.fitted:
             raise RuntimeError("ConditionScaler must be fitted before transform")
         return self.scaler.transform(conditions).astype(np.float32)
+
+
+def _guard_zero_variance(
+    scaler: StandardScaler,
+    *,
+    eps: float = CONDITION_STD_EPSILON,
+) -> None:
+    """Pass constant condition columns through instead of dividing by ~0.
+
+    The fixed mineral dictionary contributes columns that are all-zero for a given
+    rock mix (for example `EPIDOTE_MOLES` in the five-rock pilot). Their std is 0,
+    so the divisor is forced to 1.0 and the column stays exactly zero after z-scoring.
+    """
+    scale = getattr(scaler, "scale_", None)
+    if scale is None:
+        return
+    scale[~np.isfinite(scale) | (scale <= eps)] = 1.0
 
 
 class OutputScaler:

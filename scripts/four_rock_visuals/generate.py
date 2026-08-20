@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
@@ -326,8 +327,10 @@ def _plot_condition_distributions(
     samples_by_rock: tuple[RockSamples, ...],
     path: Path,
 ) -> None:
-    columns = 5
-    rows = 4
+    # One panel per condition feature plus one legend panel. The grid follows
+    # CONDITION_FEATURES, which grew when the fixed mineral dictionary landed.
+    columns = 6
+    rows = math.ceil((len(CONDITION_FEATURES) + 1) / columns)
     fig, axes = plt.subplots(
         rows,
         columns,
@@ -355,6 +358,8 @@ def _plot_condition_distributions(
         axis.tick_params(labelsize=7)
         axis.grid(axis="x", color="#D9DEE7", linewidth=0.5)
 
+    for spare_axis in flat_axes[len(CONDITION_FEATURES) : -1]:
+        spare_axis.axis("off")
     legend_axis = flat_axes[-1]
     legend_axis.axis("off")
     handles = [

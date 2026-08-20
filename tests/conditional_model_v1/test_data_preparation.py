@@ -16,6 +16,7 @@ from conditional_model_v1.config import parse_config
 from conditional_model_v1.data import (
     CONDITION_FEATURES,
     OUTPUT_FEATURES,
+    SCALAR_CONDITION_FEATURES,
     DatasetSpec,
     load_cached_bundle,
     load_input_parameters,
@@ -334,7 +335,7 @@ class DataPreparationTests(unittest.TestCase):
             self.assertFalse(cache_dir.exists())
 
     def test_strict_validation_rejects_nonfinite_mismatched_and_malformed_outputs(self) -> None:
-        cases = ("nonfinite", "mismatched_time", "missing_output", "extra_output")
+        cases = ("nonfinite", "mismatched_time", "missing_output")
         for case_name in cases:
             with self.subTest(case=case_name), tempfile.TemporaryDirectory() as tmp_dir:
                 root = Path(tmp_dir)
@@ -352,14 +353,9 @@ class DataPreparationTests(unittest.TestCase):
                     expected_error = "time axis"
                 else:
                     lines = output_path.read_text().splitlines()
-                    if case_name == "missing_output":
-                        lines[0] = " ".join(lines[0].split()[:-1])
-                        lines[1:] = [" ".join(line.split()[:-1]) for line in lines[1:]]
-                        expected_error = "missing outputs"
-                    else:
-                        lines[0] += " unexpected"
-                        lines[1:] = [f"{line} 1.0" for line in lines[1:]]
-                        expected_error = "unexpected outputs"
+                    lines[0] = " ".join(lines[0].split()[:-1])
+                    lines[1:] = [" ".join(line.split()[:-1]) for line in lines[1:]]
+                    expected_error = "missing outputs"
                     output_path.write_text("\n".join(lines) + "\n")
 
                 processed_root = root / "processed"
@@ -368,6 +364,24 @@ class DataPreparationTests(unittest.TestCase):
                     prepare_cache(specs, cache_dir, progress_every=0)
                 self.assertFalse(cache_dir.exists())
                 self._assert_missing_or_empty(processed_root)
+
+    def test_unknown_extra_output_columns_are_ignored(self) -> None:
+        """Multi-mineral datasets add columns such as `Barite`; only the contract is kept."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            specs = self._write_four_datasets(root / "raw")
+            output_path = Path(specs[0].path) / "output" / "2_Output.txt"
+            lines = output_path.read_text().splitlines()
+            lines[0] += " Barite Calcite"
+            lines[1:] = [f"{line} 1.0 2.0" for line in lines[1:]]
+            output_path.write_text("\n".join(lines) + "\n")
+            cache_dir = root / "processed" / "four_rocks_v1"
+
+            cache_path = prepare_cache(specs, cache_dir, progress_every=0)
+
+            bundle = load_cached_bundle(cache_path)
+            self.assertEqual(bundle.output_features, OUTPUT_FEATURES)
+            self.assertEqual(bundle.trajectories.shape, (8, 3, len(OUTPUT_FEATURES)))
 
     def test_duplicate_dataset_identity_is_rejected_before_writing(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -468,9 +482,11 @@ class DataPreparationTests(unittest.TestCase):
 
     @staticmethod
     def _write_input(path: Path, *, rock: str, base_value: float) -> None:
-        generic_features = CONDITION_FEATURES[:-2]
         lines = [
-            *(f"{{{feature}}} {base_value + index / 10}" for index, feature in enumerate(generic_features)),
+            *(
+                f"{{{feature}}} {base_value + index / 10}"
+                for index, feature in enumerate(SCALAR_CONDITION_FEATURES)
+            ),
             f"{{{rock.upper()}_MOLES}} {base_value + 100}",
             f"{{{rock.upper()}_AREA}} {base_value + 200}",
         ]

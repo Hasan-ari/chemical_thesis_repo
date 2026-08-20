@@ -122,8 +122,10 @@ data/phreeqc_v23/eda/
 
 # ============================================
 # LOCAL PROFESSOR DATA (too large for normal git)
+# Karar 2026-08-20: ham veri GitHub'a gitmez, yedek Drive'da
 # ============================================
 /data*
+/new_data/
 
 
 

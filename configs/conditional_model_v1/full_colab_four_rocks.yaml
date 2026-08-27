@@ -4,7 +4,7 @@ experiment:
 
 data:
   processed_root: ${PROCESSED_ROOT}
-  cache_name: four_rocks_v1
+  cache_name: four_rocks_v2
   require_cache: true
   use_cache: true
   rebuild_cache: false

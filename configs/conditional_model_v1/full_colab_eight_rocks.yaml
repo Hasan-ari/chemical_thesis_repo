@@ -1,14 +1,19 @@
 experiment:
-  name: five_rocks_pilot_condition_lstm_v1
+  name: eight_rocks_condition_lstm_v1
   run_root: ${RUN_ROOT}
 
 data:
   processed_root: ${PROCESSED_ROOT}
-  cache_name: five_rocks_pilot_v2
+  cache_name: eight_rocks_v1
   require_cache: true
   use_cache: true
   rebuild_cache: false
   write_outputs_csv: false
+  # input_units declares the units of the solution scalars in each dataset's
+  # *_Input.txt files. The schist .phr templates use `units mg/L`; the loader
+  # converts them to mol/kgw (see conditional_model_v1/units.py). SI and
+  # ALKALINITY factors are derived from phreeqc.dat / the .phr `as SO4-2` line
+  # and not yet cross-checked against the professor's converted files.
   datasets:
     - name: Calcite_wat_sat_data_3
       rock: Calcite
@@ -25,6 +30,18 @@ data:
     - name: Sandstone_data_2
       rock: Sandstone
       path: ${DATA_ROOT}/new_data/Sandstone_data_2
+    - name: Quarzite_schist_low_t
+      rock: Quartzite_schist
+      path: ${DATA_ROOT}/new_data/Quarzite_schist_low_t
+      input_units: mg_L
+    - name: Mica_schist_low_t
+      rock: Mica_schist
+      path: ${DATA_ROOT}/new_data/Mica_schist_low_t
+      input_units: mg_L
+    - name: Mica_carbonate_schist_low_t
+      rock: Mica_carbonate_schist
+      path: ${DATA_ROOT}/new_data/Mica_carbonate_schist_low_t
+      input_units: mg_L
   split:
     strategy: rock_aware_run_level
     train: 0.8

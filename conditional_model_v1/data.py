@@ -12,6 +12,12 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
+from conditional_model_v1.units import DEFAULT_INPUT_UNITS, convert_solution_units
+
+# Union of the scalar `{KEY}` lines across all eight rock datasets. The first 17
+# are the legacy four-rock/Sandstone fields; the last six appear only in the
+# schist inputs. Solution concentrations are always stored in mol/kgw here (see
+# `conditional_model_v1.units` for the mg/L datasets).
 SCALAR_CONDITION_FEATURES: tuple[str, ...] = (
     "TEMPERATURE",
     "POROSITY",
@@ -30,6 +36,29 @@ SCALAR_CONDITION_FEATURES: tuple[str, ...] = (
     "CO2",
     "N2",
     "H2S",
+    "K",
+    "MN",
+    "FE(2)",
+    "SI",
+    "AL",
+    "GAS_PRESSURE",
+)
+
+# Scalars that exist only in some datasets. Advisor decision (2026-08-21): a
+# field a rock's template never defines is encoded as 0.0, exactly like an
+# absent mineral slot. Any other missing scalar is still a parsing error.
+OPTIONAL_SCALAR_CONDITION_FEATURES: frozenset[str] = frozenset(
+    {
+        "PORE_VOLUME",  # legacy rocks only
+        "S6",  # legacy rocks only
+        "SOLID_MASS",  # absent from the two mica-schist templates
+        "K",  # schists only
+        "MN",
+        "FE(2)",
+        "SI",
+        "AL",
+        "GAS_PRESSURE",
+    }
 )
 
 # Fixed mineral dictionary shared by every dataset, single-mineral or not.
@@ -62,13 +91,16 @@ MINERAL_CONDITION_FEATURES: tuple[str, ...] = (
     *(f"{mineral}_AREA" for mineral in MINERAL_VOCAB),
 )
 
-# 17 scalar conditions + 34 mineral-dictionary slots = 51 condition features.
-# `build_condition_time_tensor` appends the normalized time channel on top (52).
+# 23 scalar conditions + 34 mineral-dictionary slots = 57 condition features.
+# `build_condition_time_tensor` appends the normalized time channel on top (58).
 CONDITION_FEATURES: tuple[str, ...] = (
     *SCALAR_CONDITION_FEATURES,
     *MINERAL_CONDITION_FEATURES,
 )
 
+# Output columns shared by all eight datasets. The legacy rocks and Sandstone
+# additionally report HCO3_mol, Na_tot, Mg_tot, Cl_tot, Ca_tot and S6_tot; the
+# schists do not, so those six left the target contract with the 8-rock move.
 OUTPUT_FEATURES: tuple[str, ...] = (
     "pH",
     "Ptot_atm",
@@ -96,12 +128,6 @@ OUTPUT_FEATURES: tuple[str, ...] = (
     "Water_VOL",
     "Gas_VOL",
     "HS-_mol",
-    "HCO3_mol",
-    "Na_tot",
-    "Mg_tot",
-    "Cl_tot",
-    "Ca_tot",
-    "S6_tot",
 )
 
 LOG_OUTPUT_FEATURES: tuple[str, ...] = (
@@ -133,6 +159,9 @@ class DatasetSpec:
     rock: str
     path: str | Path
     max_runs: int | None = None
+    # Units of the solution-chemistry scalars in this dataset's input files:
+    # "mol_kgw" (legacy rocks, Sandstone) or "mg_L" (schists). See units.py.
+    input_units: str = DEFAULT_INPUT_UNITS
 
 
 @dataclass(frozen=True)
@@ -163,8 +192,11 @@ def load_input_parameters(path: Path | str, spec: DatasetSpec) -> dict[str, Any]
     fixed `MINERAL_VOCAB` dictionary: every vocabulary mineral always gets a
     `<MINERAL>_MOLES` / `<MINERAL>_AREA` slot, set to 0.0 when the run does not
     contain that mineral. Single-mineral and multi-mineral rocks therefore share
-    one condition vector. The rock label remains metadata only; it is not a model
-    input feature.
+    one condition vector. Scalar fields that this dataset's template never
+    defines (`OPTIONAL_SCALAR_CONDITION_FEATURES`) are likewise 0.0. Solution
+    concentrations are converted to mol/kgw according to `spec.input_units`
+    before they enter the row. The rock label remains metadata only; it is not
+    a model input feature.
     """
     path = Path(path)
     values: dict[str, str] = {}
@@ -184,6 +216,14 @@ def load_input_parameters(path: Path | str, spec: DatasetSpec) -> dict[str, Any]
     }
     for key, value in values.items():
         row[key] = _coerce_value(value)
+    row.update(
+        convert_solution_units(
+            {key: row[key] for key in values},
+            input_units=spec.input_units,
+        )
+    )
+    for feature in OPTIONAL_SCALAR_CONDITION_FEATURES:
+        row.setdefault(feature, 0.0)
 
     unknown_minerals = sorted(
         {

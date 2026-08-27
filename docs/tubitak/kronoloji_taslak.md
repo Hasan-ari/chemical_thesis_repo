@@ -38,25 +38,28 @@
 - 5-kayaç pilotu: sabit 17-mineral sözlüğü girdi temsili tasarlandı ve uygulandı; 42.758 koşum yeni sözleşmeden hatasız geçti, 86 birim testi yeşil (2026-08-20, commit `0ffcd97f1`).
 - Danışman onayı: "olmayan mineraller 0 olsun, doğrudan eğitime girilebilir" — tasarım onaylandı (2026-08-21).
 - Beş-kayaç Colab eğitimi: [DOLDUR — eğitim koşulup sonuç alınınca].
+- Birim sorunu çözüldü ve sekiz-kayaç hattı kuruldu (2026-08-22 → 2026-08-27): kimya hocasının açıklaması (mg/L sadece şist GİRDİ su kimyasında; çıktılar PHREEQC tarafından mol/kgw'a çevrildiği için tutarlı) doğrulandı; `.phr` şablonları ve `phreeqc.dat`'tan PHREEQC'nin dönüşüm kuralı (mol/kgw = mg/L ÷ 1000 ÷ gfw) çıkarıldı, Ca ve Fe katsayıları çıktı verisi üzerinden %0.05 hata ile doğrulandı. Ayrı bir birim modülü (`conditional_model_v1/units.py`) yazıldı; veri setleri config'de `input_units` ile etiketleniyor. Skaler girdi sözlüğü 17→23 (K, Mn, Fe(2), Si, Al, gaz basıncı eklendi; şablonda olmayan alan 0), hedef seti 32→26 (sekiz sette ortak kolonlar). 55.122 koşumluk sekiz-kayaç önbelleği kuruldu.
+- Sekiz-kayaç Colab eğitimi: [DOLDUR — eğitim koşulup sonuç alınınca].
 
 ## 2. Veri
 
 - Kaynak: PHREEQC jeokimya simülasyonları (danışman tarafından üretilen koşum setleri).
-- Kapsam: 4 eski kayaç (Calcite 9.875, Dolomite 9.882, Halite 9.425, Trona 9.899 koşum) + Sandstone 3.677; toplam 42.758 koşum pilotta. 3 şist seti (12.364 koşum) birim kararı sonrası eklenecek.
-- Her koşum: `{ANAHTAR} değer` satırlarından oluşan girdi dosyası + 301 zaman adımlı, 32 hedef kolonlu çıktı tablosu.
+- Kapsam: 4 eski kayaç (Calcite 9.875, Dolomite 9.882, Halite 9.425, Trona 9.899 koşum) + Sandstone 3.677 (= 42.758, pilot) + 3 şist seti (Quartzite 8.069, Mica 1.346, Mica-carbonate 2.949 = 12.364); sekiz kayaçta toplam 55.122 koşum.
+- Her koşum: `{ANAHTAR} değer` satırlarından oluşan girdi dosyası + 301 zaman adımlı çıktı tablosu (eski setlerde 32, şistlerde 26–28 kolon; 26'sı ortak).
+- Birimler: eski setler ve Sandstone çözelti kimyasını mol/kgw, şist şablonları mg/L yazıyor. PHREEQC girdiyi içeride mol/kgw'a çevirdiği için çıktılar tutarlı; girdiler modele girmeden önce aynı kurala göre (mg/L ÷ 1000 ÷ gram formül ağırlığı) mol/kgw'a çevriliyor. Si (SiO2 olarak, 60.08) ve Alkalinite (`as SO4-2`, 96.06) katsayıları şablondan türetildi, hocanın çevrilmiş dosyalarıyla çapraz kontrol bekliyor.
 
 ## 3. Önişleme
 
-- Girdi: 17 skaler koşul + sabit 17-mineral sözlüğünden 34 slot (mineral_MOLES/mineral_AREA; koşumda olmayan mineral 0) + normalize zaman kanalı → adım başına 52 özellik. Kayaç etiketi modele hiçbir zaman verilmiyor.
-- Hedefler: 32 kimyasal değişken; çarpık dağılımlı değişkenlere log1p, ardından tüm değişkenlere z-score normalizasyonu.
+- Girdi: 23 skaler koşul (sekiz setin birleşimi; şablonda olmayan alan 0) + sabit 17-mineral sözlüğünden 34 slot (mineral_MOLES/mineral_AREA; koşumda olmayan mineral 0) + normalize zaman kanalı → adım başına 58 özellik. Kayaç etiketi modele hiçbir zaman verilmiyor. (5-kayaç pilotunda 17 skaler / 52 özellikti.)
+- Hedefler: sekiz sette ortak 26 kimyasal değişken (pilotta 32; şistlerde bulunmayan HCO3_mol, Na_tot, Mg_tot, Cl_tot, Ca_tot, S6_tot çıkarıldı); çarpık dağılımlı değişkenlere log1p, ardından tüm değişkenlere z-score normalizasyonu.
 - Sıfır-varyanslı sütunlar (kullanılmayan mineral slotları) için bölme koruması (std→1).
 - Veri bölme: kayaç-farkında, koşum seviyesinde %80/%10/%10 (seed 42) — aynı koşumun adımları asla iki kümeye bölünmüyor.
-- Önişlenmiş veri tek seferlik, sürümlü npz önbelleğine yazılıyor (`five_rocks_pilot_v1`).
+- Önişlenmiş veri tek seferlik, sürümlü npz önbelleğine yazılıyor (`five_rocks_pilot_v2`, `eight_rocks_v1`).
 
 ## 4. Model Mimarisi
 
 - Koşullu LSTM: gizli boyut 128, 2 katman, dropout 0.
-- Girdi (koşum, 301, 52) → çıktı (koşum, 301, 32): model, deney koşullarından tüm kimyasal yörüngeyi üretiyor.
+- Girdi (koşum, 301, 58) → çıktı (koşum, 301, 26) [pilotta 52 → 32]: model, deney koşullarından tüm kimyasal yörüngeyi üretiyor.
 - [DOLDUR — istersen buraya bir mimari şeması; benden isteyebilirsin.]
 
 ## 5. Eğitim

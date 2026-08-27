@@ -44,7 +44,7 @@ class FourRockEvaluationTests(unittest.TestCase):
             y_pred_norm,
         )
 
-    def test_metrics_rank_runs_and_build_four_by_32_rows_and_overviews(self) -> None:
+    def test_metrics_rank_runs_and_build_rock_by_feature_rows_and_overviews(self) -> None:
         (
             rock_order,
             rocks,
@@ -93,7 +93,7 @@ class FourRockEvaluationTests(unittest.TestCase):
                 np.mean(y_true[[first, second]], axis=0),
             )
 
-    def test_plotter_requests_exactly_twelve_all_32_output_overviews(self) -> None:
+    def test_plotter_requests_exactly_twelve_all_output_overviews(self) -> None:
         fixture = self._evaluation_fixture()
         rock_order, rocks, run_ids, y_true, y_pred, y_true_norm, y_pred_norm = fixture
         _metrics, _rows, overviews = evaluate_by_rock(
@@ -108,7 +108,7 @@ class FourRockEvaluationTests(unittest.TestCase):
         )
 
         def touch_overview(**kwargs):
-            self.assertEqual(len(kwargs["selected_features"]), 32)
+            self.assertEqual(len(kwargs["selected_features"]), len(OUTPUT_FEATURES))
             kwargs["path"].touch()
 
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -175,13 +175,13 @@ class FourRockEvaluationTests(unittest.TestCase):
 
             with tracker.rock_feature_metrics_path.open(newline="") as file_obj:
                 csv_rows = list(csv.DictReader(file_obj))
-            self.assertEqual(len(csv_rows), 128)
+            self.assertEqual(len(csv_rows), 4 * len(OUTPUT_FEATURES))
             with sqlite3.connect(tracker.registry_path) as connection:
                 count = connection.execute(
                     "SELECT COUNT(*) FROM rock_feature_metrics"
                 ).fetchone()[0]
                 run_count = connection.execute("SELECT COUNT(*) FROM runs").fetchone()[0]
-            self.assertEqual(count, 128)
+            self.assertEqual(count, 4 * len(OUTPUT_FEATURES))
             self.assertEqual(run_count, 1)
 
     def test_eval_prediction_archive_is_pickle_free_and_metadata_aligned(self) -> None:

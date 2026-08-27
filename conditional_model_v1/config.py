@@ -7,6 +7,8 @@ from typing import Any, Literal
 
 import yaml
 
+from conditional_model_v1.units import DEFAULT_INPUT_UNITS, SUPPORTED_INPUT_UNITS
+
 
 @dataclass(frozen=True)
 class DatasetConfig:
@@ -16,6 +18,15 @@ class DatasetConfig:
     rock: str
     path: str
     max_runs: int | None = None
+    # "mol_kgw" (default; legacy rocks, Sandstone) or "mg_L" (schist templates).
+    input_units: str = DEFAULT_INPUT_UNITS
+
+    def __post_init__(self) -> None:
+        if self.input_units not in SUPPORTED_INPUT_UNITS:
+            raise ValueError(
+                f"Dataset {self.name!r} has unsupported input_units {self.input_units!r}; "
+                f"expected one of {SUPPORTED_INPUT_UNITS}"
+            )
 
 
 @dataclass(frozen=True)

@@ -69,10 +69,10 @@ def _first_output(dataset_name: str) -> Path:
 
 class MineralVocabContractTests(unittest.TestCase):
     def test_condition_features_expand_the_mineral_dictionary(self) -> None:
-        self.assertEqual(len(SCALAR_CONDITION_FEATURES), 17)
+        self.assertEqual(len(SCALAR_CONDITION_FEATURES), 23)
         self.assertEqual(len(MINERAL_VOCAB), 17)
         self.assertEqual(len(MINERAL_CONDITION_FEATURES), 34)
-        self.assertEqual(len(CONDITION_FEATURES), 51)
+        self.assertEqual(len(CONDITION_FEATURES), 57)
         self.assertEqual(len(set(CONDITION_FEATURES)), len(CONDITION_FEATURES))
         self.assertEqual(MINERAL_VOCAB, tuple(sorted(MINERAL_VOCAB)))
         # All MOLES slots first, then all AREA slots, both in MINERAL_VOCAB order.
@@ -151,7 +151,7 @@ class MineralVocabContractTests(unittest.TestCase):
             path = Path(tmp_dir) / "1_Input.txt"
             lines = [
                 f"{{{feature}}} {index + 1.0}"
-                for index, feature in enumerate(SCALAR_CONDITION_FEATURES[:-1])
+                for index, feature in enumerate(SCALAR_CONDITION_FEATURES[1:])  # drop TEMPERATURE (mandatory)
             ]
             lines.extend(["{CALCITE_MOLES} 12.0", "{CALCITE_AREA} 34.0"])
             path.write_text("\n".join(lines) + "\n")
@@ -169,7 +169,7 @@ class SandstoneOutputContractTests(unittest.TestCase):
         self.assertIn("Calcite", frame.columns)
         self.assertEqual(len(frame), 301)
 
-    def test_prepare_cache_keeps_only_the_thirty_two_output_features(self) -> None:
+    def test_prepare_cache_keeps_only_the_shared_output_features(self) -> None:
         specs = _specs()
         with tempfile.TemporaryDirectory() as tmp_dir:
             cache_dir = Path(tmp_dir) / "five_rocks_pilot_v1"
@@ -179,10 +179,10 @@ class SandstoneOutputContractTests(unittest.TestCase):
             bundle = load_cached_bundle(cache_path)
 
         self.assertEqual(bundle.output_features, OUTPUT_FEATURES)
-        self.assertEqual(len(bundle.output_features), 32)
+        self.assertEqual(len(bundle.output_features), 26)
         self.assertEqual(bundle.condition_features, CONDITION_FEATURES)
-        self.assertEqual(bundle.conditions.shape, (10, 51))
-        self.assertEqual(bundle.trajectories.shape, (10, 301, 32))
+        self.assertEqual(bundle.conditions.shape, (10, 57))
+        self.assertEqual(bundle.trajectories.shape, (10, 301, 26))
         self.assertEqual(len(bundle.time_axis), 301)
         self.assertEqual(sorted(set(bundle.rocks.tolist())), sorted({rock for _, rock in FIVE_ROCKS}))
 

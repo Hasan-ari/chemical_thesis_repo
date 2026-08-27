@@ -30,7 +30,7 @@ class CacheCliTests(unittest.TestCase):
         ):
             config = load_config(config_path)
 
-        self.assertEqual(config.data.cache_name, "four_rocks_v1")
+        self.assertEqual(config.data.cache_name, "four_rocks_v2")
         self.assertTrue(config.data.require_cache)
         self.assertTrue(config.data.use_cache)
         self.assertFalse(config.data.rebuild_cache)
@@ -78,12 +78,12 @@ class CacheCliTests(unittest.TestCase):
                 ),
             ],
         )
-        self.assertEqual(config.cache_dir, Path("/content/processed/four_rocks_v1"))
+        self.assertEqual(config.cache_dir, Path("/content/processed/four_rocks_v2"))
         self.assertEqual(config.training.epochs, 100)
         self.assertEqual(config.training.batch_size, 64)
 
     def test_prepare_command_uses_configured_shared_cache_and_all_datasets(self) -> None:
-        config = self._config(cache_name="four_rocks_v1")
+        config = self._config(cache_name="four_rocks_v2")
         with tempfile.TemporaryDirectory() as tmp_dir:
             config_path = Path(tmp_dir) / "four_rocks.yaml"
             config_path.write_text("placeholder: patched loader\n")
@@ -137,7 +137,7 @@ class CacheCliTests(unittest.TestCase):
         self.assertIn(f"cache_path={expected_cache}", stdout.getvalue())
 
     def test_validate_command_enables_hash_verification_only_with_deep_flag(self) -> None:
-        config = self._config(cache_name="four_rocks_v1")
+        config = self._config(cache_name="four_rocks_v2")
         with tempfile.TemporaryDirectory() as tmp_dir:
             config_path = Path(tmp_dir) / "four_rocks.yaml"
             config_path.write_text("placeholder: patched loader\n")

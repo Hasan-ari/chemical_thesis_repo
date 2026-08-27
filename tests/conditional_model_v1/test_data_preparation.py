@@ -110,7 +110,7 @@ class DataPreparationTests(unittest.TestCase):
                 )
 
             manifest = json.loads((cache_dir / "manifest.json").read_text())
-            self.assertEqual(manifest["schema_version"], 1)
+            self.assertEqual(manifest["schema_version"], 2)
             self.assertEqual(
                 [(item["name"], item["rock"]) for item in manifest["datasets"]],
                 list(DATASETS),

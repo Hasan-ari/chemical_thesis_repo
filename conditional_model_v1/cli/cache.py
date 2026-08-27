@@ -66,6 +66,7 @@ def _dataset_specs(config: ExperimentConfig) -> tuple[DatasetSpec, ...]:
             rock=dataset.rock,
             path=dataset.path,
             max_runs=dataset.max_runs,
+            input_units=dataset.input_units,
         )
         for dataset in config.data.datasets
     )

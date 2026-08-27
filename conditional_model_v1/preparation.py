@@ -15,6 +15,7 @@ from typing import Any, Sequence, TextIO
 import numpy as np
 import pandas as pd
 
+from conditional_model_v1.units import SUPPORTED_INPUT_UNITS, conversion_table
 from conditional_model_v1.data import (
     CONDITION_FEATURES,
     OUTPUT_FEATURES,
@@ -24,7 +25,8 @@ from conditional_model_v1.data import (
     run_id_from_path,
 )
 
-CACHE_SCHEMA_VERSION = 1
+# v2: 23 scalar conditions (8-rock union), 26 shared outputs, per-dataset input_units.
+CACHE_SCHEMA_VERSION = 2
 _STATUSES = ("matched", "failed", "missing_input", "missing_output")
 
 
@@ -131,6 +133,7 @@ def validate_cache_manifest(
             "name": item.get("name"),
             "rock": item.get("rock"),
             "max_runs": item.get("max_runs"),
+            "input_units": item.get("input_units"),
         }
         for item in actual_datasets
         if isinstance(item, dict)
@@ -445,6 +448,7 @@ def _write_staged_cache(
                 "name": spec.name,
                 "rock": spec.rock,
                 "max_runs": spec.max_runs,
+                "input_units": spec.input_units,
                 "counts": discovery.counts_by_dataset[spec.name],
                 "output_csv": f"outputs/{spec.name}.csv.gz",
             }
@@ -454,6 +458,7 @@ def _write_staged_cache(
         "n_timesteps": n_timesteps,
         "condition_features": list(CONDITION_FEATURES),
         "output_features": list(OUTPUT_FEATURES),
+        "solution_unit_conversion": conversion_table(),
         "arrays": {
             "conditions": {
                 "shape": [n_runs, len(CONDITION_FEATURES)],
@@ -504,7 +509,8 @@ def _parse_matched_run(
         column for column in output_frame.columns if column not in {"output_path", "run_id"}
     ]
     # Multi-mineral datasets (e.g. Sandstone) report extra per-mineral columns such
-    # as `Barite`/`Calcite`. Only the 32 OUTPUT_FEATURES plus `time_d` are selected;
+    # as `Barite`/`Calcite`, and the legacy rocks report totals the schists lack.
+    # Only the shared OUTPUT_FEATURES plus `time_d` are selected;
     # unknown extra columns are ignored, while missing expected columns still raise.
     missing = [column for column in ("time_d", *OUTPUT_FEATURES) if column not in data_columns]
     if missing:
@@ -584,6 +590,10 @@ def _validate_specs(specs: tuple[DatasetSpec, ...]) -> None:
     if len(set(resolved_paths)) != len(resolved_paths):
         raise ValueError("Configured dataset paths must be unique after resolution")
     for spec in specs:
+        if spec.input_units not in SUPPORTED_INPUT_UNITS:
+            raise ValueError(
+                f"Dataset {spec.name} has unsupported input_units {spec.input_units!r}"
+            )
         if not _is_safe_file_name(spec.name):
             raise ValueError(f"Dataset name must be a safe file name: {spec.name!r}")
         if not spec.rock or spec.rock != spec.rock.strip():
@@ -594,7 +604,12 @@ def _validate_specs(specs: tuple[DatasetSpec, ...]) -> None:
 
 def _dataset_contract(specs: Sequence[DatasetSpec]) -> list[dict[str, Any]]:
     return [
-        {"name": spec.name, "rock": spec.rock, "max_runs": spec.max_runs}
+        {
+            "name": spec.name,
+            "rock": spec.rock,
+            "max_runs": spec.max_runs,
+            "input_units": spec.input_units,
+        }
         for spec in specs
     ]
 

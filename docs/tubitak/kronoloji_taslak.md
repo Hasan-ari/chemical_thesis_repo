@@ -42,7 +42,7 @@
 - Sekiz-kayaç Colab eğitimi: [DOLDUR — eğitim koşulup sonuç alınınca].
 
 ### Dönem 7 — Eylül 2026: Dönüşüm doğrulaması ve kayaç-dışı genelleme (LORO)
-- Kimya hocasının elle mol/kgw'a çevirdiği şist şablonlarıyla çapraz kontrol: 11 türden 10'u birebir; Si'de hoca element kütlesi (28.08), PHREEQC ise `units mg/L` altında SiO2 (60.08) kullanıyor. Eldeki koşular PHREEQC'nin kendi dönüşümüyle üretildiği için 60.08 korundu; hocaya teyit soruldu (2026-09-03).
+- Kimya hocasının elle mol/kgw'a çevirdiği şist şablonlarıyla çapraz kontrol: 11 türden 10'u birebir; Si'de hoca element kütlesi (28.08), PHREEQC ise `units mg/L` altında SiO2 (60.08) kullanıyor. Eldeki koşular PHREEQC'nin kendi dönüşümüyle üretildiği için 60.08 korundu; kimya hocası aynı gün mailde doğruladı: laboratuvarda SiO2 ölçülür, değer SiO2 olarak girilir ve PHREEQC SiO2 olarak işler. Böylece 11 katsayının tamamı doğrulandı, önbellek değişmedi (2026-09-03).
 - Leave-one-rock-out (LORO) hattı: bir kayaç eğitimden ve validasyondan tamamen çıkarılıp yalnız o kayaçta test ediliyor; kayaç başına ayrı model (8 model + 8-kayaç referans). Aynı model hem görülmeyen kayaçta hem görülen kayaçların test payında ölçülüyor; sonuçlar kat başına koşu klasörü, toplu özet CSV/JSON, SQLite tablosu ve grafiklerle kaydediliyor (2026-09-03, commit `8e7e82f34`).
 - LORO Colab sonuçları: [DOLDUR — 8 kat koşulunca `loro_summary.csv`'den unseen vs reference RMSE tablosu].
 
@@ -51,7 +51,7 @@
 - Kaynak: PHREEQC jeokimya simülasyonları (danışman tarafından üretilen koşum setleri).
 - Kapsam: 4 eski kayaç (Calcite 9.875, Dolomite 9.882, Halite 9.425, Trona 9.899 koşum) + Sandstone 3.677 (= 42.758, pilot) + 3 şist seti (Quartzite 8.069, Mica 1.346, Mica-carbonate 2.949 = 12.364); sekiz kayaçta toplam 55.122 koşum.
 - Her koşum: `{ANAHTAR} değer` satırlarından oluşan girdi dosyası + 301 zaman adımlı çıktı tablosu (eski setlerde 32, şistlerde 26–28 kolon; 26'sı ortak).
-- Birimler: eski setler ve Sandstone çözelti kimyasını mol/kgw, şist şablonları mg/L yazıyor. PHREEQC girdiyi içeride mol/kgw'a çevirdiği için çıktılar tutarlı; girdiler modele girmeden önce aynı kurala göre (mg/L ÷ 1000 ÷ gram formül ağırlığı) mol/kgw'a çevriliyor. Si (SiO2 olarak, 60.08) ve Alkalinite (`as SO4-2`, 96.06) katsayıları şablondan türetildi; hocanın çevrilmiş dosyalarıyla çapraz kontrolde Alkalinite ve diğer 9 tür birebir uyuştu, Si için hocanın 28.08 (element) kullandığı görüldü ve teyit istendi (2026-09-03).
+- Birimler: eski setler ve Sandstone çözelti kimyasını mol/kgw, şist şablonları mg/L yazıyor. PHREEQC girdiyi içeride mol/kgw'a çevirdiği için çıktılar tutarlı; girdiler modele girmeden önce aynı kurala göre (mg/L ÷ 1000 ÷ gram formül ağırlığı) mol/kgw'a çevriliyor. Si (SiO2 olarak, 60.08) ve Alkalinite (`as SO4-2`, 96.06) katsayıları şablondan türetildi; hocanın çevrilmiş dosyalarıyla çapraz kontrolde Alkalinite ve diğer 9 tür birebir uyuştu, Si için hocanın şablonunda 28.08 (element) görüldü; hoca mailde değerin ölçülmüş SiO2 olduğunu ve PHREEQC'nin SiO2 olarak okuduğunu doğruladı, 60.08 kesinleşti (2026-09-03).
 
 ## 3. Önişleme
 

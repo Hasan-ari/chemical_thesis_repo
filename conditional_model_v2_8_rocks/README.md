@@ -57,12 +57,13 @@ Colab'da `/content/runs/`, sonra Drive'da `MyDrive/chemical_thesis_repo/runs/`:
 3. Süre yetmezse `HELD_OUT_ROCKS` ile alt küme; ikinci oturumda kalanlar.
    Bitmiş referans koşu için `REFERENCE_RUN_DIR` ver, yeniden eğitilmez.
 
-## Açık nokta: Si birimi
+## Si birimi (kapandı, 2026-09-03)
 
-Hocanın çevrilmiş şablonu Si için 28.08 (element) kullanmış; PHREEQC `units mg/L`
-altında Si'yi `phreeqc.dat`'taki formüle göre SiO2 (60.08) olarak okur ve eldeki
-şist koşuları böyle üretildi. Bu yüzden `conditional_model_v1/units.py` 60.08'de
-kalır; hoca teyit ederse yalnız o sayı ve önbellek değişir. Diğer 10 tür birebir uyuştu.
+Hocanın çevrilmiş şablonu Si için 28.08 (element) kullanmıştı; PHREEQC `units mg/L`
+altında Si'yi `phreeqc.dat`'taki formüle göre SiO2 (60.08) olarak okur. Kimya hocası
+mailde doğruladı: laboratuvarlar Si değil SiO2 ölçer, dolayısıyla 271 mg/L değeri
+ölçülmüş SiO2'dir ve PHREEQC de öyle işler. `conditional_model_v1/units.py` 60.08'de
+kalıyor, tüm 11 dönüşüm katsayısı artık doğrulanmış; önbellek yeniden kurulmayacak.
 
 ## Kutu grafikleri (box plot)
 

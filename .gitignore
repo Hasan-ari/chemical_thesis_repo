@@ -50,7 +50,7 @@ results/tmp/
 *.pt
 *.pth
 # İstisna: Drive'dan indirilen run checkpoint'leri küçük ve LFS ile takipte
-!conditional_model_v1/from_google_drive/**/*.pt
+!conditional_model_v1/results/from_google_drive/**/*.pt
 
 # ============================================
 # LSTM OGRENME MATERYALLERI (kisisel)

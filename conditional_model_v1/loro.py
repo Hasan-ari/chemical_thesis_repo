@@ -18,6 +18,8 @@ import csv
 import dataclasses
 import json
 import shutil
+
+import numpy as np
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -214,3 +216,40 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 def _optional_float(value: Any) -> float | None:
     return None if value is None else float(value)
+
+
+def read_run_rmse(run_dir: Path | str, rock: str | None = None) -> list[dict[str, Any]]:
+    """Per-run RMSE rows of a finished run (optionally one rock only)."""
+    run_dir = Path(run_dir)
+    with (run_dir / "run_rmse.csv").open(newline="") as file_obj:
+        rows = [row for row in csv.DictReader(file_obj) if rock is None or row["rock"] == rock]
+    return [
+        {
+            "run_id": row["run_id"],
+            "rock": row["rock"],
+            "rmse_normalized": float(row["rmse_normalized"]),
+            "rmse_original": float(row["rmse_original"]),
+        }
+        for row in rows
+    ]
+
+
+def unseen_run_rmse(run_dir: Path | str, held_out_rock: str) -> np.ndarray:
+    """Normalized per-run RMSE of the held-out rock in one fold."""
+    rows = read_run_rmse(run_dir, held_out_rock)
+    if not rows:
+        raise ValueError(f"{run_dir} has no run_rmse rows for {held_out_rock!r}")
+    return np.asarray([row["rmse_normalized"] for row in rows], dtype=np.float64)
+
+
+def load_reference_run_rmse(reference_run_dir: Path | str | None) -> dict[str, np.ndarray]:
+    """Reference model's per-run normalized RMSE grouped by rock (empty when absent)."""
+    if reference_run_dir is None:
+        return {}
+    path = Path(reference_run_dir) / "run_rmse.csv"
+    if not path.is_file():  # reference trained before run_rmse.csv existed
+        return {}
+    grouped: dict[str, list[float]] = {}
+    for row in read_run_rmse(reference_run_dir):
+        grouped.setdefault(row["rock"], []).append(row["rmse_normalized"])
+    return {rock: np.asarray(values, dtype=np.float64) for rock, values in grouped.items()}

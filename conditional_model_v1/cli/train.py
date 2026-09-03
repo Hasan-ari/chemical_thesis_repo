@@ -17,12 +17,13 @@ from conditional_model_v1.data import (
     write_processed_bundle,
 )
 from conditional_model_v1.metrics import (
+    per_run_rmse,
     evaluate_by_rock,
     evaluate_subset,
     regression_metrics_original_scale,
 )
 from conditional_model_v1.models import ConditionTimeLSTM
-from conditional_model_v1.plotting import plot_loss_curve, plot_rock_overviews
+from conditional_model_v1.plotting import plot_loss_curve, plot_rock_overviews, plot_rmse_boxplots
 from conditional_model_v1.preprocessing import (
     ConditionScaler,
     OutputScaler,
@@ -273,7 +274,21 @@ def run_training(
     tracker.write_metrics(metrics)
     tracker.write_feature_metrics(metrics)
     tracker.write_rock_feature_metrics(rock_feature_rows)
-    tracker.record_registry(config, metrics, rock_feature_rows, history=history)
+    run_rmse_rows, feature_rmse_normalized = per_run_rmse(
+        y_true=y_true, y_pred=y_pred, y_true_norm=y_true_norm, y_pred_norm=y_pred_norm,
+        rocks=eval_rocks, run_ids=eval_run_ids,
+    )
+    tracker.write_run_rmse(run_rmse_rows)
+    tracker.record_registry(
+        config, metrics, rock_feature_rows, history=history, run_rmse_rows=run_rmse_rows
+    )
+    plot_rmse_boxplots(
+        run_rows=run_rmse_rows,
+        feature_rmse_normalized=feature_rmse_normalized,
+        output_features=bundle.output_features,
+        rock_order=rock_order,
+        output_dir=tracker.plot_dir / "boxplots",
+    )
     plot_rock_overviews(
         time_axis=bundle.time_axis,
         output_features=bundle.output_features,

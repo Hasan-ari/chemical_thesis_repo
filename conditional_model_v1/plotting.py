@@ -256,3 +256,132 @@ def plot_loro_feature_heatmap(
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=160)
     plt.close(fig)
+
+
+_BOX_STYLE = dict(
+    showfliers=True,
+    flierprops=dict(marker=".", markersize=2.5, alpha=0.4),
+    medianprops=dict(color="black", linewidth=1.2),
+    patch_artist=True,
+    boxprops=dict(facecolor="#9ecae1", edgecolor="#3182bd", linewidth=0.8),
+    whiskerprops=dict(linewidth=0.8),
+    capprops=dict(linewidth=0.8),
+)
+
+
+def plot_rmse_boxplots(
+    *,
+    run_rows: list[dict[str, object]],
+    feature_rmse_normalized: np.ndarray,
+    output_features: tuple[str, ...],
+    rock_order: tuple[str, ...],
+    output_dir: Path | str,
+) -> list[Path]:
+    """Distribution of per-run normalized RMSE, as box plots.
+
+    Writes ``rmse_boxplot_by_rock.png`` (one box per rock, all outputs),
+    ``rmse_boxplot_by_feature.png`` (one box per output, all rocks) and
+    ``rmse_boxplot_by_rock_and_feature.png`` (one panel per rock, one box per
+    output). Rocks absent from the evaluation split are skipped.
+    """
+    if not run_rows:
+        raise ValueError("plot_rmse_boxplots needs at least one run")
+    if feature_rmse_normalized.shape != (len(run_rows), len(output_features)):
+        raise ValueError("feature_rmse_normalized must be (n_runs, n_outputs)")
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    rocks = np.asarray([str(row["rock"]) for row in run_rows])
+    run_rmse = np.asarray([float(row["rmse_normalized"]) for row in run_rows])
+    present = [rock for rock in rock_order if np.any(rocks == rock)]
+    written = []
+
+    # 1) by rock
+    fig, axis = plt.subplots(figsize=(max(6.0, 1.1 * len(present) + 2.0), 4.6))
+    axis.boxplot([run_rmse[rocks == rock] for rock in present], **_BOX_STYLE)
+    axis.set_xticks(np.arange(1, len(present) + 1))
+    axis.set_xticklabels(
+        [f"{rock}\n(n={int(np.sum(rocks == rock))})" for rock in present], fontsize=8
+    )
+    axis.set_ylabel("per-run normalized RMSE (all outputs)", fontsize=9)
+    axis.set_title("Per-run RMSE distribution by rock", fontsize=11)
+    axis.grid(axis="y", linewidth=0.4, alpha=0.5)
+    fig.tight_layout()
+    path = output_dir / "rmse_boxplot_by_rock.png"
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+    written.append(path)
+
+    # 2) by feature
+    fig, axis = plt.subplots(figsize=(max(10.0, 0.45 * len(output_features) + 2.0), 4.8))
+    axis.boxplot([feature_rmse_normalized[:, j] for j in range(len(output_features))], **_BOX_STYLE)
+    axis.set_xticks(np.arange(1, len(output_features) + 1))
+    axis.set_xticklabels(output_features, rotation=75, ha="right", fontsize=7)
+    axis.set_ylabel("per-run normalized RMSE", fontsize=9)
+    axis.set_title(f"Per-run RMSE distribution by output ({len(run_rows)} runs, all rocks)", fontsize=11)
+    axis.grid(axis="y", linewidth=0.4, alpha=0.5)
+    fig.tight_layout()
+    path = output_dir / "rmse_boxplot_by_feature.png"
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+    written.append(path)
+
+    # 3) by rock and feature
+    fig, axes = plt.subplots(
+        len(present), 1,
+        figsize=(max(10.0, 0.45 * len(output_features) + 2.0), 2.6 * len(present) + 1.0),
+        sharex=True, squeeze=False,
+    )
+    for axis, rock in zip(axes[:, 0], present, strict=True):
+        mask = rocks == rock
+        axis.boxplot([feature_rmse_normalized[mask, j] for j in range(len(output_features))], **_BOX_STYLE)
+        axis.set_ylabel(f"{rock}\n(n={int(mask.sum())})", fontsize=8)
+        axis.grid(axis="y", linewidth=0.4, alpha=0.5)
+    axes[-1, 0].set_xticks(np.arange(1, len(output_features) + 1))
+    axes[-1, 0].set_xticklabels(output_features, rotation=75, ha="right", fontsize=7)
+    fig.suptitle("Per-run normalized RMSE by rock and output", fontsize=11)
+    fig.tight_layout()
+    path = output_dir / "rmse_boxplot_by_rock_and_feature.png"
+    fig.savefig(path, dpi=160)
+    plt.close(fig)
+    written.append(path)
+    return written
+
+
+def plot_loro_unseen_boxplot(
+    *,
+    unseen: dict[str, np.ndarray],
+    reference: dict[str, np.ndarray] | None,
+    rocks: tuple[str, ...],
+    path: Path | str,
+) -> None:
+    """Per-run RMSE of each held-out rock: the LORO fold (unseen) next to the
+    all-rocks reference model on the same rock's test runs (when available)."""
+    if not unseen:
+        raise ValueError("plot_loro_unseen_boxplot needs at least one rock")
+    fig, axis = plt.subplots(figsize=(max(7.0, 1.6 * len(rocks) + 2.0), 5.0))
+    positions_unseen = np.arange(len(rocks)) * 3.0
+    axis.boxplot(
+        [np.asarray(unseen[rock], dtype=np.float64) for rock in rocks],
+        positions=positions_unseen, widths=0.8, **_BOX_STYLE,
+    )
+    if reference:
+        ref_style = dict(_BOX_STYLE, boxprops=dict(facecolor="#fdae6b", edgecolor="#e6550d", linewidth=0.8))
+        axis.boxplot(
+            [np.asarray(reference.get(rock, []), dtype=np.float64) for rock in rocks],
+            positions=positions_unseen + 1.0, widths=0.8, **ref_style,
+        )
+        axis.plot([], [], color="#fdae6b", linewidth=8, label="all-rocks reference model (rock seen in training)")
+    axis.plot([], [], color="#9ecae1", linewidth=8, label="LORO fold (rock never seen)")
+    axis.set_xticks(positions_unseen + (0.5 if reference else 0.0))
+    axis.set_xticklabels(
+        [f"{rock}\n(n={len(unseen[rock])})" for rock in rocks], fontsize=8
+    )
+    axis.set_ylabel("per-run normalized RMSE (each model's own scaler)", fontsize=9)
+    axis.set_title("Leave-one-rock-out: per-run error on the held-out rock", fontsize=11)
+    axis.legend(fontsize=8, loc="upper left")
+    axis.grid(axis="y", linewidth=0.4, alpha=0.5)
+    fig.tight_layout()
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=160)
+    plt.close(fig)

@@ -76,6 +76,15 @@ registry.sqlite
 summary.csv
 ```
 
+## Per-run RMSE and box plots
+
+Every run writes one RMSE per evaluation run to `run_rmse.csv` (columns
+`run_id, rock, rmse_normalized, rmse_original`) and to the `run_rmse` table of
+`registry.sqlite`. Three box plots in `plots/boxplots/` show the distribution:
+by rock, by output feature, and rock x feature (one panel per rock). A LORO
+aggregate adds `plots/loro_unseen_rmse_boxplot.png` (held-out fold vs. the
+reference model on the same rock) with the numbers in `loro_run_rmse.csv`.
+
 ## Leave-One-Rock-Out (LORO) Generalization Test
 
 Question: what happens when the model meets a rock it has never seen?

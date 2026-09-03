@@ -30,14 +30,20 @@ from conditional_model_v1.loro import (
     copy_held_out_overviews,
     fold_config,
     load_reference_per_rock,
+    load_reference_run_rmse,
     read_fold_result,
     read_fold_rock_feature_rows,
     resolve_held_out_rocks,
     summary_rows,
+    unseen_run_rmse,
     write_loro_rock_feature_metrics,
     write_loro_summary,
 )
-from conditional_model_v1.plotting import plot_loro_feature_heatmap, plot_loro_rock_bars
+from conditional_model_v1.plotting import (
+    plot_loro_feature_heatmap,
+    plot_loro_rock_bars,
+    plot_loro_unseen_boxplot,
+)
 from conditional_model_v1.tracking import record_loro_folds
 
 
@@ -102,6 +108,7 @@ def run_loro(
 
     folds: list[LoroFoldResult] = []
     feature_rows: list[dict] = []
+    unseen_rmse: dict[str, list[float]] = {}
     for index, rock in enumerate(rocks, start=1):
         print(f"loro_fold_start={rock} ({index}/{len(rocks)})")
         run_dir = run_training(
@@ -111,6 +118,7 @@ def run_loro(
         )
         folds.append(read_fold_result(run_dir, rock))
         feature_rows.extend(read_fold_rock_feature_rows(run_dir, rock))
+        unseen_rmse[rock] = unseen_run_rmse(run_dir, rock).tolist()
         copy_held_out_overviews(run_dir, rock, plots_dir / "rock_overviews")
         write_loro_summary(loro_dir / "loro_summary.csv", folds, reference)
         _cleanup_fold_runtime(config, run_dir)
@@ -118,6 +126,14 @@ def run_loro(
         print(f"loro_fold_done={rock}")
 
     write_loro_rock_feature_metrics(loro_dir / "loro_rock_feature_metrics.csv", feature_rows)
+    write_loro_rock_feature_metrics(
+        loro_dir / "loro_run_rmse.csv",
+        [
+            {"held_out_rock": rock, "rmse_normalized": value}
+            for rock in rocks
+            for value in unseen_rmse[rock]
+        ],
+    )
     rows = summary_rows(folds, reference)
     _write_json(
         loro_dir / "loro_metrics.json",
@@ -146,6 +162,12 @@ def run_loro(
         rocks=rocks,
         output_features=OUTPUT_FEATURES,
         path=plots_dir / "loro_unseen_rmse_normalized_heatmap.png",
+    )
+    plot_loro_unseen_boxplot(
+        unseen=unseen_rmse,
+        reference=load_reference_run_rmse(reference_run_dir) or None,
+        rocks=rocks,
+        path=plots_dir / "loro_unseen_rmse_boxplot.png",
     )
     print(f"loro_dir={loro_dir}")
     return loro_dir

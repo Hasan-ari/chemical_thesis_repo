@@ -63,3 +63,21 @@ Hocanın çevrilmiş şablonu Si için 28.08 (element) kullanmış; PHREEQC `uni
 altında Si'yi `phreeqc.dat`'taki formüle göre SiO2 (60.08) olarak okur ve eldeki
 şist koşuları böyle üretildi. Bu yüzden `conditional_model_v1/units.py` 60.08'de
 kalır; hoca teyit ederse yalnız o sayı ve önbellek değişir. Diğer 10 tür birebir uyuştu.
+
+## Kutu grafikleri (box plot)
+
+Her eğitim koşusu, test bölmesindeki **her PHREEQC koşusu için ayrı bir RMSE** hesaplar
+(`run_rmse.csv`, sqlite `run_rmse` tablosu). Bu sayılardan `plots/boxplots/` altında
+üç PNG üretilir:
+
+| Dosya | Ne gösterir |
+|---|---|
+| `rmse_boxplot_by_rock.png` | Kayaç başına koşu-RMSE dağılımı (26 çıktı birlikte) |
+| `rmse_boxplot_by_feature.png` | Çıktı (26 değişken) başına dağılım, tüm kayaçlar |
+| `rmse_boxplot_by_rock_and_feature.png` | Kayaç × çıktı; her kayaç için ayrı panel |
+
+LORO toplu klasöründe ek olarak `plots/loro_unseen_rmse_boxplot.png` bulunur: her
+dışarıda bırakılan kayaç için, o kayacı hiç görmemiş modelin koşu-RMSE kutusu (mavi)
+ile 8 kayaçlı referans modelin aynı kayaçtaki kutusu (turuncu) yan yana. Sayılar
+`loro_run_rmse.csv` içinde. Not: normalize RMSE her modelin kendi ölçekleyicisiyle
+hesaplanır; kutular yaklaşık karşılaştırma içindir.

@@ -191,3 +191,49 @@ def evaluate_subset(
             for feature, value in zip(output_features, normalized_rmse, strict=True)
         },
     }
+
+
+def per_run_rmse(
+    *,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    y_true_norm: np.ndarray,
+    y_pred_norm: np.ndarray,
+    rocks: np.ndarray,
+    run_ids: list[str],
+    chunk_runs: int = 512,
+) -> tuple[list[dict[str, Any]], np.ndarray]:
+    """One RMSE per evaluation run (for box plots) plus a run x feature matrix.
+
+    Returns ``(rows, feature_rmse_normalized)`` where each row has
+    ``run_id, rock, rmse_normalized, rmse_original`` (both averaged over all
+    outputs and timesteps of that run) and ``feature_rmse_normalized`` has
+    shape ``(n_runs, n_outputs)``. Computed in chunks so the full error
+    tensor is never materialised.
+    """
+    n_runs = y_true.shape[0]
+    if len(rocks) != n_runs or len(run_ids) != n_runs:
+        raise ValueError("Evaluation metadata must align with the run axis")
+    feature_rmse = np.empty((n_runs, y_true.shape[2]), dtype=np.float64)
+    run_rmse_norm = np.empty(n_runs, dtype=np.float64)
+    run_rmse_orig = np.empty(n_runs, dtype=np.float64)
+    for start in range(0, n_runs, chunk_runs):
+        stop = min(start + chunk_runs, n_runs)
+        err_norm = y_pred_norm[start:stop].astype(np.float64) - y_true_norm[start:stop].astype(np.float64)
+        sq = err_norm**2
+        feature_rmse[start:stop] = np.sqrt(np.mean(sq, axis=1))
+        run_rmse_norm[start:stop] = np.sqrt(np.mean(sq, axis=(1, 2)))
+        del err_norm, sq
+        err_orig = y_pred[start:stop].astype(np.float64) - y_true[start:stop].astype(np.float64)
+        run_rmse_orig[start:stop] = np.sqrt(np.mean(err_orig**2, axis=(1, 2)))
+        del err_orig
+    rows = [
+        {
+            "run_id": str(run_ids[index]),
+            "rock": str(rocks[index]),
+            "rmse_normalized": float(run_rmse_norm[index]),
+            "rmse_original": float(run_rmse_orig[index]),
+        }
+        for index in range(n_runs)
+    ]
+    return rows, feature_rmse

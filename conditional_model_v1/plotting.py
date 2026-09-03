@@ -146,3 +146,113 @@ def _plot_all_outputs_grid(
 def _safe_name(value: str) -> str:
     """Make run ids safe for flat PNG filenames."""
     return value.replace(":", "_").replace("/", "_")
+
+
+def plot_loro_rock_bars(
+    *,
+    rows: list[dict[str, object]],
+    path_normalized: Path | str,
+    path_original: Path | str,
+) -> None:
+    """Grouped bars per held-out rock: unseen vs seen vs all-rocks reference.
+
+    ``rows`` are ``loro.summary_rows`` dicts. Missing seen/reference values
+    (``test_ratio=0`` or no reference run) simply leave that bar out.
+    """
+    if not rows:
+        raise ValueError("plot_loro_rock_bars needs at least one fold row")
+    specs = (
+        (
+            path_normalized,
+            "normalized RMSE (each fold uses its own scaler)",
+            "unseen_rmse_mean_normalized",
+            "seen_rmse_mean_normalized",
+            "reference_rmse_mean_normalized",
+        ),
+        (
+            path_original,
+            "RMSE, original chemistry units (mean over 26 outputs)",
+            "unseen_rmse_mean_original",
+            "seen_rmse_mean_original",
+            "reference_rmse_mean_original",
+        ),
+    )
+    rocks = [str(row["held_out_rock"]) for row in rows]
+    positions = np.arange(len(rocks))
+    width = 0.27
+    for path, ylabel, unseen_key, seen_key, reference_key in specs:
+        fig, axis = plt.subplots(figsize=(max(7.0, 1.3 * len(rocks) + 2.0), 4.8))
+        series = (
+            ("held-out rock (unseen)", unseen_key, -width),
+            ("other rocks' test share (seen)", seen_key, 0.0),
+            ("all-rocks reference model", reference_key, width),
+        )
+        for label, key, offset in series:
+            values = [row.get(key) for row in rows]
+            if all(value is None for value in values):
+                continue
+            heights = [float(value) if value is not None else 0.0 for value in values]
+            axis.bar(positions + offset, heights, width=width, label=label)
+        axis.set_xticks(positions)
+        axis.set_xticklabels(rocks, rotation=20, ha="right", fontsize=9)
+        axis.set_ylabel(ylabel, fontsize=9)
+        axis.set_title("Leave-one-rock-out: error on the rock the model never saw", fontsize=11)
+        # Headroom so the legend never covers the tallest bar.
+        top = max((float(row.get(key) or 0.0) for row in rows for _, key, _ in series), default=1.0)
+        axis.set_ylim(0.0, top * 1.35 if top > 0 else 1.0)
+        axis.legend(fontsize=8, ncol=3, loc="upper center")
+        axis.grid(axis="y", linewidth=0.4, alpha=0.5)
+        fig.tight_layout()
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=160)
+        plt.close(fig)
+
+
+def plot_loro_feature_heatmap(
+    *,
+    feature_rows: list[dict[str, object]],
+    rocks: tuple[str, ...],
+    output_features: tuple[str, ...],
+    path: Path | str,
+) -> None:
+    """Held-out rock x output feature grid of normalized RMSE."""
+    matrix = np.full((len(rocks), len(output_features)), np.nan)
+    rock_index = {rock: index for index, rock in enumerate(rocks)}
+    feature_index = {feature: index for index, feature in enumerate(output_features)}
+    for row in feature_rows:
+        rock = str(row["held_out_rock"])
+        feature = str(row["feature"])
+        if rock not in rock_index or feature not in feature_index:
+            raise ValueError(f"Unexpected heatmap cell: rock={rock!r} feature={feature!r}")
+        matrix[rock_index[rock], feature_index[feature]] = float(row["rmse_normalized"])
+    if np.isnan(matrix).any():
+        missing = int(np.isnan(matrix).sum())
+        raise ValueError(f"Heatmap is missing {missing} rock x feature cells")
+
+    fig, axis = plt.subplots(
+        figsize=(max(10.0, 0.45 * len(output_features) + 2.0), max(3.5, 0.5 * len(rocks) + 1.5))
+    )
+    image = axis.imshow(matrix, aspect="auto", cmap="viridis")
+    axis.set_xticks(np.arange(len(output_features)))
+    axis.set_xticklabels(output_features, rotation=75, ha="right", fontsize=7)
+    axis.set_yticks(np.arange(len(rocks)))
+    axis.set_yticklabels(rocks, fontsize=8)
+    for row_index in range(len(rocks)):
+        for column_index in range(len(output_features)):
+            axis.text(
+                column_index,
+                row_index,
+                f"{matrix[row_index, column_index]:.2f}",
+                ha="center",
+                va="center",
+                fontsize=5.5,
+                color="white" if matrix[row_index, column_index] < np.nanmax(matrix) * 0.6 else "black",
+            )
+    fig.colorbar(image, ax=axis, label="normalized RMSE on the held-out rock")
+    axis.set_title("Leave-one-rock-out: which outputs fail on an unseen rock", fontsize=11)
+    fig.tight_layout()
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=160)
+    plt.close(fig)

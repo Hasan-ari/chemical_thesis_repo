@@ -168,3 +168,75 @@ class ExperimentTracker:
             if not file_exists:
                 writer.writeheader()
             writer.writerow(row)
+
+
+LORO_FOLD_COLUMNS: tuple[str, ...] = (
+    "loro_name",
+    "held_out_rock",
+    "run_name",
+    "run_dir",
+    "loro_dir",
+    "n_train",
+    "n_val",
+    "n_test_unseen",
+    "n_test_seen",
+    "unseen_rmse_mean_original",
+    "unseen_rmse_mean_normalized",
+    "unseen_mae_mean_original",
+    "seen_rmse_mean_original",
+    "seen_rmse_mean_normalized",
+    "best_val_loss",
+)
+
+
+def record_loro_folds(
+    registry_path: Path | str,
+    *,
+    loro_name: str,
+    loro_dir: Path | str,
+    folds: list[dict[str, Any]],
+) -> None:
+    """Mirror one leave-one-rock-out experiment into the shared SQLite registry.
+
+    Each fold is also a normal row in ``runs`` (written by ``run_training``);
+    this table links the folds to their aggregate folder and stores the
+    unseen-vs-seen headline numbers. Re-running the same ``loro_name``
+    replaces rows instead of duplicating them.
+    """
+    rows = [
+        {
+            **{column: None for column in LORO_FOLD_COLUMNS},
+            **{key: value for key, value in fold.items() if key in LORO_FOLD_COLUMNS},
+            "loro_name": loro_name,
+            "loro_dir": str(loro_dir),
+        }
+        for fold in folds
+    ]
+    with sqlite3.connect(Path(registry_path)) as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS loro_folds (
+                loro_name TEXT,
+                held_out_rock TEXT,
+                run_name TEXT,
+                run_dir TEXT,
+                loro_dir TEXT,
+                n_train INTEGER,
+                n_val INTEGER,
+                n_test_unseen INTEGER,
+                n_test_seen INTEGER,
+                unseen_rmse_mean_original REAL,
+                unseen_rmse_mean_normalized REAL,
+                unseen_mae_mean_original REAL,
+                seen_rmse_mean_original REAL,
+                seen_rmse_mean_normalized REAL,
+                best_val_loss REAL,
+                PRIMARY KEY (loro_name, held_out_rock)
+            )
+            """
+        )
+        placeholders = ", ".join(f":{column}" for column in LORO_FOLD_COLUMNS)
+        connection.executemany(
+            f"INSERT OR REPLACE INTO loro_folds VALUES ({placeholders})",
+            rows,
+        )

@@ -75,3 +75,40 @@ The global run registry is mirrored in:
 registry.sqlite
 summary.csv
 ```
+
+## Leave-One-Rock-Out (LORO) Generalization Test
+
+Question: what happens when the model meets a rock it has never seen?
+`cli.loro` trains one model per held-out rock. That rock is removed from
+train/val entirely and evaluated as `test_unseen`; the usual
+train/val/test ratios apply to the remaining rocks, whose test share is
+reported as `test_seen`. Compare both against the all-rocks reference run.
+
+```bash
+# local smoke (3 rocks, 4 runs each, 2 folds, 1 epoch)
+env312/bin/python -m conditional_model_v1.cli.loro \
+  --config configs/conditional_model_v1/smoke_loro_local.yaml
+
+# Colab, all eight rocks (8 folds, same cache/model/epochs as the reference run)
+python -m conditional_model_v1.cli.loro \
+  --config configs/conditional_model_v1/loro_colab_eight_rocks.yaml \
+  --reference-run-dir "$RUN_ROOT/<timestamp>_eight_rocks_condition_lstm_v1" \
+  [--held-out-rocks Calcite Trona]   # optional subset for short sessions
+```
+
+Outputs:
+
+- one ordinary run folder per fold, `<ts>_<name>_loro_<Rock>/`
+  (`metrics.json` carries `held_out_rock`, `test_unseen`, `test_seen`),
+- an aggregate folder `<ts>_<name>_loro/` with `loro_summary.csv` (rewritten
+  after every fold, so an interrupted session keeps finished folds),
+  `loro_rock_feature_metrics.csv`, `loro_metrics.json`, `loro_config.json`, and
+  `plots/` (unseen-vs-seen-vs-reference bars in normalized and original units,
+  a rock x feature heatmap, and the held-out rock's best/worst/mean overviews),
+- a `loro_folds` table in `registry.sqlite` next to the existing `runs` and
+  `rock_feature_metrics` tables (key: `loro_name`, `held_out_rock`).
+
+`cli.train` refuses a config with `split.strategy: leave_one_rock_out`; the
+default `rock_aware_run_level` path is unchanged. Normalized RMSE values are
+computed with each fold's own output scaler, so use the original-unit columns
+for strict cross-fold comparison.

@@ -82,9 +82,9 @@ class ConversionRuleTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must be numeric"):
             convert_solution_units({"NA": "abc"}, input_units="mg_L")
 
-    def test_table_flags_the_two_unverified_factors(self) -> None:
+    def test_table_flags_only_silica_as_unverified(self) -> None:
         unverified = {row["feature"] for row in conversion_table() if not row["verified"]}
-        self.assertEqual(unverified, {"SI", "ALKALINITY"})
+        self.assertEqual(unverified, {"SI"})
         self.assertEqual(SUPPORTED_INPUT_UNITS, ("mol_kgw", "mg_L"))
 
 

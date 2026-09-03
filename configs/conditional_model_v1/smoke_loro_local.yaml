@@ -1,0 +1,53 @@
+# Local smoke test for the leave-one-rock-out driver: three rocks, four runs
+# each, two folds, one epoch. Run with
+#   env312/bin/python -m conditional_model_v1.cli.loro \
+#     --config configs/conditional_model_v1/smoke_loro_local.yaml
+experiment:
+  name: smoke_loro
+  run_root: /tmp/chemical_thesis_runs
+
+data:
+  processed_root: /tmp/chemical_thesis_processed
+  use_cache: true
+  rebuild_cache: true
+  write_outputs_csv: false
+  datasets:
+    - name: calcite_wat_sat_data_3
+      rock: Calcite
+      path: data/wat_sat/Calcite/Calcite_wat_sat_data_3
+      max_runs: 4
+    - name: dolomite_wat_sat_data_2
+      rock: Dolomite
+      path: data/wat_sat/Dolomite/Dolomite_wat_sat_data_2
+      max_runs: 4
+    - name: halite_wat_sat_data_2
+      rock: Halite
+      path: data/wat_sat/Halite/Halite_wat_sat_data_2
+      max_runs: 4
+  split:
+    strategy: leave_one_rock_out
+    held_out_rocks: [Calcite, Dolomite]
+    train: 0.8
+    val: 0.1
+    test: 0.1
+    seed: 42
+
+model:
+  hidden_size: 8
+  num_layers: 1
+  dropout: 0.0
+
+training:
+  epochs: 1
+  batch_size: 2
+  learning_rate: 0.001
+  weight_decay: 0.0
+  grad_clip: 1.0
+  num_workers: 0
+  seed: 42
+  scheduler:
+    type: none
+
+plots:
+  max_runs: 0
+  features: all

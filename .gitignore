@@ -128,6 +128,8 @@ data/phreeqc_v23/eda/
 /data*
 /new_data/
 tests/conditional_model_v1/fixtures/five_rocks/
+# Kimya hocasının elle çevrilmiş şist şablonları + tek koşular (ham veri)
+conditional_model_v2_8_rocks/last_three_rock_molkgw_conversion/
 
 
 

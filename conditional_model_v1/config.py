@@ -29,15 +29,45 @@ class DatasetConfig:
             )
 
 
+SPLIT_STRATEGIES: tuple[str, ...] = ("rock_aware_run_level", "leave_one_rock_out")
+
+
 @dataclass(frozen=True)
 class SplitConfig:
-    """Run-level split ratios. Runs never cross train/val/test boundaries."""
+    """Run-level split ratios. Runs never cross train/val/test boundaries.
+
+    ``rock_aware_run_level`` splits every rock by the ratios (the default).
+    ``leave_one_rock_out`` (LORO) trains one model per held-out rock: that rock
+    goes entirely to the test split and the ratios apply to the remaining rocks
+    only. ``held_out_rocks`` lists the rocks to hold out one at a time; ``"all"``
+    means every rock in ``data.datasets``.
+    """
 
     train: float = 0.8
     val: float = 0.1
     test: float = 0.1
     seed: int = 42
-    strategy: Literal["rock_aware_run_level"] = "rock_aware_run_level"
+    strategy: Literal["rock_aware_run_level", "leave_one_rock_out"] = "rock_aware_run_level"
+    held_out_rocks: tuple[str, ...] | Literal["all"] = "all"
+
+    def __post_init__(self) -> None:
+        if self.strategy not in SPLIT_STRATEGIES:
+            raise ValueError(
+                f"Unsupported split.strategy {self.strategy!r}; expected one of {SPLIT_STRATEGIES}"
+            )
+        if abs(self.train + self.val + self.test - 1.0) > 1e-9:
+            raise ValueError("split.train + split.val + split.test must equal 1.0")
+        if self.train <= 0.0:
+            raise ValueError("split.train must be positive")
+        if self.held_out_rocks != "all":
+            rocks = tuple(str(rock) for rock in self.held_out_rocks)
+            object.__setattr__(self, "held_out_rocks", rocks)
+            if not rocks:
+                raise ValueError("split.held_out_rocks must list at least one rock or be 'all'")
+            if self.strategy != "leave_one_rock_out":
+                raise ValueError(
+                    "split.held_out_rocks is only valid with split.strategy=leave_one_rock_out"
+                )
 
 
 @dataclass(frozen=True)
@@ -56,6 +86,19 @@ class DataConfig:
     rebuild_cache: bool = False
     write_outputs_csv: bool = False
     split: SplitConfig = field(default_factory=SplitConfig)
+
+    def __post_init__(self) -> None:
+        if self.split.strategy != "leave_one_rock_out":
+            return
+        configured_rocks = {dataset.rock for dataset in self.datasets}
+        if len(configured_rocks) < 2:
+            raise ValueError("leave_one_rock_out needs at least two distinct rocks in data.datasets")
+        if self.split.held_out_rocks != "all":
+            unknown = sorted(set(self.split.held_out_rocks) - configured_rocks)
+            if unknown:
+                raise ValueError(
+                    f"split.held_out_rocks names rocks missing from data.datasets: {unknown}"
+                )
 
 
 @dataclass(frozen=True)

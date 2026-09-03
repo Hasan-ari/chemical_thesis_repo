@@ -88,7 +88,22 @@ def _fake_fold_run(run_root: Path, fold_name: str, held_out_rock: str, *, seen: 
                 )
     for kind in loro.HELD_OUT_OVERVIEW_KINDS:
         (overviews / f"{held_out_rock}_{kind}_overview.png").write_bytes(b"png")
+    _write_run_rmse(run_dir, {held_out_rock: 4, "Other": 2})
     return run_dir
+
+
+def _write_run_rmse(run_dir: Path, counts: dict[str, int]) -> None:
+    with (run_dir / "run_rmse.csv").open("w", newline="") as file_obj:
+        writer = csv.DictWriter(
+            file_obj, fieldnames=["run_id", "rock", "rmse_normalized", "rmse_original"]
+        )
+        writer.writeheader()
+        for rock, count in counts.items():
+            for index in range(count):
+                writer.writerow(
+                    {"run_id": f"{rock}_{index}", "rock": rock,
+                     "rmse_normalized": 1.0 + 0.1 * index, "rmse_original": 0.5}
+                )
 
 
 def _fake_reference_run(run_root: Path) -> Path:
@@ -101,6 +116,7 @@ def _fake_reference_run(run_root: Path) -> Path:
         },
     }
     (run_dir / "metrics.json").write_text(json.dumps(metrics))
+    _write_run_rmse(run_dir, {rock: 3 for rock in ROCKS})
     return run_dir
 
 
@@ -181,8 +197,12 @@ class RunLoroTests(unittest.TestCase):
                 "loro_rmse_normalized_by_rock.png",
                 "loro_rmse_original_by_rock.png",
                 "loro_unseen_rmse_normalized_heatmap.png",
+                "loro_unseen_rmse_boxplot.png",
             ):
                 self.assertTrue((plots / name).is_file(), name)
+            with (loro_dir / "loro_run_rmse.csv").open(newline="") as file_obj:
+                run_rmse = list(csv.DictReader(file_obj))
+            self.assertEqual(len(run_rmse), 8)  # 4 unseen runs x 2 folds
             copied = sorted(path.name for path in (plots / "rock_overviews").iterdir())
             self.assertEqual(len(copied), 6)
             self.assertIn("Dolomite_worst_overview.png", copied)

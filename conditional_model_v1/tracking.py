@@ -27,6 +27,7 @@ class ExperimentTracker:
         self.metrics_path = self.run_dir / "metrics.json"
         self.feature_metrics_path = self.run_dir / "feature_metrics.csv"
         self.rock_feature_metrics_path = self.run_dir / "rock_feature_metrics.csv"
+        self.run_rmse_path = self.run_dir / "run_rmse.csv"
         self.summary_csv_path = Path(config.run_root) / "summary.csv"
         self.registry_path = Path(config.run_root) / "registry.sqlite"
         resolved_config = asdict(config)
@@ -85,12 +86,22 @@ class ExperimentTracker:
             writer.writeheader()
             writer.writerows(rows)
 
+    def write_run_rmse(self, rows: list[dict[str, Any]]) -> None:
+        """Write one RMSE row per evaluation run (box-plot source data)."""
+        if not rows:
+            return
+        with self.run_rmse_path.open("w", newline="") as file_obj:
+            writer = csv.DictWriter(file_obj, fieldnames=list(rows[0].keys()))
+            writer.writeheader()
+            writer.writerows(rows)
+
     def record_registry(
         self,
         config: ExperimentConfig,
         metrics: dict[str, Any],
         rock_feature_rows: list[dict[str, Any]] | None = None,
         history: list[dict[str, float | int]] | None = None,
+        run_rmse_rows: list[dict[str, Any]] | None = None,
     ) -> None:
         """Mirror final run metadata to SQLite and CSV for comparison.
 
@@ -108,7 +119,7 @@ class ExperimentTracker:
             "rmse_mean_original": metrics.get("rmse_mean_original"),
             "mae_mean_original": metrics.get("mae_mean_original"),
         }
-        self._record_sqlite(row, rock_feature_rows or [], history or [])
+        self._record_sqlite(row, rock_feature_rows or [], history or [], run_rmse_rows or [])
         self._record_summary_csv(row)
 
     def _record_sqlite(
@@ -116,6 +127,7 @@ class ExperimentTracker:
         row: dict[str, Any],
         rock_feature_rows: list[dict[str, Any]],
         history: list[dict[str, float | int]],
+        run_rmse_rows: list[dict[str, Any]],
     ) -> None:
         with sqlite3.connect(self.registry_path) as connection:
             connection.execute(
@@ -195,6 +207,26 @@ class ExperimentTracker:
                     }
                     for epoch_row in history
                 ],
+            )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS run_rmse (
+                    run_name TEXT,
+                    run_id TEXT,
+                    rock TEXT,
+                    rmse_normalized REAL,
+                    rmse_original REAL,
+                    PRIMARY KEY (run_name, run_id)
+                )
+                """
+            )
+            connection.executemany(
+                """
+                INSERT OR REPLACE INTO run_rmse VALUES (
+                    :run_name, :run_id, :rock, :rmse_normalized, :rmse_original
+                )
+                """,
+                [{"run_name": row["run_name"], **rmse_row} for rmse_row in run_rmse_rows],
             )
 
     def _record_summary_csv(self, row: dict[str, Any]) -> None:

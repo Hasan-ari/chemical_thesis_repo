@@ -1,10 +1,19 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
+from conditional_model_v1.cli import train as train_cli
 from conditional_model_v1.config import DataConfig, DatasetConfig, SplitConfig, parse_config
+from conditional_model_v1.data import OUTPUT_FEATURES
+from conditional_model_v1.metrics import (
+    evaluate_by_rock,
+    evaluate_subset,
+    regression_metrics_original_scale,
+)
 from conditional_model_v1.splitting import (
     build_split,
     leave_one_rock_out_split,
@@ -150,6 +159,77 @@ class SplitConfigValidationTests(unittest.TestCase):
                 processed_root="/tmp/p",
                 split=SplitConfig(strategy="leave_one_rock_out"),
             )
+
+
+def _evaluation_arrays():
+    rock_order = ("Calcite", "Dolomite")
+    rocks = np.repeat(np.asarray(rock_order, dtype=np.str_), 2)
+    run_ids = [f"{rock}:{run}" for rock in rock_order for run in (1, 2)]
+    shape = (len(run_ids), 3, len(OUTPUT_FEATURES))
+    y_true = np.arange(np.prod(shape), dtype=np.float32).reshape(shape) / 100.0
+    y_pred = y_true + np.arange(1, 5, dtype=np.float32)[:, None, None]
+    y_true_norm = np.zeros(shape, dtype=np.float32)
+    y_pred_norm = np.full(shape, 0.1, dtype=np.float32)
+    return rock_order, rocks, run_ids, y_true, y_pred, y_true_norm, y_pred_norm
+
+
+class LoroMetricsTests(unittest.TestCase):
+    def test_evaluate_by_rock_strict_raises_and_non_strict_skips_missing_rock(self) -> None:
+        rock_order, rocks, run_ids, y_true, y_pred, y_true_norm, y_pred_norm = _evaluation_arrays()
+        kwargs = dict(
+            y_true=y_true, y_pred=y_pred, y_true_norm=y_true_norm, y_pred_norm=y_pred_norm,
+            rocks=rocks, run_ids=run_ids, output_features=OUTPUT_FEATURES,
+            rock_order=rock_order + ("Halite",),
+        )
+        with self.assertRaisesRegex(ValueError, "missing configured rock: Halite"):
+            evaluate_by_rock(**kwargs)
+
+        per_rock, rows, overviews = evaluate_by_rock(strict=False, **kwargs)
+
+        self.assertEqual(tuple(per_rock), rock_order)
+        self.assertEqual(len(rows), 2 * len(OUTPUT_FEATURES))
+        self.assertEqual(set(overviews), set(rock_order))
+
+    def test_evaluate_subset_empty_mask_is_none_and_full_mask_matches_global(self) -> None:
+        _rock_order, rocks, _run_ids, y_true, y_pred, y_true_norm, y_pred_norm = _evaluation_arrays()
+        kwargs = dict(
+            y_true=y_true, y_pred=y_pred, y_true_norm=y_true_norm, y_pred_norm=y_pred_norm,
+            output_features=OUTPUT_FEATURES,
+        )
+        self.assertIsNone(evaluate_subset(mask=np.zeros(4, dtype=bool), **kwargs))
+        with self.assertRaisesRegex(ValueError, "one boolean per evaluation run"):
+            evaluate_subset(mask=np.ones(3, dtype=bool), **kwargs)
+
+        full = evaluate_subset(mask=np.ones(4, dtype=bool), **kwargs)
+        expected = regression_metrics_original_scale(
+            y_true=y_true, y_pred=y_pred, output_features=OUTPUT_FEATURES
+        )
+        self.assertEqual(full["n_runs"], 4)
+        self.assertAlmostEqual(full["rmse_mean_original"], expected["rmse_mean_original"], places=6)
+        self.assertAlmostEqual(full["rmse_mean_normalized"], 0.1, places=6)
+
+        dolomite = evaluate_subset(mask=rocks == "Dolomite", **kwargs)
+        self.assertEqual(dolomite["n_runs"], 2)
+        # Dolomite runs carry errors 3 and 4 -> RMSE sqrt((9+16)/2).
+        self.assertAlmostEqual(dolomite["rmse_mean_original"], np.sqrt(12.5), places=5)
+
+
+class TrainEntryPointGuardTests(unittest.TestCase):
+    def test_run_training_rejects_mismatched_strategy_before_reading_data(self) -> None:
+        loro = parse_config(_config_payload("leave_one_rock_out"))
+        legacy = parse_config(_config_payload("rock_aware_run_level"))
+        with mock.patch.object(train_cli, "_load_or_build_bundle", side_effect=AssertionError("read data")):
+            with self.assertRaisesRegex(ValueError, "requires held_out_rock"):
+                train_cli.run_training(config=loro, config_path=Path("x.yaml"))
+            with self.assertRaisesRegex(ValueError, "only valid with"):
+                train_cli.run_training(config=legacy, config_path=Path("x.yaml"), held_out_rock="Calcite")
+
+    def test_train_main_redirects_loro_configs_to_cli_loro(self) -> None:
+        loro = parse_config(_config_payload("leave_one_rock_out"))
+        with mock.patch.object(train_cli, "load_config", return_value=loro), \
+             mock.patch("sys.argv", ["train", "--config", "loro.yaml"]):
+            with self.assertRaisesRegex(SystemExit, "cli.loro"):
+                train_cli.main()
 
 
 if __name__ == "__main__":

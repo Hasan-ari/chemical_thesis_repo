@@ -18,6 +18,7 @@ from conditional_model_v1.data import (
 )
 from conditional_model_v1.metrics import (
     evaluate_by_rock,
+    evaluate_subset,
     regression_metrics_original_scale,
 )
 from conditional_model_v1.models import ConditionTimeLSTM
@@ -30,7 +31,7 @@ from conditional_model_v1.preprocessing import (
 )
 from conditional_model_v1.preparation import validate_cache_manifest
 from conditional_model_v1.runtime_data import materialize_mmap_bundle
-from conditional_model_v1.splitting import rock_aware_split
+from conditional_model_v1.splitting import build_split
 from conditional_model_v1.tracking import ExperimentTracker
 from conditional_model_v1.training import (
     get_device,
@@ -47,23 +48,40 @@ def main() -> None:
 
     config_path = Path(args.config)
     config = load_config(config_path)
+    if config.data.split.strategy == "leave_one_rock_out":
+        raise SystemExit(
+            "This config uses split.strategy=leave_one_rock_out; run it with "
+            "`python -m conditional_model_v1.cli.loro --config ...` instead."
+        )
     run_training(config=config, config_path=config_path)
 
 
-def run_training(*, config: ExperimentConfig, config_path: Path) -> Path:
-    """Run the full Colab-friendly training pipeline for one config."""
+def run_training(
+    *,
+    config: ExperimentConfig,
+    config_path: Path,
+    held_out_rock: str | None = None,
+) -> Path:
+    """Run the full Colab-friendly training pipeline for one config.
+
+    ``held_out_rock`` is set by the leave-one-rock-out driver for one fold and
+    must be paired with ``split.strategy=leave_one_rock_out``; the rock-aware
+    path never receives it.
+    """
+    is_loro = config.data.split.strategy == "leave_one_rock_out"
+    if is_loro and held_out_rock is None:
+        raise ValueError(
+            "split.strategy=leave_one_rock_out requires held_out_rock; use cli.loro"
+        )
+    if not is_loro and held_out_rock is not None:
+        raise ValueError("held_out_rock is only valid with split.strategy=leave_one_rock_out")
+
     set_seed(config.training.seed)
     tracker = ExperimentTracker(config)
     tracker.copy_config(config_path)
 
     bundle = _load_or_build_bundle(config)
-    split = rock_aware_split(
-        rocks=bundle.rocks,
-        train_ratio=config.data.split.train,
-        val_ratio=config.data.split.val,
-        test_ratio=config.data.split.test,
-        seed=config.data.split.seed,
-    )
+    split = build_split(config.data.split, bundle.rocks, held_out_rock=held_out_rock)
 
     log_indices = tuple(
         index for index, feature in enumerate(bundle.output_features) if feature in LOG_OUTPUT_FEATURES
@@ -154,6 +172,9 @@ def run_training(*, config: ExperimentConfig, config_path: Path) -> Path:
     )
     print(f"x_shape={x_shape} y_shape={bundle.trajectories.shape}")
     print(f"split train={len(split.train)} val={len(split.val)} test={len(split.test)}")
+    if held_out_rock is not None:
+        n_unseen = int(np.sum(bundle.rocks[split.test] == held_out_rock))
+        print(f"held_out_rock={held_out_rock} test_unseen={n_unseen} test_seen={len(split.test) - n_unseen}")
 
     history = train_model(
         model=model,
@@ -216,10 +237,26 @@ def run_training(*, config: ExperimentConfig, config_path: Path) -> Path:
         run_ids=eval_run_ids,
         output_features=bundle.output_features,
         rock_order=rock_order,
+        strict=held_out_rock is None,
     )
+    test_unseen = test_seen = None
+    if held_out_rock is not None:
+        unseen_mask = eval_rocks == held_out_rock
+        test_unseen = evaluate_subset(
+            y_true=y_true, y_pred=y_pred, y_true_norm=y_true_norm, y_pred_norm=y_pred_norm,
+            mask=unseen_mask, output_features=bundle.output_features,
+        )
+        test_seen = evaluate_subset(
+            y_true=y_true, y_pred=y_pred, y_true_norm=y_true_norm, y_pred_norm=y_pred_norm,
+            mask=~unseen_mask, output_features=bundle.output_features,
+        )
     metrics.update(
         {
             "eval_split": eval_name,
+            "split_strategy": config.data.split.strategy,
+            "held_out_rock": held_out_rock,
+            "test_unseen": test_unseen,
+            "test_seen": test_seen,
             "n_runs_total": int(bundle.conditions.shape[0]),
             "n_train_runs": int(len(split.train)),
             "n_val_runs": int(len(split.val)),

@@ -51,8 +51,8 @@ Colab'da `/content/runs/`, sonra Drive'da `MyDrive/chemical_thesis_repo/runs/`:
 
 1. Drive `chemical_thesis_data/` altına 8 zip: `Calcite_wat_sat_data_3.zip`,
    `Dolomite_wat_sat_data_2.zip`, `Halite_wat_sat_data_2.zip`,
-   `Trona_par_sat_data_3.zip`, `Sandstone_data_2.zip`, `Quarzite_schist_low_t.zip`,
-   `Mica_schist_low_t.zip`, `Mica_carbonate_schist_low_t.zip`.
+   `Trona_par_sat_data_3.zip`, `Sandstone_data_2.zip`, `Quarzite_schist_low_t_1.zip`,
+   `Mica_schist_low_t_1.zip`, `Mica_carbonate_schist_low_t_1.zip`.
 2. Defteri Colab'da GPU ile aç, 1. hücredeki yolları kontrol et, hücreleri sırayla çalıştır.
 3. Süre yetmezse `HELD_OUT_ROCKS` ile alt küme; ikinci oturumda kalanlar.
    Bitmiş referans koşu için `REFERENCE_RUN_DIR` ver, yeniden eğitilmez.

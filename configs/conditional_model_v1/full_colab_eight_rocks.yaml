@@ -11,9 +11,9 @@ data:
   write_outputs_csv: false
   # input_units declares the units of the solution scalars in each dataset's
   # *_Input.txt files. The schist .phr templates use `units mg/L`; the loader
-  # converts them to mol/kgw (see conditional_model_v1/units.py). SI and
-  # ALKALINITY factors are derived from phreeqc.dat / the .phr `as SO4-2` line
-  # and not yet cross-checked against the professor's converted files.
+  # converts them to mol/kgw (see conditional_model_v1/units.py). All factors,
+  # including SI (read as SiO2, 60.08) and ALKALINITY (`as SO4-2`, 96.06), were
+  # cross-checked with the chemistry professor (2026-09-03).
   datasets:
     - name: Calcite_wat_sat_data_3
       rock: Calcite

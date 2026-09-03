@@ -82,9 +82,11 @@ class ConversionRuleTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must be numeric"):
             convert_solution_units({"NA": "abc"}, input_units="mg_L")
 
-    def test_table_flags_only_silica_as_unverified(self) -> None:
+    def test_every_factor_is_verified_after_professor_confirmation(self) -> None:
+        # Si (as SiO2, 60.08) was the last open factor; confirmed by mail 2026-09-03.
         unverified = {row["feature"] for row in conversion_table() if not row["verified"]}
-        self.assertEqual(unverified, {"SI"})
+        self.assertEqual(unverified, set())
+        self.assertEqual(SOLUTION_SPECIES_GFW["SI"].gfw_g_per_mol, 60.08)
         self.assertEqual(SUPPORTED_INPUT_UNITS, ("mol_kgw", "mg_L"))
 
 

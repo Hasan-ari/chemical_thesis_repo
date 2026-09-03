@@ -22,8 +22,10 @@ either, and 0.3% is far below the model's resolution).
 
 Cross-check (2026-09-03): the professor's hand-converted mol/kgw templates for the
 three schists agree with this table for every species except Si, where the
-professor divided by 28.08 (element Si) rather than 60.08 (SiO2). Alkalinity is
-therefore ``verified=True``; Si stays ``verified=False`` until confirmed.
+template divided by 28.08 (element Si) rather than 60.08 (SiO2). Asked by mail,
+the chemistry professor confirmed the same day that the mg/L silica value is a
+measured SiO2 concentration (labs measure SiO2, not elemental Si) and that
+PHREEQC reads it as SiO2. Every factor in the table is therefore verified.
 
 Notes on the two derived factors:
 
@@ -35,8 +37,8 @@ Notes on the two derived factors:
   (96.06 g/mol for SO4-2) without dividing by charge; that is why the database
   default formula is the half-equivalent ``Ca0.5(CO3)0.5``. Used 96.06.
 
-If the professor confirms Si should be 28.08, only that number in
-``SOLUTION_SPECIES_GFW`` changes and the cache is rebuilt.
+The ``verified`` flag records that a factor was checked against the professor's
+templates or the professor's written answer; ``conversion_table()`` exposes it.
 """
 
 from __future__ import annotations
@@ -70,8 +72,8 @@ SOLUTION_SPECIES_GFW: dict[str, SpeciesGfw] = {
     "AL": SpeciesGfw(26.9815, True, "phreeqc.dat: Al Al+3 0 Al 26.9815"),
     "SI": SpeciesGfw(
         60.08,
-        False,
-        "phreeqc.dat: Si H4SiO4 0 SiO2 28.0843 -> mg/L is read as SiO2 (60.08). The professor's hand-converted template used 28.08 (element Si); the existing mg/L runs were produced by PHREEQC itself, so 60.08 is kept until confirmed.",
+        True,
+        "phreeqc.dat: Si H4SiO4 0 SiO2 28.0843 -> mg/L is read as SiO2 (60.08). The professor's hand-converted template used 28.08 (element Si), but the professor confirmed by mail (2026-09-03) that the value is measured SiO2 and PHREEQC treats it as SiO2.",
     ),
     "ALKALINITY": SpeciesGfw(96.06, True, ".phr: 'Alkalinity {ALKALINITY} as SO4-2' -> gfw of SO4-2; matches the professor's converted template"),
     "S6": SpeciesGfw(96.06, True, "phreeqc.dat: S(6) SO4-2 0 SO4 (legacy rocks only, always mol/kgw)"),

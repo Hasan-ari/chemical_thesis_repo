@@ -90,8 +90,14 @@ class ExperimentTracker:
         config: ExperimentConfig,
         metrics: dict[str, Any],
         rock_feature_rows: list[dict[str, Any]] | None = None,
+        history: list[dict[str, float | int]] | None = None,
     ) -> None:
-        """Mirror final run metadata to SQLite and CSV for comparison."""
+        """Mirror final run metadata to SQLite and CSV for comparison.
+
+        ``history`` (per-epoch train/val loss, the same rows as ``history.csv``)
+        goes to the ``epoch_history`` table so loss curves survive in the
+        registry even if a run folder is lost.
+        """
         row = {
             "run_name": self.run_dir.name,
             "experiment": config.name,
@@ -102,13 +108,14 @@ class ExperimentTracker:
             "rmse_mean_original": metrics.get("rmse_mean_original"),
             "mae_mean_original": metrics.get("mae_mean_original"),
         }
-        self._record_sqlite(row, rock_feature_rows or [])
+        self._record_sqlite(row, rock_feature_rows or [], history or [])
         self._record_summary_csv(row)
 
     def _record_sqlite(
         self,
         row: dict[str, Any],
         rock_feature_rows: list[dict[str, Any]],
+        history: list[dict[str, float | int]],
     ) -> None:
         with sqlite3.connect(self.registry_path) as connection:
             connection.execute(
@@ -158,6 +165,35 @@ class ExperimentTracker:
                 [
                     {"run_name": row["run_name"], **feature_row}
                     for feature_row in rock_feature_rows
+                ],
+            )
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS epoch_history (
+                    run_name TEXT,
+                    epoch INTEGER,
+                    train_loss REAL,
+                    val_loss REAL,
+                    lr REAL,
+                    PRIMARY KEY (run_name, epoch)
+                )
+                """
+            )
+            connection.executemany(
+                """
+                INSERT OR REPLACE INTO epoch_history VALUES (
+                    :run_name, :epoch, :train_loss, :val_loss, :lr
+                )
+                """,
+                [
+                    {
+                        "run_name": row["run_name"],
+                        "epoch": int(epoch_row["epoch"]),
+                        "train_loss": epoch_row.get("train_loss"),
+                        "val_loss": epoch_row.get("val_loss"),
+                        "lr": epoch_row.get("lr"),
+                    }
+                    for epoch_row in history
                 ],
             )
 

@@ -273,7 +273,7 @@ def run_training(
     tracker.write_metrics(metrics)
     tracker.write_feature_metrics(metrics)
     tracker.write_rock_feature_metrics(rock_feature_rows)
-    tracker.record_registry(config, metrics, rock_feature_rows)
+    tracker.record_registry(config, metrics, rock_feature_rows, history=history)
     plot_rock_overviews(
         time_axis=bundle.time_axis,
         output_features=bundle.output_features,

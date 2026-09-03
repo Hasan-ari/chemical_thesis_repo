@@ -46,8 +46,14 @@ def evaluate_by_rock(
     run_ids: list[str],
     output_features: tuple[str, ...],
     rock_order: tuple[str, ...],
+    strict: bool = True,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[str, dict[str, dict[str, Any]]]]:
-    """Compute per-rock RMSE and best/worst/mean overview trajectories."""
+    """Compute per-rock RMSE and best/worst/mean overview trajectories.
+
+    ``strict=True`` (the rock-aware default) raises when a configured rock has
+    no runs in the evaluation split. ``strict=False`` skips such rocks, which
+    is normal in a leave-one-rock-out fold with ``test_ratio=0``.
+    """
     if not (
         y_true.shape == y_pred.shape == y_true_norm.shape == y_pred_norm.shape
         and y_true.ndim == 3
@@ -65,7 +71,9 @@ def evaluate_by_rock(
     for rock in rock_order:
         rock_indices = np.flatnonzero(rocks == rock)
         if len(rock_indices) == 0:
-            raise ValueError(f"Evaluation split is missing configured rock: {rock}")
+            if strict:
+                raise ValueError(f"Evaluation split is missing configured rock: {rock}")
+            continue
 
         original_error = (
             y_pred[rock_indices].astype(np.float64)
@@ -143,3 +151,43 @@ def evaluate_by_rock(
             },
         }
     return per_rock, feature_rows, overviews
+
+
+def evaluate_subset(
+    *,
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    y_true_norm: np.ndarray,
+    y_pred_norm: np.ndarray,
+    mask: np.ndarray,
+    output_features: tuple[str, ...],
+) -> dict[str, Any] | None:
+    """Original- and normalized-scale metrics over the runs selected by ``mask``.
+
+    Used by leave-one-rock-out folds to report the held-out rock (``unseen``)
+    and the remaining rocks' test share (``seen``) separately. Returns ``None``
+    when the mask selects no runs.
+    """
+    mask = np.asarray(mask, dtype=bool)
+    if mask.shape != (y_true.shape[0],):
+        raise ValueError("mask must have one boolean per evaluation run")
+    if not mask.any():
+        return None
+    metrics = regression_metrics_original_scale(
+        y_true=y_true[mask],
+        y_pred=y_pred[mask],
+        output_features=output_features,
+    )
+    normalized_error = (
+        y_pred_norm[mask].astype(np.float64) - y_true_norm[mask].astype(np.float64)
+    )
+    normalized_rmse = np.sqrt(np.mean(normalized_error**2, axis=(0, 1)))
+    return {
+        "n_runs": int(mask.sum()),
+        **metrics,
+        "rmse_mean_normalized": float(np.mean(normalized_rmse)),
+        "rmse_per_feature_normalized": {
+            feature: float(value)
+            for feature, value in zip(output_features, normalized_rmse, strict=True)
+        },
+    }

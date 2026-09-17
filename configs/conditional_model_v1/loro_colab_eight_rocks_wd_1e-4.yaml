@@ -1,0 +1,76 @@
+# v3: leave-one-rock-out (LORO) with weight decay 1e-4 — one of two points on the
+# "yay sertliği" (weight-decay strength) curve; v2's loro_colab_eight_rocks.yaml
+# (weight_decay 0.0) is the first point. Everything else is byte-identical to v2:
+# same cache (eight_rocks_v1), model, epochs, seed, split ratios. Run with
+# `python -m conditional_model_v1.cli.loro --config <this file>
+#   --reference-run-dir <v2 all-rocks reference run>`.
+# Design note: daily-sessions/2026-09-17_0112.md (v3 spec).
+experiment:
+  name: eight_rocks_loro_wd_1e-4
+  run_root: ${RUN_ROOT}
+
+data:
+  processed_root: ${PROCESSED_ROOT}
+  cache_name: eight_rocks_v1
+  require_cache: true
+  use_cache: true
+  rebuild_cache: false
+  write_outputs_csv: false
+  datasets:
+    - name: Calcite_wat_sat_data_3
+      rock: Calcite
+      path: ${DATA_ROOT}/wat_sat/Calcite/Calcite_wat_sat_data_3
+    - name: Dolomite_wat_sat_data_2
+      rock: Dolomite
+      path: ${DATA_ROOT}/wat_sat/Dolomite/Dolomite_wat_sat_data_2
+    - name: Halite_wat_sat_data_2
+      rock: Halite
+      path: ${DATA_ROOT}/wat_sat/Halite/Halite_wat_sat_data_2
+    - name: Trona_par_sat_data_3
+      rock: Trona
+      path: ${DATA_ROOT}/wat_sat/Trona/Trona_par_sat_data_3
+    - name: Sandstone_data_2
+      rock: Sandstone
+      path: ${DATA_ROOT}/new_data/Sandstone_data_2
+    - name: Quarzite_schist_low_t
+      rock: Quartzite_schist
+      path: ${DATA_ROOT}/new_data/Quarzite_schist_low_t
+      input_units: mg_L
+    - name: Mica_schist_low_t
+      rock: Mica_schist
+      path: ${DATA_ROOT}/new_data/Mica_schist_low_t
+      input_units: mg_L
+    - name: Mica_carbonate_schist_low_t
+      rock: Mica_carbonate_schist
+      path: ${DATA_ROOT}/new_data/Mica_carbonate_schist_low_t
+      input_units: mg_L
+  split:
+    strategy: leave_one_rock_out
+    # "all" = one fold per rock above (8 folds). Use a list to run a subset,
+    # e.g. [Calcite, Trona], when a Colab session cannot fit all eight.
+    held_out_rocks: all
+    train: 0.8
+    val: 0.1
+    test: 0.1
+    seed: 42
+
+model:
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.0
+
+training:
+  epochs: 100
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0001  # Adam coupled L2; v2 = 0.0
+  grad_clip: 1.0
+  num_workers: 2
+  preprocessing_chunk_runs: 256
+  seed: 42
+  scheduler:
+    type: none
+
+plots:
+  max_runs: 0
+  features: all

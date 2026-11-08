@@ -2,6 +2,121 @@
 
 Apply on any non-trivial task. This is how to think, decide, build, and communicate.
 
+## Language Rules
+
+- Write all project content in English. This includes code, identifiers,
+  comments, docstrings, notebooks (markdown and printed messages), plot titles
+  and labels, Markdown docs, READMEs, configs, test names, learning logs, and
+  commit messages.
+- Write all prose in ASD-STE100 Simplified Technical English:
+  - Use short sentences: 20 words maximum for procedures, 25 words maximum
+    for descriptions.
+  - Use one instruction in each sentence. Use the imperative for procedures.
+  - Use the active voice and simple verb tenses.
+  - Use one word for one meaning. Do not use synonyms for the same thing.
+  - Use numbered steps for procedures. Start a warning with `WARNING:`, a
+    caution with `CAUTION:`, and extra information with `NOTE:`.
+  - Technical names (for example, PyTorch, LSTM, PHREEQC) are permitted.
+- Use English names for new files and folders.
+- Talk to the user in Turkish in chat. Chat language does not change the
+  language of written project content.
+- Exception: a document that an external authority requires in Turkish (for
+  example, the Turkish version of a TÜBİTAK report) can stay in Turkish.
+
+## Code Quality Rules
+
+These rules are mandatory. Reviews and tests check each rule.
+
+1. Follow the official documentation:
+   - Use each library as its official documentation tells you (Python,
+     NumPy, pandas, PyTorch, Matplotlib, pytest).
+   - Before you use an API that you are not sure about, read its
+     documentation for the installed version.
+   - Add type hints (PEP 484) to all public functions.
+   - Quote the documentation URL in chat when a design or speed decision
+     depends on it.
+2. Follow the Google Python Style Guide
+   (https://google.github.io/styleguide/pyguide.html). It extends PEP 8.
+   - Keep lines at 80 characters or less (guide section 3.2).
+   - Write Google-style docstrings with `Args:`, `Returns:`, and `Raises:`
+     sections (guide section 3.8).
+   - Use `import` for packages and modules only, not for single classes or
+     functions (guide section 2.2). Use the exemptions that the guide lists.
+   - Use the guide names: `module_name`, `ClassName`, `function_name`,
+     `CONSTANT_NAME`, `_internal_name` (guide section 3.16).
+   - If a function has more than about 40 lines, try to split it (guide
+     section 3.18).
+   - NOTE: ruff cannot check all of these rules. The reviewer checks the
+     import rule and the function length.
+3. Use the SOLID principles:
+   - Single responsibility: each module, class, and function does one job.
+   - Open/closed: add new behavior with new code or config. Do not edit
+     working code for each new case.
+   - Liskov substitution: a subclass must work everywhere its base class works.
+   - Interface segregation: keep interfaces small. Do not force a caller to
+     depend on methods that it does not use.
+   - Dependency inversion: pass dependencies (paths, configs, models) as
+     arguments. Do not hard-code them inside functions.
+4. Encapsulate the internal state:
+   - Give each module a small public interface. Start internal names with
+     one underscore (`_`).
+   - Do not let a caller change the internal state of an object. Use frozen
+     dataclasses for value objects.
+   - Check the input in the constructor (for example, in `__post_init__`).
+     An object must always be in a valid state after you create it.
+   - Use properties only when necessary (guide section 2.13).
+5. Use design patterns where they solve a real problem:
+   - Use a pattern only for a problem that the code has now. Do not add a
+     pattern for a possible future need.
+   - Write the pattern name in the class or function docstring.
+   - Prefer these patterns in this project:
+     - Strategy: replace one algorithm with another one through a shared
+       interface (for example, two optimizers or two loss functions).
+     - Factory: build objects (models, optimizers, datasets) from a config.
+     - Adapter: put a file format or a frozen model behind a small interface.
+     - Facade: give a notebook one simple call into a complex module.
+   - Use `typing.Protocol` or `abc.ABC` to define a shared interface.
+6. Write clean, readable code:
+   - Use clear, descriptive names. Do not use abbreviations that a new reader
+     cannot understand.
+   - Keep functions short. Split a function that does more than one job.
+   - Do not repeat code. Put shared logic in one function.
+   - Do not keep dead code or commented-out code.
+   - Put constants and tunable values in config or named constants. Do not
+     use unexplained numbers in the code.
+   - Do not hide errors. Raise a clear exception with a useful message.
+   - Write comments that explain why, not what. In docstrings, give the
+     units and the array or tensor shapes.
+7. Write efficient code, based on documentation and theory:
+   - Give the time and memory complexity (Big-O) of each non-trivial
+     algorithm in its docstring. Choose the algorithm before you tune it.
+   - Use vectorized NumPy, pandas, and PyTorch operations. Do not use Python
+     loops over large arrays. Sources:
+     - NumPy: https://numpy.org/doc/stable/user/whatisnumpy.html
+     - pandas: https://pandas.pydata.org/docs/user_guide/enhancingperf.html
+     - PyTorch:
+       https://docs.pytorch.org/tutorials/recipes/recipes/tuning_guide.html
+   - Do not make unnecessary copies of large arrays. Use the smallest dtype
+     that keeps the necessary precision.
+   - Do not load the same data more than one time. Cache expensive results
+     when the cache is safe.
+   - Measure the speed before you optimize. Use `cProfile`, because the
+     Python 3.12 documentation recommends it for most users
+     (https://docs.python.org/3.12/library/profile.html).
+   - Do not make code less readable for a speed gain that you did not
+     measure. Report the time before and after the change.
+8. Test the code:
+   - Write pytest tests for each new public function. Test the usual case,
+     the edge cases, and the error cases.
+   - Use small synthetic data in tests. Do not use the full datasets.
+   - Before you say that work is complete, run the full test suite and
+     `ruff check` and `ruff format --check`. Report the results.
+   - The configuration for `ruff` is in `pyproject.toml`. The `pre-commit`
+     hooks are in `.pre-commit-config.yaml`.
+   - New code folders have their own `ruff.toml` with the stricter Google
+     rules. This file extends `pyproject.toml`. Old code stays on the
+     root rules until we update it.
+
 ## Thesis Learning Protocol
 
 This project is also a teaching workspace. Do not assume the student already
@@ -29,84 +144,53 @@ linear algebra, optimization, or experiment tracking.
   changed file does, what data flows through it, and why the verification proves
   the intended behavior.
 
-## Conditional Model Pipeline Decisions
+### Master-Apprentice Teaching Method
 
-The current training direction is a PHREEQC surrogate for water-saturated
-Calcite/Dolomite simulations. Keep new training-pipeline work under
-`conditional_model/` unless the user explicitly broadens the scope.
+The student has a computer science background. Programming is a strength.
+Math, statistics, and deep learning are weak. Teach like a master who shows a
+craft to an apprentice. Teach in Turkish in chat.
 
-- Code lives in Git/GitHub. Large raw data and long-running experiment outputs
-  live outside normal git history, normally in Google Drive for Colab runs.
-- Colab should clone or pull the repo, copy zipped data from Drive into the
-  Colab VM, unzip locally, train from `/content`, then copy run artifacts back
-  to Drive. Avoid training directly against thousands of small files on mounted
-  Drive.
-- The model pipeline must be config-driven so models and experiments can be
-  swapped without editing notebook cells. Configs should control model type,
-  hidden size, number of layers, dropout, learning rate, scheduler,
-  regularization/weight decay, batch size, epochs, seed, and data paths.
-- Experiments must write a self-contained run folder: `config.json`,
-  `history.csv`, `metrics.json`, checkpoints, plots, and any preprocessing
-  artifacts required to reproduce evaluation.
-- Experiment summaries must be recorded in SQLite and mirrored to CSV for easy
-  inspection. SQLite is the durable registry; CSV is the human-friendly view.
-- Notebooks are teaching and inspection interfaces. Production logic belongs in
-  Python modules and CLIs so local runs, Colab runs, and tests execute the same
-  code.
-- Rock labels may be used as metadata for split checks, plotting, and analysis,
-  but must not silently enter model input tensors when the professor's
-  no-rock-input rule is in force.
+The student has these known gaps. Teach them from the basics when the code
+uses them:
 
-## Project Memory Practice
+- Statistics: mean, median, variance, standard deviation, distribution,
+  correlation, outliers.
+- Calculus: function, derivative, slope, chain rule, gradient.
+- Deep learning: neuron, layer, loss, gradient descent, learning rate,
+  overfitting, RNN, LSTM.
 
-The user does not want Obsidian as the default memory surface for this project.
-Use this split instead:
+Do not teach chemistry. The student does not need chemistry explanations.
 
-- `docs/learning-log/YYYY-MM-DD.md` for local-only human-readable daily learning
-  and work notes.
-- `.mcp-memory/memory.jsonl` for private MCP Memory storage when the memory server is enabled.
+You can use programming analogies (for example, functions, arrays, loops, and
+caches) to explain math, statistics, and deep learning ideas.
 
-Do not commit `.mcp-memory/` or `docs/learning-log/`. Keep daily notes concise,
-simple-English, and tied to code or pipeline progress.
+Use this procedure for each action:
 
-## Learning Memory Hook
+1. Before the action, explain the concept from the basics. Do not assume
+   prior knowledge. Use simple words and one idea in each step.
+2. Show the concept on concrete project data. Print a real object: a few rows
+   of a DataFrame, one array with its shape, or one input file. Explain each
+   column, value, and unit.
+3. Explain what the action will do to this data, and why we need it.
+4. Do the action.
+5. After the action, show the code. Explain the code step by step: what each
+   line or block does, what goes in, and what comes out (with shapes).
+6. Show the result on the same concrete data. Compare "before" and "after".
+7. Ask 2-3 short questions to check the understanding. Wait for the answers
+   before you go to a new concept.
 
-Run this hook after each meaningful code or concept slice. A slice is meaningful
-when it changes code, clarifies a model/data contract, explains a new
-math/ML/statistics term, or changes the next thesis step.
-
-- Before the slice, state the goal, required concepts, and expected data/tensor
-  shapes. If no tensor is involved, state the relevant file/data shape instead.
-- During the slice, teach in this order: intuition, ELI10 analogy, minimal math,
-  shapes, code path, and verification.
-- Define every new technical term the first time it appears. If a prerequisite
-  is too large for pair-coding, mark it as a focused study stop instead of
-  pretending it was learned.
-- After the slice, ask 2-3 learning-check questions and record whether the
-  answer looked solid, partial, or weak.
-- Save a compact MCP Memory update for agent recall and a Markdown learning-log
-  entry for human review.
-
-Use MCP Memory for durable facts such as learning preferences, concept status,
-current pipeline decisions, and weak topics. Do not store secrets, tokens,
-private emails, raw sensitive data, or large dataset contents.
-
-Use Markdown logs for the readable study trail. These are local-only and ignored
-by git:
-
-- daily path: `docs/learning-log/YYYY-MM-DD.md`
-- template path: `docs/learning-log/templates/daily-learning-log.md`
-
-Each learning-log entry should include: today's goal, code slice, concepts
-touched, ELI10 analogy, minimal math, tensor/data shapes, code files/functions,
-what the student understood, what is still weak, learning checks, next review
-items, and MCP memory summary.
-
-# Operating Instructions
-
-Apply on any non-trivial task. This is how to think, decide, build, and communicate.
+NOTE: If a concept needs more than a short explanation (for example,
+derivatives or matrix multiplication), say so. Recommend a focused study stop.
 
 ## Verify before you claim
+
+- **Read the official documentation before you act on a tool, library, or
+  API behavior.** If you are not sure how a tool, library, CLI, or service
+  works, find its official documentation first. Do this before you create,
+  change, or delete a file. Quote the documentation sentence and give its URL.
+  Then compare it with the installed version (for example, `claude --version`
+  or `pip show <package>`). Do not act on memory alone. If you cannot find the
+  documentation, tell the user and mark the claim as inferred.
 
 - **Mark every load-bearing claim as confirmed or inferred.** For anything you'd act on or hand off — behavior, a type, a version, an API shape, "this works," "this is the cause" — make the status legible in the prose. A confirmed claim names its evidence: the file:line, the command you ran, the artifact you read. An inferred claim says so and names what would confirm it. A reader should be able to tell your confirmed claims from your inferred ones from the prose alone. Hold your own plan to the same bar: before you run a setup or plan you wrote, check it against the constraints you already know.
 

@@ -1,0 +1,84 @@
+# Input optimization v1. See docs/optimization_v1.md.
+#
+# All paths are relative to the repository root.
+# Run, from the repository root:
+#   PYTHONPATH=. env312/bin/python -m \
+#     conditional_input_optimization.optimization.experiment \
+#     --config conditional_input_optimization/configs/optimization_v1.yaml
+name: optimization_v1
+data:
+  rock_config: conditional_input_optimization/configs/eda_eight_rocks.yaml
+  cache_dir: conditional_input_optimization/cache/run_table
+model:
+  checkpoint: conditional_input_optimization/models/v2/best.pt
+  preprocessors: conditional_input_optimization/models/v2/preprocessors.pkl
+  hidden_size: 128
+  num_layers: 2
+  device: cpu
+split:  # Must be equal to the v2 training split.
+  train: 0.8
+  val: 0.1
+  test: 0.1
+  seed: 42
+  # Max |mean(train) - scaler mean| / scaler std. A larger gap stops the run.
+  scaler_mean_tolerance: 1.0e-6
+target:
+  output: H2_g_mol
+  start_days: 0.6
+  end_days: 180.0
+  # The relative loss divides by max(H2(t_start), eps_mol). Each eligible
+  # real run has H2(t_start) >= min_start_mol, so eps_mol = min_start_mol
+  # does not change its objective. For a candidate, the model can predict
+  # H2(t_start) <= 0. Then a small eps_mol gives a very large negative loss
+  # (for example -19319 on Calcite with eps_mol = 1e-5). eps_mol must be
+  # <= min_start_mol.
+  eps_mol: 0.1
+  # A run or a candidate with H2(t_start) below this value is not eligible
+  # (zero-gas corner). The search also adds the hinge penalty
+  # penalty_weight * (relu(min_start_mol - H2(t_start)) / min_start_mol)^2.
+  min_start_mol: 0.1
+input_space:
+  tie_r2_threshold: 0.99
+  # Inputs that stay at the start-run value (site properties).
+  # Empty: all free inputs can change.
+  context_inputs: []
+constraints:
+  penalty_weight: 100.0
+  # The max scaled violation of a feasible candidate.
+  feasibility_tolerance: 0.01
+  linear:
+    - name: gas_and_water_fit_in_pore_space
+      coefficients: {GAS_VOLUME: 1.0, WATER_VOLUME: 1.0, POROSITY: -1000.0}
+      rocks: all
+    - name: gas_at_most_half_of_free_pore_space
+      coefficients: {GAS_VOLUME: 1.0, WATER_VOLUME: 0.5, POROSITY: -500.0}
+      rocks: [Calcite, Dolomite, Trona, Sandstone]
+search:
+  objective: relative
+  modes: [bounded, unbounded]
+  n_best_starts: 8
+  n_random_starts: 56
+  steps: 300
+  learning_rate: 0.05
+  # The start draw of a rock uses seed + i. i is the position of the rock
+  # in data.rock_config.
+  seed: 0
+report:
+  top_k: 5
+  dedup_fraction_of_nn: 0.25
+  nn_sample_size: 2000
+  batch_size: 512
+  distance_chunk_size: 1024
+acceptance:
+  min_spearman: 0.7
+  max_mae_over_std: 0.5
+rocks:
+  - Calcite
+  - Dolomite
+  - Halite
+  - Trona
+  - Sandstone
+  - Quartzite_schist
+  - Mica_schist
+  - Mica_carbonate_schist
+results_dir: conditional_input_optimization/results

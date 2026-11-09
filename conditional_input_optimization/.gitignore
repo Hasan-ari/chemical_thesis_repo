@@ -1,0 +1,9 @@
+# The RunTable cache is about 3.5 GB. Build it again with:
+# python -m conditional_input_optimization.run_data.build_cache --workers 10
+cache/
+
+# The frozen v2 surrogate files (best.pt, preprocessors.pkl) from Drive.
+# Download them by hand. See docs/optimization_v1.md.
+models/
+# Optimization results. Each run writes one folder.
+results/

@@ -33,8 +33,16 @@ convention = "google"
 [tool.ruff.lint.per-file-ignores]
 # Test names describe the case, so test methods need no docstring.
 # Expected values in assertions are not magic numbers.
-"tests/**" = ["B011", "D1", "PLR2004"]
+# "**/tests/**" also matches the tests/ folder inside each work stream.
+"**/tests/**" = ["B011", "D1", "PLR2004"]
 "notebooks/**" = ["E402", "F401"]  # imports often staged across cells
+
+[tool.pytest.ini_options]
+# archive/ has old tests that import a removed module, so we name the test
+# folders. Each work stream keeps its tests in <work_stream>/tests/.
+testpaths = ["tests", "conditional_input_optimization/tests"]
+# The repository root must be on sys.path to import the work stream packages.
+pythonpath = ["."]
 
 [tool.ruff.format]
 quote-style = "double"

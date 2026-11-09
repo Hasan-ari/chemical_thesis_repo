@@ -113,9 +113,15 @@ These rules are mandatory. Reviews and tests check each rule.
      `ruff check` and `ruff format --check`. Report the results.
    - The configuration for `ruff` is in `pyproject.toml`. The `pre-commit`
      hooks are in `.pre-commit-config.yaml`.
-   - New code folders have their own `ruff.toml` with the stricter Google
-     rules. This file extends `pyproject.toml`. Old code stays on the
-     root rules until we update it.
+   - The ruff rules apply to the full repository. Old code that does not
+     obey the rules must be fixed before you commit a change to it.
+9. Keep each work stream in its own folder:
+   - Put each work stream (for example, `conditional_input_optimization/`)
+     in its own top-level folder.
+   - Put the tests of a work stream in a `tests/` folder inside that work
+     stream folder. Do not put them in the shared root `tests/` folder.
+   - Do not import code from one work stream into another without a
+     reason. Write the reason in the docstring.
 
 ## Thesis Learning Protocol
 

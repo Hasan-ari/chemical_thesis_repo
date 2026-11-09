@@ -1,0 +1,28 @@
+# Rock sources for the input optimization EDA.
+#
+# data_root is relative to the repository root.
+# Each rock folder has the subfolders input/ and output/.
+# The folder name is the rock name.
+#
+# input_units is the unit of the solution values in the *_Input.txt files.
+# The v2 model converts mg_L values to mol_kgw. The EDA must do the same
+# conversion, so these values must agree with the v2 training config
+# configs/conditional_model_v1/full_colab_eight_rocks.yaml.
+data_root: data/v2_eight_rocks
+rocks:
+  - name: Calcite
+    input_units: mol_kgw
+  - name: Dolomite
+    input_units: mol_kgw
+  - name: Halite
+    input_units: mol_kgw
+  - name: Trona
+    input_units: mol_kgw
+  - name: Sandstone
+    input_units: mol_kgw
+  - name: Quartzite_schist
+    input_units: mg_L
+  - name: Mica_schist
+    input_units: mg_L
+  - name: Mica_carbonate_schist
+    input_units: mg_L
